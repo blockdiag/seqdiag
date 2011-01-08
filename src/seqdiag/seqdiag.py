@@ -62,7 +62,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             self.lifelines(node)
 
     def lifelines(self, node):
-        metrix = self.metrix.node(node)
+        metrix = self.metrix.originalMetrix().node(node)
         pagesize = self.pageSize()
 
         _from = metrix.bottom()
