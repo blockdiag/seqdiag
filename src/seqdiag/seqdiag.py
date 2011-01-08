@@ -15,29 +15,34 @@ from blockdiag.utils.XY import XY
 
 class DiagramTreeBuilder:
     def build(self, tree):
-        diagram = self.instantiate(Diagram(), tree)
-        for i, key in enumerate(DiagramNode.namespace):
-            node = DiagramNode.get(key)
-            node.xy = XY(i, 0)
-            diagram.nodes.append(node)
+        self.diagram = Diagram()
+        self.diagram = self.instantiate(self.diagram, tree)
 
-        diagram.width = len(diagram.nodes)
-        diagram.height = len(diagram.edges) + 1
+        self.diagram.width = len(self.diagram.nodes)
+        self.diagram.height = len(self.diagram.edges) + 1
 
-        return diagram
+        return self.diagram
+
+    def append_node(self, node):
+        if node not in self.diagram.nodes:
+            node.xy = XY(len(self.diagram.nodes), 0)
+            self.diagram.nodes.append(node)
 
     def instantiate(self, group, tree):
         for stmt in tree.stmts:
             if isinstance(stmt, diagparser.Node):
                 node = DiagramNode.get(stmt.id)
                 node.setAttributes(stmt.attrs)
+                self.append_node(node)
 
             elif isinstance(stmt, diagparser.Edge):
                 edge_from = DiagramNode.get(stmt.nodes.pop(0))
+                self.append_node(edge_from)
 
                 while len(stmt.nodes):
                     edge_type, edge_to = stmt.nodes.pop(0)
                     edge_to = DiagramNode.get(edge_to)
+                    self.append_node(edge_to)
 
                     edge = DiagramEdge(edge_from, edge_to)
                     edge.setAttributes(stmt.attrs)
