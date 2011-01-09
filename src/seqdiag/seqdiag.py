@@ -85,26 +85,40 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         m = self.metrix
         baseheight = node1_xy.y + (m.nodeHeight + m.spanHeight) * (i + 1)
 
-        if node1_xy.x < node2_xy.x:
-            margin = m.cellSize
-            headshape = ['right', 'left']
+        if edge.node1 == edge.node2:
+            points = []
+            points.append(XY(node1_xy.x + m.cellSize,
+                             baseheight + m.nodeHeight * 0.5))
+            points.append(XY(node1_xy.x + m.nodeWidth * 0.5 + m.cellSize,
+                             baseheight + m.nodeHeight * 0.5))
+            points.append(XY(node1_xy.x + m.nodeWidth * 0.5 + m.cellSize,
+                             baseheight + m.nodeHeight))
+            points.append(XY(node1_xy.x + m.cellSize,
+                             baseheight + m.nodeHeight))
+
+            self.drawer.line(points, fill=self.fill)
+            self.edge_head(points[-1], 'left')
         else:
-            margin = - m.cellSize
-            headshape = ['left', 'right']
+            if node1_xy.x < node2_xy.x:
+                margin = m.cellSize
+                headshape = ['right', 'left']
+            else:
+                margin = - m.cellSize
+                headshape = ['left', 'right']
 
-        _from = XY(node1_xy.x + margin,
-                   baseheight + m.nodeHeight * 0.5)
-        _to = XY(node2_xy.x - margin,
-                 baseheight + m.nodeHeight * 0.5)
-        self.drawer.line((_from, _to), fill=self.fill)
-        self.edge_head(_to, headshape[0])
+            _from = XY(node1_xy.x + margin,
+                       baseheight + m.nodeHeight * 0.5)
+            _to = XY(node2_xy.x - margin,
+                     baseheight + m.nodeHeight * 0.5)
+            self.drawer.line((_from, _to), fill=self.fill)
+            self.edge_head(_to, headshape[0])
 
-        _from = XY(node2_xy.x - margin,
-                   baseheight + m.nodeHeight)
-        _to = XY(node1_xy.x + margin,
-                 baseheight + m.nodeHeight)
-        self.drawer.line((_from, _to), fill=self.fill, style='dashed')
-        self.edge_head(_to, headshape[1])
+            _from = XY(node2_xy.x - margin,
+                       baseheight + m.nodeHeight)
+            _to = XY(node1_xy.x + margin,
+                     baseheight + m.nodeHeight)
+            self.drawer.line((_from, _to), fill=self.fill, style='dashed')
+            self.edge_head(_to, headshape[1])
 
     def edge_head(self, xy, direct):
         head = []
