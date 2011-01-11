@@ -254,6 +254,9 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         x1, x2 = node1_xy.x, node2_xy.x
         if node1_xy.x < node2_xy.x:
             aligns = ['left', 'right']
+        elif node1_xy.x == node2_xy.x:
+            x2 = x1 + m.nodeWidth * 0.5
+            aligns = ['left', 'right']
         else:
             x1, x2 = x2, x1
             aligns = ['right', 'left']
