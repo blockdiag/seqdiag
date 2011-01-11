@@ -232,14 +232,14 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             x1, x2 = x2, x1
             aligns = ['right', 'left']
 
-        if edge.label:
+        if edge.dir in ('forward', 'both') and edge.label:
             box = (x1, baseheight,
                    x2, baseheight + m.nodeHeight * 0.45)
             self.drawer.textarea(box, edge.label, fill=self.fill,
                                  font=self.font, fontsize=self.metrix.fontSize,
                                  align=aligns[0])
 
-        if edge.return_label:
+        if edge.dir in ('back', 'both') and edge.return_label:
             box = (x1, int(baseheight + m.nodeHeight * 0.5),
                    x2, int(baseheight + m.nodeHeight * 1.0))
             self.drawer.textarea(box, edge.return_label, fill=self.fill,
