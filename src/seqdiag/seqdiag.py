@@ -317,12 +317,9 @@ def main():
 
     tree = diagparser.parse_file(infile)
     diagram = DiagramTreeBuilder().build(tree)
-    edges = diagram.edges
-    #diagram.edges = []
 
     draw = DiagramDraw(options.type, diagram, font=fontpath,
                        antialias=options.antialias)
-
     draw.draw()
     draw.save(outfile)
 
