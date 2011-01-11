@@ -12,6 +12,67 @@ import blockdiag.DiagramDraw
 from blockdiag import diagparser
 from blockdiag.utils.XY import XY
 
+# blockdiag patch 1: accept 'return' edge attribute like [return = "foo bar"]
+from blockdiag.ImageDrawEx import ImageDrawEx
+DiagramEdgeBase = DiagramEdge
+class DiagramEdge(DiagramEdgeBase):
+
+    return_label = None
+
+    def setAttributes(self, attrs):
+        for attr in attrs:
+            value = unquote(attr.value)
+
+            if attr.name == 'return':
+                self.return_label = value
+                attrs.remove(attr)
+
+        DiagramEdgeBase.setAttributes(self, attrs)
+
+# blocdiag patch 2: add align option for TextFolder
+from blockdiag.ImageDrawEx import TextFolder as TextFolderBase
+import math
+class TextFolder(TextFolderBase):
+    def __init__(self, box, string, **kwargs):
+        self.align = kwargs.get('align', 'center')
+        if 'align' in kwargs:
+            del kwargs['align']
+        TextFolderBase.__init__(self, box, string, **kwargs)
+
+    def each_line(self):
+        size = XY(self.box[2] - self.box[0], self.box[3] - self.box[1])
+
+        height = int(math.ceil((size.y - self.height()) / 2.0))
+        base_xy = XY(self.box[0], self.box[1])
+
+        for string in self._result:
+            textsize = self.textsize(string)
+            halign = size.x - textsize[0] * self.scale
+
+            if self.adjustBaseline:
+                height += textsize[1]
+
+            if self.align == 'left':
+                x = 8  # left padding 8 : MAGIC number
+            elif self.align == 'right':
+                x = halign - 8  # right padding 8 : MAGIC number
+            else:
+                x = int(math.ceil(halign / 2.0))
+            draw_xy = XY(base_xy.x + x, base_xy.y + height)
+
+            yield string, draw_xy
+
+            if self.adjustBaseline:
+                height += self.lineSpacing
+            else:
+                height += textsize[1] + self.lineSpacing
+
+def imagedrawex_textarea(self, box, string, **kwargs):
+    lines = TextFolder(box, string, scale=self.scale_ratio, **kwargs)
+    for string, xy in lines.each_line():
+        self.text(xy, string, **kwargs)
+ImageDrawEx.textarea = imagedrawex_textarea
+
 
 class DiagramTreeBuilder:
     def build(self, tree):
@@ -136,9 +197,6 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         self.drawer.polygon(head, outline=self.fill, fill=self.fill)
 
     def edge_label(self, edge):
-        if not edge.label:
-            return
-
         for i, e in enumerate(self.edges):
             if e == edge:
                 break
@@ -150,10 +208,20 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         baseheight = node1_xy.y + (m.nodeHeight + m.spanHeight) * (i + 1)
 
         xx = (node1_xy.x, node2_xy.x)
-        box = (min(xx), baseheight,
-               max(xx), baseheight + m.nodeHeight * 0.45)
-        self.drawer.label(box, edge.label, fill=self.fill,
-                          font=self.font, fontsize=self.metrix.fontSize)
+
+        if edge.label:
+            box = (min(xx), baseheight,
+                   max(xx), baseheight + m.nodeHeight * 0.45)
+            self.drawer.textarea(box, edge.label, fill=self.fill,
+                                 font=self.font, fontsize=self.metrix.fontSize,
+                                 align='left')
+
+        if edge.return_label:
+            box = (min(xx), int(baseheight + m.nodeHeight * 0.5),
+                   max(xx), int(baseheight + m.nodeHeight * 1.0))
+            self.drawer.textarea(box, edge.return_label, fill=self.fill,
+                                 font=self.font, fontsize=self.metrix.fontSize,
+                                 align='right')
 
 
 def parse_option():
