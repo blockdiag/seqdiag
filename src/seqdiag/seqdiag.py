@@ -212,21 +212,26 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         m = self.metrix
         baseheight = node1_xy.y + (m.nodeHeight + m.spanHeight) * (i + 1)
 
-        xx = (node1_xy.x, node2_xy.x)
+        x1, x2 = node1_xy.x, node2_xy.x
+        if node1_xy.x < node2_xy.x:
+            aligns = ['left', 'right']
+        else:
+            x1, x2 = x2, x1
+            aligns = ['right', 'left']
 
         if edge.label:
-            box = (min(xx), baseheight,
-                   max(xx), baseheight + m.nodeHeight * 0.45)
+            box = (x1, baseheight,
+                   x2, baseheight + m.nodeHeight * 0.45)
             self.drawer.textarea(box, edge.label, fill=self.fill,
                                  font=self.font, fontsize=self.metrix.fontSize,
-                                 align='left')
+                                 align=aligns[0])
 
         if edge.return_label:
-            box = (min(xx), int(baseheight + m.nodeHeight * 0.5),
-                   max(xx), int(baseheight + m.nodeHeight * 1.0))
+            box = (x1, int(baseheight + m.nodeHeight * 0.5),
+                   x2, int(baseheight + m.nodeHeight * 1.0))
             self.drawer.textarea(box, edge.return_label, fill=self.fill,
                                  font=self.font, fontsize=self.metrix.fontSize,
-                                 align='right')
+                                 align=aligns[1])
 
 
 def parse_option():
