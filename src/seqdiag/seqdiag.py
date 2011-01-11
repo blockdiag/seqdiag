@@ -21,6 +21,7 @@ class DiagramEdge(DiagramEdgeBase):
     return_label = None
 
     def setAttributes(self, attrs):
+        attrs = list(attrs)
         for attr in attrs:
             value = unquote(attr.value)
 
