@@ -27,6 +27,9 @@ class DiagramEdge(DiagramEdgeBase):
                 self.return_label = value
                 attrs.remove(attr)
 
+        if not [attr for attr in attrs if attr.name == 'dir']:
+            attrs.append(diagparser.Attr('dir', 'both'))
+
         DiagramEdgeBase.setAttributes(self, attrs)
 
 # blocdiag patch 2: add align option for TextFolder
@@ -167,19 +170,21 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
                 margin = - m.cellSize
                 headshape = ['left', 'right']
 
-            _from = XY(node1_xy.x + margin,
-                       baseheight + m.nodeHeight * 0.5)
-            _to = XY(node2_xy.x - margin,
-                     baseheight + m.nodeHeight * 0.5)
-            self.drawer.line((_from, _to), fill=self.fill)
-            self.edge_head(_to, headshape[0])
+            if edge.dir in ('forward', 'both'):
+                _from = XY(node1_xy.x + margin,
+                           baseheight + m.nodeHeight * 0.5)
+                _to = XY(node2_xy.x - margin,
+                         baseheight + m.nodeHeight * 0.5)
+                self.drawer.line((_from, _to), fill=self.fill)
+                self.edge_head(_to, headshape[0])
 
-            _from = XY(node2_xy.x - margin,
-                       baseheight + m.nodeHeight)
-            _to = XY(node1_xy.x + margin,
-                     baseheight + m.nodeHeight)
-            self.drawer.line((_from, _to), fill=self.fill, style='dashed')
-            self.edge_head(_to, headshape[1])
+            if edge.dir in ('back', 'both'):
+                _from = XY(node2_xy.x - margin,
+                           baseheight + m.nodeHeight)
+                _to = XY(node1_xy.x + margin,
+                         baseheight + m.nodeHeight)
+                self.drawer.line((_from, _to), fill=self.fill, style='dashed')
+                self.edge_head(_to, headshape[1])
 
     def edge_head(self, xy, direct):
         head = []
