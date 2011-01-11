@@ -76,6 +76,13 @@ def imagedrawex_textarea(self, box, string, **kwargs):
         self.text(xy, string, **kwargs)
 ImageDrawEx.textarea = imagedrawex_textarea
 
+def imagedrawex_textarea(self, box, string, **kwargs):
+    lines = TextFolder(box, string, adjustBaseline=True, **kwargs)
+    for string, xy in lines.each_line():
+        self.text(xy, string, **kwargs)
+from blockdiag.SVGImageDraw import SVGImageDraw
+SVGImageDraw.textarea = imagedrawex_textarea
+
 
 class DiagramTreeBuilder:
     def build(self, tree):
