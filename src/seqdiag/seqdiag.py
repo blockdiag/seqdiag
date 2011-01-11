@@ -96,7 +96,7 @@ class DiagramTreeBuilder:
         self.diagram = self.instantiate(self.diagram, tree)
 
         self.diagram.width = len(self.diagram.nodes)
-        self.diagram.height = len(self.diagram.edges) + 1
+        self.diagram.height = len(self.diagram.edges) * 0.5 + 1
 
         return self.diagram
 
@@ -113,24 +113,39 @@ class DiagramTreeBuilder:
                 self.append_node(node)
 
             elif isinstance(stmt, diagparser.Edge):
-                edge_from = DiagramNode.get(stmt.nodes.pop(0))
-                self.append_node(edge_from)
-
-                while len(stmt.nodes):
-                    edge_type, edge_to = stmt.nodes.pop(0)
-                    edge_to = DiagramNode.get(edge_to)
-                    self.append_node(edge_to)
-
-                    edge = DiagramEdge(edge_from, edge_to)
-                    edge.setAttributes(stmt.attrs)
-                    group.edges.append(edge)
-
-                    edge_from = edge_to
+                self.instantiate_edge(group, stmt)
 
             else:
                 raise AttributeError("Unknown sentense: " + str(type(stmt)))
 
         return group
+
+    def instantiate_edge(self, group, tree):
+        node_id = tree.nodes.pop(0)
+        edge_from = DiagramNode.get(node_id)
+        self.append_node(edge_from)
+
+        edge_type, node_id = tree.nodes.pop(0)
+        edge_to = DiagramNode.get(node_id)
+        self.append_node(edge_to)
+
+        edge = DiagramEdge(edge_from, edge_to)
+        edge.setAttributes(tree.attrs)
+
+        if edge.dir in ('forward', 'both'):
+            forward = edge.duplicate()
+            forward.dir = 'forward'
+            group.edges.append(forward)
+
+        if len(tree.nodes):
+            nested = diagparser.Edge([edge_to.id] + tree.nodes, tree.attrs)
+            self.instantiate_edge(group, nested)
+
+        if edge.dir in ('back', 'both') and edge.node1 != edge.node2:
+            reverse = edge.duplicate()
+            reverse.dir = 'back'
+            reverse.style = 'dashed'
+            group.edges.append(reverse)
 
 
 class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
@@ -160,7 +175,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         node2_xy = self.metrix.node(edge.node2).top()
 
         m = self.metrix
-        baseheight = node1_xy.y + (m.nodeHeight + m.spanHeight) * (i + 1)
+        baseheight = node1_xy.y + (m.nodeHeight + m.spanHeight) * (i * 0.5 + 1)
 
         if edge.node1 == edge.node2:
             points = []
@@ -169,9 +184,9 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             points.append(XY(node1_xy.x + m.nodeWidth * 0.5 + m.cellSize,
                              baseheight + m.nodeHeight * 0.5))
             points.append(XY(node1_xy.x + m.nodeWidth * 0.5 + m.cellSize,
-                             baseheight + m.nodeHeight))
+                             baseheight + m.nodeHeight * 0.75))
             points.append(XY(node1_xy.x + m.cellSize,
-                             baseheight + m.nodeHeight))
+                             baseheight + m.nodeHeight * 0.75))
 
             self.drawer.line(points, fill=self.fill)
             self.edge_head(points[-1], 'left')
@@ -193,9 +208,9 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
             if edge.dir in ('back', 'both'):
                 _from = XY(node2_xy.x - margin,
-                           baseheight + m.nodeHeight)
+                           baseheight + m.nodeHeight * 0.5)
                 _to = XY(node1_xy.x + margin,
-                         baseheight + m.nodeHeight)
+                         baseheight + m.nodeHeight * 0.5)
                 self.drawer.line((_from, _to), fill=self.fill, style='dashed')
                 self.edge_head(_to, headshape[1])
 
@@ -223,7 +238,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         node2_xy = self.metrix.node(edge.node2).top()
 
         m = self.metrix
-        baseheight = node1_xy.y + (m.nodeHeight + m.spanHeight) * (i + 1)
+        baseheight = node1_xy.y + (m.nodeHeight + m.spanHeight) * (i * 0.5 + 1)
 
         x1, x2 = node1_xy.x, node2_xy.x
         if node1_xy.x < node2_xy.x:
@@ -240,8 +255,8 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
                                  align=aligns[0])
 
         if edge.dir in ('back', 'both') and edge.return_label:
-            box = (x1, int(baseheight + m.nodeHeight * 0.5),
-                   x2, int(baseheight + m.nodeHeight * 1.0))
+            box = (x1, baseheight,
+                   x2, baseheight + m.nodeHeight * 0.45)
             self.drawer.textarea(box, edge.return_label, fill=self.fill,
                                  font=self.font, fontsize=self.metrix.fontSize,
                                  align=aligns[1])
