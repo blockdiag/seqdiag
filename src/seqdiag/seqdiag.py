@@ -86,7 +86,7 @@ try:
             self.text(xy, string, **kwargs)
 
     ImageDrawEx.textarea = imagedrawex_textarea
-except ImprotError:
+except ImportError:
     pass
 
 
