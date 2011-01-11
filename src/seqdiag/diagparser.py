@@ -48,7 +48,7 @@ from funcparserlib.parser import (some, a, maybe, many, finished, skip,
 try:
     from collections import namedtuple
 except ImportError:
-    from utils.namedtuple import namedtuple
+    from blockdiag.utils.namedtuple import namedtuple
 
 ENCODING = 'utf-8'
 
