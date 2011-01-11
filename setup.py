@@ -28,6 +28,7 @@ setup(
      author_email='i.tkomiya at gmail.com',
      url='https://bitbucket.org/tk0miya/seqdiag',
      license='PSL',
+     py_modules=['sphinxcontrib_seqdiag'],
      packages=find_packages('src'),
      package_dir={'': 'src'},
      package_data = {'': ['buildout.cfg']},
