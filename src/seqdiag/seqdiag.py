@@ -149,8 +149,9 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         m = self.metrix
         baseheight = node1_xy.y + (m.nodeHeight + m.spanHeight) * (i + 1)
 
-        box = (node1_xy.x, baseheight,
-               node2_xy.x, baseheight + m.nodeHeight * 0.45)
+        xx = (node1_xy.x, node2_xy.x)
+        box = (min(xx), baseheight,
+               max(xx), baseheight + m.nodeHeight * 0.45)
         self.drawer.label(box, edge.label, fill=self.fill,
                           font=self.font, fontsize=self.metrix.fontSize)
 
