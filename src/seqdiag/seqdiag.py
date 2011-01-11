@@ -14,6 +14,8 @@ from blockdiag.utils.XY import XY
 # blockdiag patch 1: accept 'return' edge attribute like [return = "foo bar"]
 from blockdiag.ImageDrawEx import ImageDrawEx
 DiagramEdgeBase = DiagramEdge
+
+
 class DiagramEdge(DiagramEdgeBase):
 
     return_label = None
@@ -34,6 +36,8 @@ class DiagramEdge(DiagramEdgeBase):
 # blocdiag patch 2: add align option for TextFolder
 from blockdiag.ImageDrawEx import TextFolder as TextFolderBase
 import math
+
+
 class TextFolder(TextFolderBase):
     def __init__(self, box, string, **kwargs):
         self.align = kwargs.get('align', 'center')
@@ -69,11 +73,13 @@ class TextFolder(TextFolderBase):
             else:
                 height += textsize[1] + self.lineSpacing
 
+
 def imagedrawex_textarea(self, box, string, **kwargs):
     lines = TextFolder(box, string, scale=self.scale_ratio, **kwargs)
     for string, xy in lines.each_line():
         self.text(xy, string, **kwargs)
 ImageDrawEx.textarea = imagedrawex_textarea
+
 
 def imagedrawex_textarea(self, box, string, **kwargs):
     lines = TextFolder(box, string, adjustBaseline=True, **kwargs)
