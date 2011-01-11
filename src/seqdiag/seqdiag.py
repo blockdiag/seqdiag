@@ -8,7 +8,7 @@ from ConfigParser import SafeConfigParser
 from optparse import OptionParser
 from blockdiag.elements import *
 import blockdiag.DiagramDraw
-from blockdiag import diagparser
+import diagparser
 from blockdiag.utils.XY import XY
 
 # blockdiag patch 1: accept 'return' edge attribute like [return = "foo bar"]
@@ -121,11 +121,11 @@ class DiagramTreeBuilder:
         return group
 
     def instantiate_edge(self, group, tree):
-        node_id = tree.nodes.pop(0)
+        node_id = tree.nodes[0]
         edge_from = DiagramNode.get(node_id)
         self.append_node(edge_from)
 
-        edge_type, node_id = tree.nodes.pop(0)
+        edge_type, node_id = tree.nodes[1]
         edge_to = DiagramNode.get(node_id)
         self.append_node(edge_to)
 
@@ -137,9 +137,12 @@ class DiagramTreeBuilder:
             forward.dir = 'forward'
             group.edges.append(forward)
 
-        if len(tree.nodes):
-            nested = diagparser.Edge([edge_to.id] + tree.nodes, tree.attrs)
+        if len(tree.nodes) > 2:
+            nodes = [edge_to.id] + tree.nodes[2:]
+            nested = diagparser.Edge(nodes, tree.attrs, tree.subedge)
             self.instantiate_edge(group, nested)
+        elif tree.subedge:
+            self.instantiate(group, tree.subedge)
 
         if edge.dir in ('back', 'both') and edge.node1 != edge.node2:
             reverse = edge.duplicate()
