@@ -82,6 +82,11 @@ Python Software Foundation License.
 History
 =======
 
+0.1.3 (2011-01-11)
+------------------
+* Support diagonal edge
+* Fix bugs
+
 0.1.2 (2011-01-11)
 ------------------
 * Support nested edges
