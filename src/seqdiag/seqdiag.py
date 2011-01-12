@@ -39,16 +39,17 @@ class DiagramEdge(DiagramEdgeBase):
                 self.diagonal = True
                 self.height = 1.5
                 attrs.remove(attr)
+            elif attr.name == 'async':
+                self.dir = 'forward'
+                attrs.remove(attr)
             elif attr.name == 'dir':
                 dir = value.lower()
                 if dir in ('back', 'both', 'forward'):
                     self.dir = dir
                 elif dir == '->':
                     self.dir = 'both'
-                elif dir == '<=':
+                elif dir == '<-':
                     self.dir = 'back'
-                elif dir == '=>':
-                    self.dir = 'forward'
                 else:
                     msg = "WARNING: unknown edge dir: %s\n" % dir
                     sys.stderr.write(msg)
