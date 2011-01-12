@@ -24,6 +24,7 @@ class DiagramEdge(DiagramEdgeBase):
         self.dir = 'both'
         self.height = 1
         self.y = 0
+        self.diagonal = False
         self.return_label = ''
 
     def setAttributes(self, attrs):
@@ -33,6 +34,10 @@ class DiagramEdge(DiagramEdgeBase):
 
             if attr.name == 'return':
                 self.return_label = value
+                attrs.remove(attr)
+            elif attr.name == 'diagonal':
+                self.diagonal = True
+                self.height = 1.5
                 attrs.remove(attr)
 
         DiagramEdgeBase.setAttributes(self, attrs)
@@ -108,9 +113,10 @@ class DiagramTreeBuilder:
         self.diagram = self.instantiate(self.diagram, tree)
 
         self.update_y_coordinates()
+        max_y = self.diagram.edges[-1].y
 
         self.diagram.width = len(self.diagram.nodes)
-        self.diagram.height = int(self.diagram.edges[-1].y * 0.5 + 2)
+        self.diagram.height = int(math.ceil(max_y * 0.5 + 1.5))
 
         return self.diagram
 
@@ -202,6 +208,9 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         m = self.metrix
         baseheight = node1_xy.y + \
                 int((m.nodeHeight + m.spanHeight) * (edge.y * 0.5 + 1))
+        diagonal_cap = 0
+        if edge.diagonal:
+            diagonal_cap = int(m.nodeHeight * 0.75)
 
         if edge.node1 == edge.node2:
             points = []
@@ -228,7 +237,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
                 _from = XY(node1_xy.x + margin,
                            baseheight + m.nodeHeight * 0.5)
                 _to = XY(node2_xy.x - margin,
-                         baseheight + m.nodeHeight * 0.5)
+                         baseheight + diagonal_cap + m.nodeHeight * 0.5)
                 self.drawer.line((_from, _to), fill=self.fill)
                 self.edge_head(_to, headshape[0])
 
@@ -236,7 +245,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
                 _from = XY(node2_xy.x - margin,
                            baseheight + m.nodeHeight * 0.5)
                 _to = XY(node1_xy.x + margin,
-                         baseheight + m.nodeHeight * 0.5)
+                         baseheight + diagonal_cap + m.nodeHeight * 0.5)
                 self.drawer.line((_from, _to), fill=self.fill, style='dashed')
                 self.edge_head(_to, headshape[1])
 
