@@ -29,7 +29,7 @@ class DiagramEdge(DiagramEdgeBase):
 
     def setAttributes(self, attrs):
         attrs = list(attrs)
-        for attr in attrs:
+        for attr in list(attrs):
             value = unquote(attr.value)
 
             if attr.name == 'return':
@@ -38,6 +38,21 @@ class DiagramEdge(DiagramEdgeBase):
             elif attr.name == 'diagonal':
                 self.diagonal = True
                 self.height = 1.5
+                attrs.remove(attr)
+            elif attr.name == 'dir':
+                dir = value.lower()
+                if dir in ('back', 'both', 'forward'):
+                    self.dir = dir
+                elif dir == '->':
+                    self.dir = 'both'
+                elif dir == '<=':
+                    self.dir = 'back'
+                elif dir == '=>':
+                    self.dir = 'forward'
+                else:
+                    msg = "WARNING: unknown edge dir: %s\n" % dir
+                    sys.stderr.write(msg)
+
                 attrs.remove(attr)
 
         DiagramEdgeBase.setAttributes(self, attrs)
@@ -156,6 +171,8 @@ class DiagramTreeBuilder:
         self.append_node(edge_to)
 
         edge = DiagramEdge(edge_from, edge_to)
+        if edge_type:
+            edge.setAttributes([diagparser.Attr('dir', edge_type)])
         edge.setAttributes(tree.attrs)
 
         if edge.dir in ('forward', 'both'):
