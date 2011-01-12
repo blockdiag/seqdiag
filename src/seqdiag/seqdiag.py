@@ -22,6 +22,8 @@ class DiagramEdge(DiagramEdgeBase):
         DiagramEdgeBase.__init__(self, node1, node2)
 
         self.dir = 'both'
+        self.height = 1
+        self.y = 0
         self.return_label = ''
 
     def setAttributes(self, attrs):
@@ -108,7 +110,15 @@ class DiagramTreeBuilder:
         self.diagram.width = len(self.diagram.nodes)
         self.diagram.height = int(len(self.diagram.edges) * 0.5 + 1.5)
 
+        self.update_y_coordinates()
+
         return self.diagram
+
+    def update_y_coordinates(self):
+        height = 0
+        for edge in self.diagram.edges:
+            edge.y = height
+            height += edge.height
 
     def append_node(self, node):
         if node not in self.diagram.nodes:
@@ -186,16 +196,12 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         self.drawer.line((_from, _to), fill=self.fill, style='dotted')
 
     def edge(self, edge):
-        for i, e in enumerate(self.edges):
-            if e == edge:
-                break
-
         node1_xy = self.metrix.node(edge.node1).top()
         node2_xy = self.metrix.node(edge.node2).top()
 
         m = self.metrix
         baseheight = node1_xy.y + \
-                int((m.nodeHeight + m.spanHeight) * (i * 0.5 + 1))
+                int((m.nodeHeight + m.spanHeight) * (edge.y * 0.5 + 1))
 
         if edge.node1 == edge.node2:
             points = []
@@ -250,16 +256,12 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         self.drawer.polygon(head, outline=self.fill, fill=self.fill)
 
     def edge_label(self, edge):
-        for i, e in enumerate(self.edges):
-            if e == edge:
-                break
-
         node1_xy = self.metrix.node(edge.node1).top()
         node2_xy = self.metrix.node(edge.node2).top()
 
         m = self.metrix
         baseheight = node1_xy.y + \
-                int((m.nodeHeight + m.spanHeight) * (i * 0.5 + 1))
+                int((m.nodeHeight + m.spanHeight) * (edge.y * 0.5 + 1))
 
         x1, x2 = node1_xy.x, node2_xy.x
         if node1_xy.x < node2_xy.x:
