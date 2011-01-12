@@ -104,7 +104,7 @@ class DiagramTreeBuilder:
         self.diagram = self.instantiate(self.diagram, tree)
 
         self.diagram.width = len(self.diagram.nodes)
-        self.diagram.height = len(self.diagram.edges) * 0.5 + 1
+        self.diagram.height = int(len(self.diagram.edges) * 0.5 + 1)
 
         return self.diagram
 
@@ -186,7 +186,8 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         node2_xy = self.metrix.node(edge.node2).top()
 
         m = self.metrix
-        baseheight = node1_xy.y + (m.nodeHeight + m.spanHeight) * (i * 0.5 + 1)
+        baseheight = node1_xy.y + \
+                int((m.nodeHeight + m.spanHeight) * (i * 0.5 + 1))
 
         if edge.node1 == edge.node2:
             points = []
@@ -249,7 +250,8 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         node2_xy = self.metrix.node(edge.node2).top()
 
         m = self.metrix
-        baseheight = node1_xy.y + (m.nodeHeight + m.spanHeight) * (i * 0.5 + 1)
+        baseheight = node1_xy.y + \
+                int((m.nodeHeight + m.spanHeight) * (i * 0.5 + 1))
 
         x1, x2 = node1_xy.x, node2_xy.x
         if node1_xy.x < node2_xy.x:
