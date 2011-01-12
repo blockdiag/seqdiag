@@ -137,6 +137,8 @@ def create_seqdiag(self, code, options, prefix='seqdiag'):
     try:
         antialias = self.builder.config.seqdiag_antialias
 
+        DiagramNode.clear()
+        DiagramEdge.clear()
         tree = parse(tokenize(code))
         diagram = DiagramTreeBuilder().build(tree)
         draw = DiagramDraw('PNG', diagram, font=fontpath,
