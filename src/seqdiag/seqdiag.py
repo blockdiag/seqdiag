@@ -104,7 +104,7 @@ class DiagramTreeBuilder:
         self.diagram = self.instantiate(self.diagram, tree)
 
         self.diagram.width = len(self.diagram.nodes)
-        self.diagram.height = int(len(self.diagram.edges) * 0.5 + 1)
+        self.diagram.height = int(len(self.diagram.edges) * 0.5 + 1.5)
 
         return self.diagram
 
