@@ -16,8 +16,13 @@ DiagramEdgeBase = DiagramEdge
 
 
 class DiagramEdge(DiagramEdgeBase):
-
     return_label = None
+
+    def __init__(self, node1, node2):
+        DiagramEdgeBase.__init__(self, node1, node2)
+
+        self.dir = 'both'
+        self.return_label = ''
 
     def setAttributes(self, attrs):
         attrs = list(attrs)
@@ -27,9 +32,6 @@ class DiagramEdge(DiagramEdgeBase):
             if attr.name == 'return':
                 self.return_label = value
                 attrs.remove(attr)
-
-        if not [attr for attr in attrs if attr.name == 'dir']:
-            attrs.append(diagparser.Attr('dir', 'both'))
 
         DiagramEdgeBase.setAttributes(self, attrs)
 
