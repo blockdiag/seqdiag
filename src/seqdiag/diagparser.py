@@ -68,7 +68,7 @@ def tokenize(str):
         ('NL',      (r'[\r\n]+',)),
         ('Space',   (r'[ \t\r\n]+',)),
         ('Name',    (r'[A-Za-z\200-\377_][A-Za-z\200-\377_0-9]*',)),
-        ('Op',      (r'[{};,=\[\]]|(--)|(->)',)),
+        ('Op',      (r'(<=)|(=>)|[{};,=\[\]]|(->)',)),
         ('Number',  (r'-?(\.[0-9]+)|([0-9]+(\.[0-9]*)?)',)),
         ('String',  (r'"[^"]*"',)),  # '\"' escapes are ignored
     ]
@@ -110,7 +110,7 @@ def parse(seq):
     # We use a forward_decl becaue of circular definitions like (stmt_list ->
     # stmt -> subgraph -> stmt_list)
     subedge = forward_decl()
-    edge_rhs = (op('->') | op('--')) + node_id
+    edge_rhs = (op('->') | op('<=') | op('=>')) + node_id
     edge_stmt = (
         node_id +
         edge_rhs +
