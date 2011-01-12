@@ -169,6 +169,12 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         for node in self.nodes:
             self.lifelines(node)
 
+    def draw(self, **kwargs):
+        super(DiagramDraw, self).draw()
+
+        for edge in (x for x in self.edges if not x.label and x.return_label):
+            self.edge_label(edge)
+
     def lifelines(self, node):
         metrix = self.metrix.originalMetrix().node(node)
         pagesize = self.pageSize()
