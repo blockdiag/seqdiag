@@ -21,7 +21,6 @@ class DiagramEdge(DiagramEdgeBase):
     def __init__(self, node1, node2):
         DiagramEdgeBase.__init__(self, node1, node2)
 
-        self.dir = 'both'
         self.height = 1
         self.y = 0
         self.diagonal = False
@@ -47,9 +46,15 @@ class DiagramEdge(DiagramEdgeBase):
                 if dir in ('back', 'both', 'forward'):
                     self.dir = dir
                 elif dir == '->':
-                    self.dir = 'both'
+                    self.dir = 'forward'
+                elif dir == '-->':
+                    self.dir = 'forward'
+                    self.style = 'dashed'
                 elif dir == '<-':
                     self.dir = 'back'
+                elif dir == '<--':
+                    self.dir = 'back'
+                    self.style = 'dashed'
                 else:
                     msg = "WARNING: unknown edge dir: %s\n" % dir
                     sys.stderr.write(msg)
@@ -191,7 +196,6 @@ class DiagramTreeBuilder:
         if edge.dir in ('back', 'both') and edge.node1 != edge.node2:
             reverse = edge.duplicate()
             reverse.dir = 'back'
-            reverse.style = 'dashed'
             group.edges.append(reverse)
 
 
@@ -256,7 +260,8 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
                            baseheight + m.nodeHeight * 0.5)
                 _to = XY(node2_xy.x - margin,
                          baseheight + diagonal_cap + m.nodeHeight * 0.5)
-                self.drawer.line((_from, _to), fill=self.fill)
+                self.drawer.line((_from, _to), fill=self.fill,
+                                 style=edge.style)
                 self.edge_head(_to, headshape[0])
 
             if edge.dir in ('back', 'both'):
@@ -264,7 +269,8 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
                            baseheight + m.nodeHeight * 0.5)
                 _to = XY(node1_xy.x + margin,
                          baseheight + diagonal_cap + m.nodeHeight * 0.5)
-                self.drawer.line((_from, _to), fill=self.fill, style='dashed')
+                self.drawer.line((_from, _to), fill=self.fill,
+                                 style=edge.style)
                 self.edge_head(_to, headshape[1])
 
     def edge_head(self, xy, direct):
