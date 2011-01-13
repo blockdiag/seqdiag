@@ -23,6 +23,7 @@ class DiagramEdge(DiagramEdgeBase):
 
         self.height = 1
         self.y = 0
+        self.async = False
         self.diagonal = False
         self.return_label = ''
 
@@ -45,16 +46,30 @@ class DiagramEdge(DiagramEdgeBase):
                 dir = value.lower()
                 if dir in ('back', 'both', 'forward'):
                     self.dir = dir
-                elif dir == '->':
+                elif dir in ('->', '->>', '-->', '-->>'):
                     self.dir = 'forward'
-                elif dir == '-->':
-                    self.dir = 'forward'
-                    self.style = 'dashed'
-                elif dir == '<-':
+
+                    if re.search('--', dir):
+                        self.style = 'dashed'
+                    else:
+                        self.style = None
+
+                    if re.search('>>', dir):
+                        self.async = True
+                    else:
+                        self.async = False
+                elif dir in ('<-', '<<-', '<--', '<<--'):
                     self.dir = 'back'
-                elif dir == '<--':
-                    self.dir = 'back'
-                    self.style = 'dashed'
+
+                    if re.search('--', dir):
+                        self.style = 'dashed'
+                    else:
+                        self.style = None
+
+                    if re.search('<<', dir):
+                        self.async = True
+                    else:
+                        self.async = False
                 else:
                     msg = "WARNING: unknown edge dir: %s\n" % dir
                     sys.stderr.write(msg)
@@ -272,22 +287,26 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             _to = XY(x2 - margin,
                      baseheight + diagonal_cap + m.nodeHeight * 0.5)
             self.drawer.line((_from, _to), fill=self.fill, style=edge.style)
-            self.edge_head(_to, headshape)
+            self.edge_head(_to, headshape, edge.async)
 
-    def edge_head(self, xy, direct):
+    def edge_head(self, xy, direct, async):
         head = []
         cell = self.metrix.cellSize
 
         if direct == 'right':
+            head.append(XY(xy.x - cell, xy.y - cell / 2))
             head.append(xy)
-            head.append((xy.x - cell, xy.y - cell / 2))
-            head.append((xy.x - cell, xy.y + cell / 2))
+            head.append(XY(xy.x - cell, xy.y + cell / 2))
         elif direct == 'left':
+            head.append(XY(xy.x + cell, xy.y - cell / 2))
             head.append(xy)
-            head.append((xy.x + cell, xy.y - cell / 2))
-            head.append((xy.x + cell, xy.y + cell / 2))
+            head.append(XY(xy.x + cell, xy.y + cell / 2))
 
-        self.drawer.polygon(head, outline=self.fill, fill=self.fill)
+        if async:
+            self.drawer.line((head[0], head[1]), fill=self.fill)
+            self.drawer.line((head[1], head[2]), fill=self.fill)
+        else:
+            self.drawer.polygon(head, outline=self.fill, fill=self.fill)
 
     def edge_label(self, edge):
         node1_xy = self.metrix.node(edge.node1).top()
