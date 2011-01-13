@@ -250,28 +250,29 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         else:
             if node1_xy.x < node2_xy.x:
                 margin = m.cellSize
-                headshape = ['right', 'left']
+                headshapes = ['right', 'left']
             else:
                 margin = - m.cellSize
-                headshape = ['left', 'right']
+                headshapes = ['left', 'right']
 
-            if edge.dir in ('forward', 'both'):
-                _from = XY(node1_xy.x + margin,
-                           baseheight + m.nodeHeight * 0.5)
-                _to = XY(node2_xy.x - margin,
-                         baseheight + diagonal_cap + m.nodeHeight * 0.5)
-                self.drawer.line((_from, _to), fill=self.fill,
-                                 style=edge.style)
-                self.edge_head(_to, headshape[0])
+            if edge.dir == 'forward':
+                x1, x2 = node1_xy.x, node2_xy.x
+                headshape = headshapes[0]
+            else:
+                x1, x2 = node2_xy.x, node1_xy.x
+                headshape = headshapes[1]
 
-            if edge.dir in ('back', 'both'):
-                _from = XY(node2_xy.x - margin,
-                           baseheight + m.nodeHeight * 0.5)
-                _to = XY(node1_xy.x + margin,
-                         baseheight + diagonal_cap + m.nodeHeight * 0.5)
-                self.drawer.line((_from, _to), fill=self.fill,
-                                 style=edge.style)
-                self.edge_head(_to, headshape[1])
+            if x1 < x2:
+                margin = m.cellSize
+            else:
+                margin = - m.cellSize
+
+            _from = XY(x1 + margin,
+                       baseheight + m.nodeHeight * 0.5)
+            _to = XY(x2 - margin,
+                     baseheight + diagonal_cap + m.nodeHeight * 0.5)
+            self.drawer.line((_from, _to), fill=self.fill, style=edge.style)
+            self.edge_head(_to, headshape)
 
     def edge_head(self, xy, direct):
         head = []
