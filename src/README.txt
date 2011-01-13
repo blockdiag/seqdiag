@@ -48,10 +48,12 @@ simple.diag
 simple.diag is simply define nodes and transitions by dot-like text format::
 
     diagram {
-      browser -> webserver [label = "GET /index.html"];
-      browser -> webserver [label = "POST /blog/comment"] {
-        webserver -> database [label = "INSERT comment"];
-      }
+      browser  -> webserver [label = "GET /index.html"];
+      browser <-- webserver;
+      browser  -> webserver [label = "POST /blog/comment"];
+                  webserver  -> database [label = "INSERT comment"];
+                  webserver <-- database;
+      browser <-- webserver;
     }
 
 
@@ -82,7 +84,11 @@ Python Software Foundation License.
 History
 =======
 
-0.1.3 (2011-01-11)
+0.1.4 (2011-01-13)
+------------------
+* Change synxtax around edges
+
+0.1.3 (2011-01-12)
 ------------------
 * Support diagonal edge
 * Fix bugs
