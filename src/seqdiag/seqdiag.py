@@ -260,8 +260,8 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             points.append(XY(node1_xy.x + m.cellSize,
                              baseheight + m.nodeHeight * 0.75))
 
-            self.drawer.line(points, fill=self.fill)
-            self.edge_head(points[-1], 'left')
+            self.drawer.line(points, fill=self.fill, style=edge.style)
+            self.edge_head(points[-1], 'left', edge.async)
         else:
             if node1_xy.x < node2_xy.x:
                 margin = m.cellSize
