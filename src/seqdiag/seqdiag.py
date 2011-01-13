@@ -25,17 +25,13 @@ class DiagramEdge(DiagramEdgeBase):
         self.y = 0
         self.async = False
         self.diagonal = False
-        self.return_label = ''
 
     def setAttributes(self, attrs):
         attrs = list(attrs)
         for attr in list(attrs):
             value = unquote(attr.value)
 
-            if attr.name == 'return':
-                self.return_label = value
-                attrs.remove(attr)
-            elif attr.name == 'diagonal':
+            if attr.name == 'diagonal':
                 self.diagonal = True
                 self.height = 1.5
                 attrs.remove(attr)
@@ -224,12 +220,6 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         for node in self.nodes:
             self.lifelines(node)
 
-    def draw(self, **kwargs):
-        super(DiagramDraw, self).draw()
-
-        for edge in (x for x in self.edges if not x.label and x.return_label):
-            self.edge_label(edge)
-
     def lifelines(self, node):
         metrix = self.metrix.originalMetrix().node(node)
         pagesize = self.pageSize()
@@ -333,10 +323,10 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
                                  font=self.font, fontsize=self.metrix.fontSize,
                                  align=aligns[0])
 
-        if edge.dir in ('back', 'both') and edge.return_label:
+        if edge.dir in ('back', 'both') and edge.label:
             box = (x1, baseheight,
                    x2, baseheight + m.nodeHeight * 0.45)
-            self.drawer.textarea(box, edge.return_label, fill=self.fill,
+            self.drawer.textarea(box, edge.label, fill=self.fill,
                                  font=self.font, fontsize=self.metrix.fontSize,
                                  align=aligns[1])
 
