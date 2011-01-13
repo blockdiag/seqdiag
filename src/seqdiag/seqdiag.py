@@ -25,13 +25,17 @@ class DiagramEdge(DiagramEdgeBase):
         self.y = 0
         self.async = False
         self.diagonal = False
+        self.return_label = ''
 
     def setAttributes(self, attrs):
         attrs = list(attrs)
         for attr in list(attrs):
             value = unquote(attr.value)
 
-            if attr.name == 'diagonal':
+            if attr.name == 'return':
+                self.return_label = value
+                attrs.remove(attr)
+            elif attr.name == 'diagonal':
                 self.diagonal = True
                 self.height = 1.5
                 attrs.remove(attr)
@@ -42,6 +46,8 @@ class DiagramEdge(DiagramEdgeBase):
                 dir = value.lower()
                 if dir in ('back', 'both', 'forward'):
                     self.dir = dir
+                elif dir == '=>':
+                    self.dir = 'both'
                 elif dir in ('->', '->>', '-->', '-->>'):
                     self.dir = 'forward'
 
@@ -207,6 +213,10 @@ class DiagramTreeBuilder:
         if edge.dir in ('back', 'both') and edge.node1 != edge.node2:
             reverse = edge.duplicate()
             reverse.dir = 'back'
+            if edge.dir == 'both':
+                reverse.style = 'dashed'
+                reverse.label = edge.return_label
+
             group.edges.append(reverse)
 
 
