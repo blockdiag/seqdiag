@@ -116,9 +116,16 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
     def node_activity_shadow(self, node, activity):
         m = self.metrix
 
+        if hasattr(m, 'shadowOffsetX'):
+            shadowOffsetX = m.shadowOffsetX
+            shadowOffsetY = m.shadowOffsetY
+        else:
+            shadowOffsetX = 6
+            shadowOffsetY = 3
+
         box = self.node_activity_box(node, activity)
-        shadowbox = (box[0] + m.shadowOffsetX, box[1] + m.shadowOffsetY,
-                     box[2] + m.shadowOffsetX, box[3] + m.shadowOffsetY)
+        shadowbox = (box[0] + shadowOffsetX, box[1] + shadowOffsetY,
+                     box[2] + shadowOffsetX, box[3] + shadowOffsetY)
         self.drawer.rectangle(shadowbox, fill=self.shadow,
                               filter='transp-blur')
 
