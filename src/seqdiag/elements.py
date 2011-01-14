@@ -32,7 +32,9 @@ class DiagramNode(blockdiag.elements.DiagramNode):
             return
 
         if self.activity[index]:
-            self.activities.append(self.activity[index])
+            attr = {'lifetime': self.activity[index],
+                    'level': index}
+            self.activities.append(attr)
 
         self.activity[index] = []
 
