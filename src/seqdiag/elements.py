@@ -3,15 +3,14 @@
 
 import re
 import sys
+import blockdiag.elements
 from blockdiag.elements import *
 from blockdiag.utils.XY import XY
 
-DiagramNodeBase = DiagramNode
 
-
-class DiagramNode(DiagramNodeBase):
+class DiagramNode(blockdiag.elements.DiagramNode):
     def __init__(self, id):
-        DiagramNodeBase.__init__(self, id)
+        blockdiag.elements.DiagramNode.__init__(self, id)
 
         self.activity = []
         self.activities = []
@@ -38,14 +37,11 @@ class DiagramNode(DiagramNodeBase):
         self.activity[index] = []
 
 
-DiagramEdgeBase = DiagramEdge
-
-
-class DiagramEdge(DiagramEdgeBase):
+class DiagramEdge(blockdiag.elements.DiagramEdge):
     return_label = None
 
     def __init__(self, node1, node2):
-        DiagramEdgeBase.__init__(self, node1, node2)
+        blockdiag.elements.DiagramEdge.__init__(self, node1, node2)
 
         self.height = 1
         self.y = 0
@@ -104,4 +100,4 @@ class DiagramEdge(DiagramEdgeBase):
 
                 attrs.remove(attr)
 
-        DiagramEdgeBase.setAttributes(self, attrs)
+        blockdiag.elements.DiagramEdge.setAttributes(self, attrs)
