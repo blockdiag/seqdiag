@@ -84,6 +84,11 @@ Python Software Foundation License.
 History
 =======
 
+0.1.5 (2011-01-15)
+------------------
+* Draw activity on lifelines
+* Support both direction edge with '=>' operator
+
 0.1.4 (2011-01-13)
 ------------------
 * Change synxtax around edges
