@@ -6,6 +6,38 @@ import sys
 from blockdiag.elements import *
 from blockdiag.utils.XY import XY
 
+DiagramNodeBase = DiagramNode
+
+
+class DiagramNode(DiagramNodeBase):
+    def __init__(self, id):
+        DiagramNodeBase.__init__(self, id)
+
+        self.activity = []
+        self.activities = []
+
+    def activate(self, height, index):
+        if len(self.activity) <= index:
+            self.activity.insert(index, [])
+
+        if len(self.activity[index]) > 0 and \
+           self.activity[index][-1] != height - 1:
+            self.deactivate(index)
+
+        self.activity[index].append(height)
+
+    def deactivate(self, index=None):
+        if index is None:
+            for i in range(len(self.activity)):
+                self.deactivate(i)
+            return
+
+        if self.activity[index]:
+            self.activities.append(self.activity[index])
+
+        self.activity[index] = []
+
+
 DiagramEdgeBase = DiagramEdge
 
 
