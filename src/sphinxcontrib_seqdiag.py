@@ -18,7 +18,7 @@ from sphinx.util.osutil import ensuredir, ENOENT, EPIPE
 from sphinx.util.compat import Directive
 
 from seqdiag.seqdiag import *
-from seqdiag.seqdiag.DiagramDraw import DiagramDraw
+from seqdiag.DiagramDraw import DiagramDraw
 from seqdiag.diagparser import parse, tokenize
 
 class SeqdiagError(SphinxError):
