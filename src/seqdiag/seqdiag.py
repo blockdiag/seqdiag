@@ -19,6 +19,7 @@ class DiagramTreeBuilder:
         self.diagram = self.instantiate(self.diagram, tree)
 
         self.update_y_coordinates()
+        self.create_activities()
         max_y = self.diagram.edges[-1].y
 
         self.diagram.width = len(self.diagram.nodes)
@@ -31,6 +32,29 @@ class DiagramTreeBuilder:
         for edge in self.diagram.edges:
             edge.y = height
             height += edge.height
+
+    def create_activities(self):
+        first_node = self.diagram.edges[0].node1
+        active_nodes = {first_node: 1}
+
+        for i, edge in enumerate(self.diagram.edges):
+            if edge.node1 == edge.node2:
+                pass
+            elif edge.dir == 'forward':
+                if edge.node2 in active_nodes:
+                    active_nodes[edge.node2] += 1
+                else:
+                    active_nodes[edge.node2] = 1
+            elif edge.dir == 'back':
+                active_nodes[edge.node2] -= 1
+
+            for node in active_nodes:
+                if active_nodes[node] > 0:
+                    for index in range(active_nodes[node]):
+                        node.activate(i, index)
+
+        for node in self.diagram.nodes:
+            node.deactivate()
 
     def append_node(self, node):
         if node not in self.diagram.nodes:
