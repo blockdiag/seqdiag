@@ -35,9 +35,9 @@ class TextFolder(TextFolderBase):
                 height += textsize[1]
 
             if self.align == 'left':
-                x = 8  # left padding 8 : MAGIC number
+                x = 12  # left padding 12 : MAGIC number
             elif self.align == 'right':
-                x = halign - 8  # right padding 8 : MAGIC number
+                x = halign - 12  # right padding 12 : MAGIC number
             else:
                 x = int(math.ceil(halign / 2.0))
             draw_xy = XY(base_xy.x + x, base_xy.y + height)
@@ -75,10 +75,58 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         super(DiagramDraw, self).__init__(format, diagram, **kwargs)
 
     def _drawBackground(self):
+        for node in self.nodes:
+            for activity in node.activities:
+                self.node_activity_shadow(node, activity)
+
         super(DiagramDraw, self)._drawBackground()
 
         for node in self.nodes:
             self.lifelines(node)
+
+            for activity in node.activities:
+                self.node_activity(node, activity)
+
+    def node_activity_box(self, node, activity):
+        starts = activity['lifetime'][0]
+        ends = activity['lifetime'][-1] + 1
+        m = self.metrix
+
+        edge = self.diagram.edges[starts]
+        node_xy = self.metrix.node(node).top()
+        y1 = node_xy.y + \
+             int((m.nodeHeight + m.spanHeight) * (edge.y * 0.5 + 1)) + \
+             m.nodeHeight * 0.5
+        if ends < len(self.diagram.edges):
+            edge = self.diagram.edges[ends]
+            y2 = node_xy.y + \
+                 int((m.nodeHeight + m.spanHeight) * (edge.y * 0.5 + 1)) + \
+                 m.nodeHeight * 0.5
+        else:
+            y2 = self.pageSize().y - m.spanHeight * 0.5
+
+        metrix = self.metrix.node(node)
+        x = metrix.bottom().x
+        index = activity['level']
+        box = (x + (index - 1) * m.cellSize / 2, y1,
+               x + (index + 1) * m.cellSize / 2, y2)
+
+        return box
+
+    def node_activity_shadow(self, node, activity):
+        m = self.metrix
+
+        box = self.node_activity_box(node, activity)
+        shadowbox = (box[0] + m.shadowOffsetX, box[1] + m.shadowOffsetY,
+                     box[2] + m.shadowOffsetX, box[3] + m.shadowOffsetY)
+        self.drawer.rectangle(shadowbox, fill=self.shadow,
+                              filter='transp-blur')
+
+    def node_activity(self, node, activity):
+        m = self.metrix
+
+        box = self.node_activity_box(node, activity)
+        self.drawer.rectangle(box, outline=self.fill, fill='moccasin')
 
     def lifelines(self, node):
         metrix = self.metrix.originalMetrix().node(node)
