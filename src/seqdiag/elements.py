@@ -10,7 +10,7 @@ from blockdiag.utils.XY import XY
 
 class DiagramNode(blockdiag.elements.DiagramNode):
     def __init__(self, id):
-        blockdiag.elements.DiagramNode.__init__(self, id)
+        super(DiagramNode, self).__init__(id)
 
         self.activity = []
         self.activities = []
@@ -40,10 +40,8 @@ class DiagramNode(blockdiag.elements.DiagramNode):
 
 
 class DiagramEdge(blockdiag.elements.DiagramEdge):
-    return_label = None
-
     def __init__(self, node1, node2):
-        blockdiag.elements.DiagramEdge.__init__(self, node1, node2)
+        super(DiagramEdge, self).__init__(node1, node2)
 
         self.height = 1
         self.y = 0
@@ -51,21 +49,18 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
         self.diagonal = False
         self.return_label = ''
 
-    def setAttributes(self, attrs):
+    def set_attributes(self, attrs):
         attrs = list(attrs)
         for attr in list(attrs):
             value = unquote(attr.value)
 
-            if attr.name == 'return':
-                self.return_label = value
-                attrs.remove(attr)
-            elif attr.name == 'diagonal':
+            if attr.name == 'diagonal':
                 self.diagonal = True
                 self.height = 1.5
-                attrs.remove(attr)
             elif attr.name == 'async':
                 self.dir = 'forward'
-                attrs.remove(attr)
+            elif attr.name == 'return':
+                self.return_label = value
             elif attr.name == 'dir':
                 dir = value.lower()
                 if dir in ('back', 'both', 'forward'):
@@ -99,7 +94,5 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
                 else:
                     msg = "WARNING: unknown edge dir: %s\n" % dir
                     sys.stderr.write(msg)
-
-                attrs.remove(attr)
-
-        blockdiag.elements.DiagramEdge.setAttributes(self, attrs)
+            else:
+                self.set_attribute(attr)

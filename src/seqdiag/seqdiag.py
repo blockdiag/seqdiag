@@ -65,7 +65,7 @@ class DiagramTreeBuilder:
         for stmt in tree.stmts:
             if isinstance(stmt, diagparser.Node):
                 node = DiagramNode.get(stmt.id)
-                node.setAttributes(stmt.attrs)
+                node.set_attributes(stmt.attrs)
                 self.append_node(node)
 
             elif isinstance(stmt, diagparser.Edge):
@@ -87,8 +87,8 @@ class DiagramTreeBuilder:
 
         edge = DiagramEdge(edge_from, edge_to)
         if edge_type:
-            edge.setAttributes([diagparser.Attr('dir', edge_type)])
-        edge.setAttributes(tree.attrs)
+            edge.set_attributes([diagparser.Attr('dir', edge_type)])
+        edge.set_attributes(tree.attrs)
 
         if edge.dir in ('forward', 'both'):
             forward = edge.duplicate()

@@ -36,7 +36,7 @@ setup(
      install_requires=[
         'setuptools',
         'PIL',
-        'blockdiag>=0.6.2',
+        'blockdiag>=0.6.3',
         'funcparserlib',
          # -*- Extra requirements: -*-
      ],

@@ -5,81 +5,16 @@ import blockdiag.DiagramDraw
 from blockdiag.utils.XY import XY
 
 
-# blocdiag patch: add align option for TextFolder
-try:
-    from blockdiag.ImageDrawEx import TextFolder as TextFolderBase
-except ImportError:
-    from blockdiag.SVGImageDraw import TextFolder as TextFolderBase
-
-import math
-
-
-class TextFolder(TextFolderBase):
-    def __init__(self, box, string, **kwargs):
-        self.align = kwargs.get('align', 'center')
-        if 'align' in kwargs:
-            del kwargs['align']
-        TextFolderBase.__init__(self, box, string, **kwargs)
-
-    def each_line(self):
-        size = XY(self.box[2] - self.box[0], self.box[3] - self.box[1])
-
-        height = int(math.ceil((size.y - self.height()) / 2.0))
-        base_xy = XY(self.box[0], self.box[1])
-
-        for string in self._result:
-            textsize = self.textsize(string)
-            halign = size.x - textsize[0] * self.scale
-
-            if self.adjustBaseline:
-                height += textsize[1]
-
-            if self.align == 'left':
-                x = 12  # left padding 12 : MAGIC number
-            elif self.align == 'right':
-                x = halign - 12  # right padding 12 : MAGIC number
-            else:
-                x = int(math.ceil(halign / 2.0))
-            draw_xy = XY(base_xy.x + x, base_xy.y + height)
-
-            yield string, draw_xy
-
-            if self.adjustBaseline:
-                height += self.lineSpacing
-            else:
-                height += textsize[1] + self.lineSpacing
-
-try:
-    from blockdiag.ImageDrawEx import ImageDrawEx
-
-    def imagedrawex_textarea(self, box, string, **kwargs):
-        lines = TextFolder(box, string, scale=self.scale_ratio, **kwargs)
-        for string, xy in lines.each_line():
-            self.text(xy, string, **kwargs)
-
-    ImageDrawEx.textarea = imagedrawex_textarea
-except ImportError:
-    pass
-
-
-def imagedrawex_textarea(self, box, string, **kwargs):
-    lines = TextFolder(box, string, adjustBaseline=True, **kwargs)
-    for string, xy in lines.each_line():
-        self.text(xy, string, **kwargs)
-from blockdiag.SVGImageDraw import SVGImageDraw
-SVGImageDraw.textarea = imagedrawex_textarea
-
-
 class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
     def __init__(self, format, diagram, **kwargs):
         super(DiagramDraw, self).__init__(format, diagram, **kwargs)
 
-    def _drawBackground(self):
+    def _draw_background(self):
         for node in self.nodes:
             for activity in node.activities:
                 self.node_activity_shadow(node, activity)
 
-        super(DiagramDraw, self)._drawBackground()
+        super(DiagramDraw, self)._draw_background()
 
         for node in self.nodes:
             self.lifelines(node)
@@ -106,7 +41,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
                  int((m.nodeHeight + m.spanHeight) * (edge.y * 0.5 + 1)) + \
                  m.nodeHeight * 0.5
         else:
-            y2 = self.pageSize().y - m.spanHeight * 0.5
+            y2 = self.pagesize().y - m.spanHeight * 0.5
 
         metrix = self.metrix.node(node)
         x = metrix.bottom().x
@@ -140,7 +75,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
     def lifelines(self, node):
         metrix = self.metrix.originalMetrix().node(node)
-        pagesize = self.pageSize()
+        pagesize = self.pagesize()
 
         _from = metrix.bottom()
         _to = XY(_from.x, pagesize.y)
@@ -239,11 +174,11 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
                    x2, baseheight + m.nodeHeight * 0.45)
             self.drawer.textarea(box, edge.label, fill=self.fill,
                                  font=self.font, fontsize=self.metrix.fontSize,
-                                 align=aligns[0])
+                                 halign=aligns[0])
 
         if edge.dir in ('back', 'both') and edge.label:
             box = (x1, baseheight,
                    x2, baseheight + m.nodeHeight * 0.45)
             self.drawer.textarea(box, edge.label, fill=self.fill,
                                  font=self.font, fontsize=self.metrix.fontSize,
-                                 align=aligns[1])
+                                 halign=aligns[1])
