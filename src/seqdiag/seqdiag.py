@@ -49,7 +49,10 @@ class DiagramTreeBuilder:
                 else:
                     active_nodes[edge.node2] = 1
             elif edge.dir == 'back':
-                active_nodes[edge.node2] -= 1
+                if edge.node2 in active_nodes:
+                    active_nodes[edge.node2] -= 1
+                else:
+                    active_nodes[edge.node2] = 0
 
             for node in active_nodes:
                 if active_nodes[node] > 0:
