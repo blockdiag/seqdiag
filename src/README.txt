@@ -84,6 +84,11 @@ Python Software Foundation License.
 History
 =======
 
+0.1.6 (2011-01-15)
+------------------
+* Support blockdiag-0.6.3
+* Fix bugs
+
 0.1.5 (2011-01-15)
 ------------------
 * Draw activity on lifelines
