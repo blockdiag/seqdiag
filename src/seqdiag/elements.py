@@ -65,6 +65,7 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
 
         self.height = 1
         self.y = 0
+        self.activate = True
         self.async = False
         self.diagonal = False
         self.return_label = ''
@@ -81,6 +82,8 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
                 self.dir = 'forward'
             elif attr.name == 'return':
                 self.return_label = value
+            elif attr.name == 'noactivate':
+                self.activate = False
             elif attr.name == 'dir':
                 dir = value.lower()
                 if dir in ('back', 'both', 'forward'):
