@@ -29,9 +29,8 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
         edge = self.diagram.edges[starts]
         node_xy = self.metrix.node(node).top()
-        y1 = node_xy.y + \
-             int((m.nodeHeight + m.spanHeight) * (edge.y * 0.5 + 1)) + \
-             m.nodeHeight * 0.5
+        y1 = node_xy.y + m.nodeHeight * 0.5 + \
+             int((m.nodeHeight + m.spanHeight) * (edge.y * 0.5 + 1))
         if edge.diagonal and edge.node2 == node:
             y1 += int(m.nodeHeight * 0.75)
 
@@ -86,31 +85,24 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         node2_xy = self.metrix.node(edge.node2).top()
 
         m = self.metrix
-        baseheight = node1_xy.y + \
+        baseheight = node1_xy.y + m.nodeHeight * 0.5 + \
                 int((m.nodeHeight + m.spanHeight) * (edge.y * 0.5 + 1))
-        diagonal_cap = 0
-        if edge.diagonal:
-            diagonal_cap = int(m.nodeHeight * 0.75)
 
         if edge.node1 == edge.node2:
-            points = []
-            points.append(XY(node1_xy.x + m.cellSize,
-                             baseheight + m.nodeHeight * 0.5))
-            points.append(XY(node1_xy.x + m.nodeWidth * 0.5 + m.cellSize,
-                             baseheight + m.nodeHeight * 0.5))
-            points.append(XY(node1_xy.x + m.nodeWidth * 0.5 + m.cellSize,
-                             baseheight + m.nodeHeight * 0.75))
-            points.append(XY(node1_xy.x + m.cellSize,
-                             baseheight + m.nodeHeight * 0.75))
+            fold_width = m.nodeWidth * 0.5 + m.cellSize
+            fold_height = m.nodeHeight * 0.25
+
+            points = [XY(node1_xy.x + m.cellSize, baseheight),
+                      XY(node1_xy.x + fold_width, baseheight),
+                      XY(node1_xy.x + fold_width, baseheight + fold_height),
+                      XY(node1_xy.x + m.cellSize, baseheight + fold_height)]
 
             self.drawer.line(points, fill=self.fill, style=edge.style)
             self.edge_head(points[-1], 'left', edge.async)
         else:
             if node1_xy.x < node2_xy.x:
-                margin = m.cellSize
                 headshapes = ['right', 'left']
             else:
-                margin = - m.cellSize
                 headshapes = ['left', 'right']
 
             if edge.dir == 'forward':
@@ -125,10 +117,10 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             else:
                 margin = - m.cellSize
 
-            _from = XY(x1 + margin,
-                       baseheight + m.nodeHeight * 0.5)
-            _to = XY(x2 - margin,
-                     baseheight + diagonal_cap + m.nodeHeight * 0.5)
+            _from = XY(x1 + margin, baseheight)
+            _to = XY(x2 - margin, baseheight)
+            if edge.diagonal:
+                _to = XY(_to.x, _to.y + m.nodeHeight * 0.75)
             self.drawer.line((_from, _to), fill=self.fill, style=edge.style)
             self.edge_head(_to, headshape, edge.async)
 
