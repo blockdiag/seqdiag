@@ -158,7 +158,7 @@ def render_dot_html(self, node, code, options, prefix='seqdiag',
         relfn, outfn = get_image_filename(self, code, options, prefix)
 
         image = create_seqdiag(self, code, options, prefix)
-        image.save(outfn, 'PNG')
+        image.save(outfn)
 
         # generate description table
         descriptions = []
@@ -176,7 +176,7 @@ def render_dot_html(self, node, code, options, prefix='seqdiag',
                                                 options, thumb_prefix)
 
             thumb_size = (options['maxwidth'], image_size[1])
-            image.save(toutfn, 'PNG', thumb_size)
+            image.save(toutfn, thumb_size)
             thumb_size = image.image.size
 
     except SeqdiagError, exc:
@@ -256,7 +256,7 @@ def render_dot_latex(self, node, code, options, prefix='sdedit'):
         fname, outfn = get_image_filename(self, code, options, prefix)
 
         image = create_seqdiag(self, code, options, prefix)
-        image.save(fname, 'PNG')
+        image.save(fname)
 
     except SdeditError, exc:
         self.builder.warn('dot code %r: ' % code + str(exc))
