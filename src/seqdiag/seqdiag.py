@@ -41,6 +41,8 @@ class DiagramTreeBuilder:
         for i, edge in enumerate(self.diagram.edges):
             if edge.node1 == edge.node2:
                 pass
+            elif edge.activate == False:
+                pass
             elif edge.dir == 'forward':
                 if edge.node2 in active_nodes:
                     active_nodes[edge.node2] += 1
