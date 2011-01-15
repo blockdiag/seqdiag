@@ -19,7 +19,8 @@ class DiagramTreeBuilder:
         self.diagram = self.instantiate(self.diagram, tree)
 
         self.update_y_coordinates()
-        self.create_activities()
+        if self.diagram.draw_activation:
+            self.create_activities()
         max_y = self.diagram.edges[-1].y
 
         self.diagram.width = len(self.diagram.nodes)
@@ -70,6 +71,9 @@ class DiagramTreeBuilder:
 
             elif isinstance(stmt, diagparser.Edge):
                 self.instantiate_edge(group, stmt)
+
+            elif isinstance(stmt, diagparser.DefAttrs):
+                group.set_attributes(stmt.attrs)
 
             else:
                 raise AttributeError("Unknown sentense: " + str(type(stmt)))

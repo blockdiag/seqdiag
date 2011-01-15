@@ -39,6 +39,26 @@ class DiagramNode(blockdiag.elements.DiagramNode):
         self.activity[index] = []
 
 
+class Diagram(blockdiag.elements.Diagram):
+    def __init__(self):
+        super(Diagram, self).__init__()
+
+        self.draw_activation = True
+
+    def set_attributes(self, attrs):
+        attrs = list(attrs)
+        for attr in list(attrs):
+            value = unquote(attr.value)
+
+            if attr.name == 'draw_activation':
+                if value == 'False':
+                    self.draw_activation = False
+                else:
+                    self.draw_activation = True
+            else:
+                self.set_attribute(attr)
+
+
 class DiagramEdge(blockdiag.elements.DiagramEdge):
     def __init__(self, node1, node2):
         super(DiagramEdge, self).__init__(node1, node2)
