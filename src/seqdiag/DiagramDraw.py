@@ -32,7 +32,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         y1 = node_xy.y + \
              int((m.nodeHeight + m.spanHeight) * (edge.y * 0.5 + 1)) + \
              m.nodeHeight * 0.5
-        if edge.diagonal:
+        if edge.diagonal and edge.node2 == node:
             y1 += int(m.nodeHeight * 0.75)
 
         if ends < len(self.diagram.edges):
