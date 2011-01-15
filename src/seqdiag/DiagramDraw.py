@@ -25,10 +25,10 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
     def node_activity_box(self, node, activity):
         starts = activity['lifetime'][0]
         ends = activity['lifetime'][-1] + 1
-        m = self.metrix
+        m = self.metrix.originalMetrix()
 
         edge = self.diagram.edges[starts]
-        node_xy = self.metrix.node(node).top()
+        node_xy = m.node(node).top()
         y1 = node_xy.y + \
              int((m.nodeHeight + m.spanHeight) * (edge.y * 0.5 + 1)) + \
              m.nodeHeight * 0.5
@@ -43,7 +43,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         else:
             y2 = self.pagesize().y - m.spanHeight * 0.5
 
-        metrix = self.metrix.node(node)
+        metrix = m.node(node)
         x = metrix.bottom().x
         index = activity['level']
         box = (x + (index - 1) * m.cellSize / 2, y1,
@@ -71,7 +71,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         m = self.metrix
 
         box = self.node_activity_box(node, activity)
-        self.drawer.rectangle(box, outline=self.fill, fill='moccasin')
+        self.drawer.rectangle(box, outline=self.fill, fill='moccasin', width=1)
 
     def lifelines(self, node):
         metrix = self.metrix.originalMetrix().node(node)
