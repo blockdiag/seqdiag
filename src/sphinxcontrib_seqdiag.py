@@ -251,14 +251,14 @@ def html_visit_seqdiag(self, node):
     render_dot_html(self, node, node['code'], node['options'])
 
 
-def render_dot_latex(self, node, code, options, prefix='sdedit'):
+def render_dot_latex(self, node, code, options, prefix='seqdiag'):
     try:
         fname, outfn = get_image_filename(self, code, options, prefix)
 
         image = create_seqdiag(self, code, options, prefix)
-        image.save(fname)
+        image.save(outfn)
 
-    except SdeditError, exc:
+    except SeqdiagError, exc:
         self.builder.warn('dot code %r: ' % code + str(exc))
         raise nodes.SkipNode
 
