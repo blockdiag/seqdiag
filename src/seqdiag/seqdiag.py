@@ -143,10 +143,18 @@ def parse_option():
         sys.exit(0)
 
     options.type = options.type.upper()
-    if not options.type in ('SVG', 'PNG'):
+    if not options.type in ('SVG', 'PNG', 'PDF'):
         msg = "ERROR: unknown format: %s\n" % options.type
         sys.stderr.write(msg)
         sys.exit(0)
+
+    if options.type == 'PDF':
+        try:
+            import reportlab.pdfgen.canvas
+        except ImportError:
+            msg = "ERROR: colud not output PDF format; Install reportlab\n"
+            sys.stderr.write(msg)
+            sys.exit(0)
 
     if options.config and not os.path.isfile(options.config):
         msg = "ERROR: config file is not found: %s\n" % options.config
@@ -199,10 +207,10 @@ def main():
     tree = diagparser.parse_file(infile)
     diagram = DiagramTreeBuilder().build(tree)
 
-    draw = DiagramDraw(options.type, diagram, font=fontpath,
+    draw = DiagramDraw(options.type, diagram, outfile, font=fontpath,
                        antialias=options.antialias)
     draw.draw()
-    draw.save(outfile)
+    draw.save()
 
 
 if __name__ == '__main__':

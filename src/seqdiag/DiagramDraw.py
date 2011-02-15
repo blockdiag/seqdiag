@@ -6,8 +6,8 @@ from blockdiag.utils.XY import XY
 
 
 class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
-    def __init__(self, format, diagram, **kwargs):
-        super(DiagramDraw, self).__init__(format, diagram, **kwargs)
+    def __init__(self, format, diagram, filename=None, **kwargs):
+        super(DiagramDraw, self).__init__(format, diagram, filename, **kwargs)
 
     def _draw_background(self):
         for node in self.nodes:
