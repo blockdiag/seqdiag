@@ -18,7 +18,7 @@ from sphinx.util.osutil import ensuredir, ENOENT, EPIPE
 from sphinx.util.compat import Directive
 
 from seqdiag.seqdiag import *
-from seqdiag.DiagramDraw import DiagramDraw
+import DiagramDraw
 from seqdiag.diagparser import parse, tokenize
 
 class SeqdiagError(SphinxError):
@@ -99,12 +99,23 @@ def relfn2path(env, filename, docname=None):
         return rel_fn, os.path.join(env.srcdir, enc_rel_fn)
 
 
-def get_image_filename(self, code, options, prefix='seqdiag'):
+def get_image_filename(self, code, format, options, prefix='seqdiag'):
     """
     Get path of output file.
     """
+    if format not in ('PNG', 'PDF'):
+        raise SeqdiagError('seqdiag error:\nunknown format: %s\n' % format)
+
+    if format == 'PDF':
+        try:
+            import reportlab
+        except ImportError:
+            msg = 'seqdiag error:\n' + \
+                  'colud not output PDF format; Install reportlab\n'
+            raise SeqdiagError(msg)
+
     hashkey = code.encode('utf-8') + str(options)
-    fname = '%s-%s.png' % (prefix, sha(hashkey).hexdigest())
+    fname = '%s-%s.%s' % (prefix, sha(hashkey).hexdigest(), format.lower())
     if hasattr(self.builder, 'imgpath'):
         # HTML
         relfn = posixpath.join(self.builder.imgpath, fname)
@@ -122,11 +133,10 @@ def get_image_filename(self, code, options, prefix='seqdiag'):
     return relfn, outfn
 
 
-def create_seqdiag(self, code, options, prefix='seqdiag'):
+def create_seqdiag(self, code, format, filename, options, prefix='seqdiag'):
     """
     Render seqdiag code into a PNG output file.
     """
-    ttfont = None
     fontpath = self.builder.config.seqdiag_fontpath
     if fontpath and not hasattr(self.builder, '_seqdiag_fontpath_warned'):
         if not os.path.isfile(fontpath):
@@ -136,15 +146,14 @@ def create_seqdiag(self, code, options, prefix='seqdiag'):
 
     draw = None
     try:
-        antialias = self.builder.config.seqdiag_antialias
-
         DiagramNode.clear()
         DiagramEdge.clear()
         tree = parse(tokenize(code))
         diagram = DiagramTreeBuilder().build(tree)
-        draw = DiagramDraw('PNG', diagram, font=fontpath,
-                           antialias=antialias)
-        draw.draw()
+
+        antialias = self.builder.config.seqdiag_antialias
+        draw = DiagramDraw.DiagramDraw(format, diagram, filename, font=fontpath,
+                                       antialias=antialias)
     except Exception, e:
         raise SeqdiagError('seqdiag error:\n%s\n' % e)
 
@@ -155,10 +164,13 @@ def render_dot_html(self, node, code, options, prefix='seqdiag',
                     imgcls=None, alt=None):
     has_thumbnail = False
     try:
-        relfn, outfn = get_image_filename(self, code, options, prefix)
+        format = 'PNG'
+        relfn, outfn = get_image_filename(self, code, format, options, prefix)
 
-        image = create_seqdiag(self, code, options, prefix)
-        image.save(outfn)
+        image = create_seqdiag(self, code, format, outfn, options, prefix)
+        if not os.path.isfile(outfn):
+            image.draw()
+            image.save()
 
         # generate description table
         descriptions = []
@@ -172,12 +184,14 @@ def render_dot_html(self, node, code, options, prefix='seqdiag',
         if 'maxwidth' in options and options['maxwidth'] < image_size[0]:
             has_thumbnail = True
             thumb_prefix = prefix + '_thumb'
-            trelfn, toutfn = get_image_filename(self, code,
+            trelfn, toutfn = get_image_filename(self, code, format,
                                                 options, thumb_prefix)
 
             thumb_size = (options['maxwidth'], image_size[1])
-            image.save(toutfn, thumb_size)
-            thumb_size = image.image.size
+            if not os.path.isfile(toutfn):
+                image.draw()
+                image.save(toutfn, thumb_size)
+            thumb_size = image.drawer.image.size
 
     except SeqdiagError, exc:
         self.builder.warn('dot code %r: ' % code + str(exc))
@@ -253,10 +267,13 @@ def html_visit_seqdiag(self, node):
 
 def render_dot_latex(self, node, code, options, prefix='seqdiag'):
     try:
-        fname, outfn = get_image_filename(self, code, options, prefix)
+        format = self.builder.config.seqdiag_tex_image_format
+        fname, outfn = get_image_filename(self, code, format, options, prefix)
 
-        image = create_seqdiag(self, code, options, prefix)
-        image.save(outfn)
+        image = create_seqdiag(self, code, format, outfn, options, prefix)
+        if not os.path.isfile(outfn):
+            image.draw()
+            image.save()
 
     except SeqdiagError, exc:
         self.builder.warn('dot code %r: ' % code + str(exc))
@@ -278,3 +295,4 @@ def setup(app):
     app.add_directive('seqdiag', Seqdiag)
     app.add_config_value('seqdiag_fontpath', None, 'html')
     app.add_config_value('seqdiag_antialias', False, 'html')
+    app.add_config_value('seqdiag_tex_image_format', 'PNG', 'html')
