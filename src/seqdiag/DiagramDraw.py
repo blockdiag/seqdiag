@@ -11,6 +11,9 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
     def _draw_background(self):
         for node in self.nodes:
+            node.activities.sort(lambda x, y: cmp(x['level'], y['level']))
+
+        for node in self.nodes:
             for activity in node.activities:
                 self.node_activity_shadow(node, activity)
 
