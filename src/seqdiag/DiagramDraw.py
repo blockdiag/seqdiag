@@ -10,6 +10,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
     def __init__(self, format, diagram, filename=None, **kwargs):
         super(DiagramDraw, self).__init__(format, diagram, filename, **kwargs)
 
+    def preset_metrix(self):
         if self.diagram.edge_height:
             self.edge_height = self.diagram.edge_height
         else:
@@ -25,6 +26,23 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
                 span = 0
 
             self.metrix.spanWidth = span
+
+    def pagesize(self, scaled=False):
+        self.preset_metrix()
+
+        if scaled:
+            m = self.metrix
+        else:
+            m = self.metrix.originalMetrix()
+
+        node = max(self.nodes, key=lambda x: x.xy.x)
+        xy = m.cell(node).bottomRight()
+        x = xy.x + m.pageMargin.x
+        y = xy.y + m.spanHeight + self.edge_height / 2 + m.pageMargin.y
+
+        y += len(self.diagram.edges) * self.edge_height
+
+        return XY(x, y)
 
     def _draw_background(self):
         for node in self.nodes:
@@ -48,22 +66,19 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         m = self.metrix
 
         edge = self.diagram.edges[starts]
-        node_xy = self.metrix.node(node).top()
-        y1 = node_xy.y + \
-             int((self.edge_height + m.spanHeight) * (edge.y * 0.5 + 1))
+        base_xy = self.metrix.cell(node).bottom()
+        base_y = base_xy.y + m.spanHeight
+        y1 = base_y + edge.y * self.edge_height + self.edge_height / 2
         if edge.diagonal and edge.node2 == node:
-            y1 += int(self.edge_height * 0.75)
+            y1 += self.edge_height * 3 / 4
 
         if ends < len(self.diagram.edges):
             edge = self.diagram.edges[ends]
-            y2 = node_xy.y + \
-                 int((self.edge_height + m.spanHeight) * \
-                 (edge.y * 0.5 + 1)) + self.edge_height * 0.5
+            y2 = base_y + edge.y * self.edge_height + self.edge_height / 2
         else:
-            y2 = self.pagesize().y - m.spanHeight * 0.5
+            y2 = self.pagesize().y - m.pageMargin.y - self.edge_height / 2
 
-        metrix = self.metrix.node(node)
-        x = metrix.bottom().x
+        x = base_xy.x
         index = activity['level']
         box = (x + (index - 1) * m.cellSize / 2, y1,
                x + (index + 1) * m.cellSize / 2, y2)
@@ -97,16 +112,16 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         pagesize = self.pagesize()
 
         _from = metrix.bottom()
-        _to = XY(_from.x, pagesize.y)
+        _to = XY(_from.x, pagesize.y - self.metrix.pageMargin.y)
         self.drawer.line((_from, _to), fill=self.fill, style='dotted')
 
     def edge(self, edge):
-        node1_xy = self.metrix.node(edge.node1).top()
-        node2_xy = self.metrix.node(edge.node2).top()
+        node1_xy = self.metrix.node(edge.node1).bottom()
+        node2_xy = self.metrix.node(edge.node2).bottom()
 
         m = self.metrix
-        baseheight = node1_xy.y + \
-                int((self.edge_height + m.spanHeight) * (edge.y * 0.5 + 1))
+        baseheight = node1_xy.y + m.spanHeight + \
+                     edge.y * self.edge_height + self.edge_height / 2
 
         if edge.node1 == edge.node2:
             fold_width = m.nodeWidth * 0.5 + m.cellSize
@@ -140,7 +155,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             _from = XY(x1 + margin, baseheight)
             _to = XY(x2 - margin, baseheight)
             if edge.diagonal:
-                _to = XY(_to.x, _to.y + self.edge_height * 0.75)
+                _to = XY(_to.x, _to.y + self.edge_height * 3 / 4)
             self.drawer.line((_from, _to), fill=self.fill, style=edge.style)
             self.edge_head(_to, headshape, edge.async)
 
@@ -164,12 +179,11 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             self.drawer.polygon(head, outline=self.fill, fill=self.fill)
 
     def edge_label(self, edge):
-        node1_xy = self.metrix.node(edge.node1).top()
-        node2_xy = self.metrix.node(edge.node2).top()
+        node1_xy = self.metrix.node(edge.node1).bottom()
+        node2_xy = self.metrix.node(edge.node2).bottom()
 
         m = self.metrix
-        baseheight = node1_xy.y - self.edge_height / 2 + \
-                int((self.edge_height + m.spanHeight) * (edge.y * 0.5 + 1))
+        baseheight = node1_xy.y + m.spanHeight + edge.y * self.edge_height
 
         x1, x2 = node1_xy.x, node2_xy.x
         if node1_xy.x < node2_xy.x:
