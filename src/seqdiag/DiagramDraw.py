@@ -9,6 +9,11 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
     def __init__(self, format, diagram, filename=None, **kwargs):
         super(DiagramDraw, self).__init__(format, diagram, filename, **kwargs)
 
+        if self.diagram.edge_height:
+            self.edge_height = self.diagram.edge_height
+        else:
+            self.edge_height = self.metrix.nodeHeight
+
     def _draw_background(self):
         for node in self.nodes:
             node.activities.sort(lambda x, y: cmp(x['level'], y['level']))
@@ -32,16 +37,16 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
         edge = self.diagram.edges[starts]
         node_xy = self.metrix.node(node).top()
-        y1 = node_xy.y + m.nodeHeight * 0.5 + \
-             int((m.nodeHeight + m.spanHeight) * (edge.y * 0.5 + 1))
+        y1 = node_xy.y + self.edge_height * 0.5 + \
+             int((self.edge_height + m.spanHeight) * (edge.y * 0.5 + 1))
         if edge.diagonal and edge.node2 == node:
-            y1 += int(m.nodeHeight * 0.75)
+            y1 += int(self.edge_height * 0.75)
 
         if ends < len(self.diagram.edges):
             edge = self.diagram.edges[ends]
             y2 = node_xy.y + \
-                 int((m.nodeHeight + m.spanHeight) * (edge.y * 0.5 + 1)) + \
-                 m.nodeHeight * 0.5
+                 int((self.edge_height + m.spanHeight) * \
+                 (edge.y * 0.5 + 1)) + self.edge_height * 0.5
         else:
             y2 = self.pagesize().y - m.spanHeight * 0.5
 
@@ -88,12 +93,12 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         node2_xy = self.metrix.node(edge.node2).top()
 
         m = self.metrix
-        baseheight = node1_xy.y + m.nodeHeight * 0.5 + \
-                int((m.nodeHeight + m.spanHeight) * (edge.y * 0.5 + 1))
+        baseheight = node1_xy.y + self.edge_height * 0.5 + \
+                int((self.edge_height + m.spanHeight) * (edge.y * 0.5 + 1))
 
         if edge.node1 == edge.node2:
             fold_width = m.nodeWidth * 0.5 + m.cellSize
-            fold_height = m.nodeHeight * 0.25
+            fold_height = self.edge_height * 0.25
 
             points = [XY(node1_xy.x + m.cellSize, baseheight),
                       XY(node1_xy.x + fold_width, baseheight),
@@ -123,7 +128,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             _from = XY(x1 + margin, baseheight)
             _to = XY(x2 - margin, baseheight)
             if edge.diagonal:
-                _to = XY(_to.x, _to.y + m.nodeHeight * 0.75)
+                _to = XY(_to.x, _to.y + self.edge_height * 0.75)
             self.drawer.line((_from, _to), fill=self.fill, style=edge.style)
             self.edge_head(_to, headshape, edge.async)
 
@@ -152,7 +157,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
         m = self.metrix
         baseheight = node1_xy.y + \
-                int((m.nodeHeight + m.spanHeight) * (edge.y * 0.5 + 1))
+                int((self.edge_height + m.spanHeight) * (edge.y * 0.5 + 1))
 
         x1, x2 = node1_xy.x, node2_xy.x
         if node1_xy.x < node2_xy.x:
@@ -170,6 +175,6 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             halign = aligns[1]
 
         box = (x1, baseheight,
-               x2, baseheight + m.nodeHeight * 0.45)
+               x2, baseheight + self.edge_height * 0.45)
         self.drawer.textarea(box, edge.label, fill=self.fill, halign=halign,
                              font=self.font, fontsize=m.fontSize)
