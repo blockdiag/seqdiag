@@ -40,10 +40,12 @@ class DiagramNode(blockdiag.elements.DiagramNode):
 
 
 class Diagram(blockdiag.elements.Diagram):
-    int_attrs = ['edge_height', 'edge_length']
 
     def __init__(self):
         super(Diagram, self).__init__()
+
+        self.int_attrs.append('edge_height')
+        self.int_attrs.append('edge_length')
 
         self.draw_activation = True
         self.edge_height = None
