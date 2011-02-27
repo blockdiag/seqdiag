@@ -84,6 +84,10 @@ Python Software Foundation License.
 History
 =======
 
+0.2.1 (2011-02-28)
+------------------
+* Add default_shape attribute to diagram
+
 0.2.0 (2011-02-27)
 ------------------
 * Add metrix parameters for edge label: edge_height, edge_length
