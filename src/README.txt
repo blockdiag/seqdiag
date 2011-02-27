@@ -87,6 +87,7 @@ History
 0.2.0 (2011-02-27)
 ------------------
 * Add metrix parameters for edge label: edge_height, edge_length
+* Fix bugs
 
 0.1.7 (2011-01-21)
 ------------------
