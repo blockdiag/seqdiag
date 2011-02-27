@@ -60,6 +60,13 @@ class Diagram(blockdiag.elements.Diagram):
                     self.draw_activation = False
                 else:
                     self.draw_activation = True
+            elif attr.name == 'default_shape':
+                try:
+                    noderenderer.get(value)
+                    DiagramNode.set_default_shape(value)
+                except RuntimeError:
+                    msg = "WARNING: unknown node shape: %s\n" % value
+                    sys.stderr.write(msg)
             else:
                 self.set_attribute(attr)
 
