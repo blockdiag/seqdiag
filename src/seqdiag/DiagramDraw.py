@@ -1,6 +1,7 @@
 #!bin/py
 # -*- coding: utf-8 -*-
 
+import sys
 import blockdiag.DiagramDraw
 from blockdiag.utils.XY import XY
 
@@ -13,6 +14,17 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             self.edge_height = self.diagram.edge_height
         else:
             self.edge_height = self.metrix.nodeHeight
+
+        if self.diagram.edge_length:
+            span = self.diagram.edge_length - self.metrix.nodeWidth
+            if span < 0:
+                msg = "WARNING: edge_length is too short: %d\n" % \
+                      self.diagram.edge_length
+                sys.stderr.write(msg)
+
+                span = 0
+
+            self.metrix.spanWidth = span
 
     def _draw_background(self):
         for node in self.nodes:
