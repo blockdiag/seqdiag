@@ -37,7 +37,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
         edge = self.diagram.edges[starts]
         node_xy = self.metrix.node(node).top()
-        y1 = node_xy.y + self.edge_height * 0.5 + \
+        y1 = node_xy.y + \
              int((self.edge_height + m.spanHeight) * (edge.y * 0.5 + 1))
         if edge.diagonal and edge.node2 == node:
             y1 += int(self.edge_height * 0.75)
@@ -93,7 +93,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         node2_xy = self.metrix.node(edge.node2).top()
 
         m = self.metrix
-        baseheight = node1_xy.y + self.edge_height * 0.5 + \
+        baseheight = node1_xy.y + \
                 int((self.edge_height + m.spanHeight) * (edge.y * 0.5 + 1))
 
         if edge.node1 == edge.node2:
@@ -156,7 +156,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         node2_xy = self.metrix.node(edge.node2).top()
 
         m = self.metrix
-        baseheight = node1_xy.y + \
+        baseheight = node1_xy.y - self.edge_height / 2 + \
                 int((self.edge_height + m.spanHeight) * (edge.y * 0.5 + 1))
 
         x1, x2 = node1_xy.x, node2_xy.x
