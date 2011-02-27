@@ -84,6 +84,10 @@ Python Software Foundation License.
 History
 =======
 
+0.2.0 (2011-02-27)
+------------------
+* Add metrix parameters for edge label: edge_height, edge_length
+
 0.1.7 (2011-01-21)
 ------------------
 * Fix TeX exporting in Sphinx extension
