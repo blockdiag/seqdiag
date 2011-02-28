@@ -119,6 +119,11 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         node1_xy = self.metrix.node(edge.node1).bottom()
         node2_xy = self.metrix.node(edge.node2).bottom()
 
+        if edge.color:
+            color = edge.color
+        else:
+            color = self.fill
+
         m = self.metrix
         baseheight = node1_xy.y + m.spanHeight + \
                      edge.y * self.edge_height + self.edge_height / 2
@@ -132,8 +137,8 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
                       XY(node1_xy.x + fold_width, baseheight + fold_height),
                       XY(node1_xy.x + m.cellSize, baseheight + fold_height)]
 
-            self.drawer.line(points, fill=self.fill, style=edge.style)
-            self.edge_head(points[-1], 'left', edge.async)
+            self.drawer.line(points, fill=color, style=edge.style)
+            self.edge_head(points[-1], 'left', color, edge.async)
         else:
             if node1_xy.x < node2_xy.x:
                 headshapes = ['right', 'left']
@@ -156,10 +161,10 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             _to = XY(x2 - margin, baseheight)
             if edge.diagonal:
                 _to = XY(_to.x, _to.y + self.edge_height * 3 / 4)
-            self.drawer.line((_from, _to), fill=self.fill, style=edge.style)
-            self.edge_head(_to, headshape, edge.async)
+            self.drawer.line((_from, _to), fill=color, style=edge.style)
+            self.edge_head(_to, headshape, color, edge.async)
 
-    def edge_head(self, xy, direct, async):
+    def edge_head(self, xy, direct, fill, async):
         head = []
         cell = self.metrix.cellSize
 
@@ -173,10 +178,10 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             head.append(XY(xy.x + cell, xy.y + cell / 2))
 
         if async:
-            self.drawer.line((head[0], head[1]), fill=self.fill)
-            self.drawer.line((head[1], head[2]), fill=self.fill)
+            self.drawer.line((head[0], head[1]), fill=fill)
+            self.drawer.line((head[1], head[2]), fill=fill)
         else:
-            self.drawer.polygon(head, outline=self.fill, fill=self.fill)
+            self.drawer.polygon(head, outline=fill, fill=fill)
 
     def edge_label(self, edge):
         node1_xy = self.metrix.node(edge.node1).bottom()
@@ -200,7 +205,12 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         else:
             halign = aligns[1]
 
+        if edge.color:
+            color = edge.color
+        else:
+            color = self.fill
+
         box = (x1, baseheight,
                x2, baseheight + self.edge_height * 0.45)
-        self.drawer.textarea(box, edge.label, fill=self.fill, halign=halign,
+        self.drawer.textarea(box, edge.label, fill=color, halign=halign,
                              font=self.font, fontsize=m.fontSize)
