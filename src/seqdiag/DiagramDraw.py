@@ -35,7 +35,10 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         else:
             m = self.metrix.originalMetrix()
 
-        node = max(self.nodes, key=lambda x: x.xy.x)
+        nodes = [x for x in self.nodes]
+        nodes.sort(lambda x, y: cmp(x.xy.x, y.xy.y))
+
+        node = nodes[-1]
         xy = m.cell(node).bottomRight()
         x = xy.x + m.pageMargin.x
         y = xy.y + m.spanHeight + self.edge_height / 2 + m.pageMargin.y
