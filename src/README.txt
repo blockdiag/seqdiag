@@ -84,6 +84,11 @@ Python Software Foundation License.
 History
 =======
 
+0.2.2 (2011-03-07)
+------------------
+* Fix could not run under python 2.4
+* Support edge colors
+
 0.2.1 (2011-02-28)
 ------------------
 * Add default_shape attribute to diagram
