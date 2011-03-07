@@ -132,8 +132,8 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
                      edge.y * self.edge_height + self.edge_height / 2
 
         if edge.node1 == edge.node2:
-            fold_width = m.nodeWidth * 0.5 + m.cellSize
-            fold_height = self.edge_height * 0.25
+            fold_width = m.nodeWidth / 2 + m.cellSize
+            fold_height = self.edge_height / 4
 
             points = [XY(node1_xy.x + m.cellSize, baseheight),
                       XY(node1_xy.x + fold_width, baseheight),
@@ -214,6 +214,6 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             color = self.fill
 
         box = (x1, baseheight,
-               x2, baseheight + self.edge_height * 0.45)
+               x2, baseheight + int(self.edge_height * 0.45))
         self.drawer.textarea(box, edge.label, fill=color, halign=halign,
                              font=self.font, fontsize=m.fontSize)
