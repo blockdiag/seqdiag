@@ -71,13 +71,13 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         edge = self.diagram.edges[starts]
         base_xy = self.metrix.cell(node).bottom()
         base_y = base_xy.y + m.spanHeight
-        y1 = base_y + edge.y * self.edge_height + self.edge_height / 2
+        y1 = base_y + int(edge.y * self.edge_height) + self.edge_height / 2
         if edge.diagonal and edge.node2 == node:
             y1 += self.edge_height * 3 / 4
 
         if ends < len(self.diagram.edges):
             edge = self.diagram.edges[ends]
-            y2 = base_y + edge.y * self.edge_height + self.edge_height / 2
+            y2 = base_y + int(edge.y * self.edge_height) + self.edge_height / 2
         else:
             y2 = self.pagesize().y - m.pageMargin.y - self.edge_height / 2
 
@@ -129,7 +129,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
         m = self.metrix
         baseheight = node1_xy.y + m.spanHeight + \
-                     edge.y * self.edge_height + self.edge_height / 2
+                     int(edge.y * self.edge_height) + self.edge_height / 2
 
         if edge.node1 == edge.node2:
             fold_width = m.nodeWidth / 2 + m.cellSize
@@ -191,7 +191,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         node2_xy = self.metrix.node(edge.node2).bottom()
 
         m = self.metrix
-        baseheight = node1_xy.y + m.spanHeight + edge.y * self.edge_height
+        baseheight = node1_xy.y + m.spanHeight + int(edge.y * self.edge_height)
 
         x1, x2 = node1_xy.x, node2_xy.x
         if node1_xy.x < node2_xy.x:
