@@ -10,14 +10,19 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
     def __init__(self, format, diagram, filename=None, **kwargs):
         super(DiagramDraw, self).__init__(format, diagram, filename, **kwargs)
 
-    def preset_metrix(self):
+    def preset_metrix(self, scaled):
+        if scaled:
+            m = self.metrix
+        else:
+            m = self.metrix.originalMetrix()
+
         if self.diagram.edge_height:
             self.edge_height = self.diagram.edge_height
         else:
-            self.edge_height = self.metrix.nodeHeight
+            self.edge_height = m.nodeHeight
 
         if self.diagram.edge_length:
-            span = self.diagram.edge_length - self.metrix.nodeWidth
+            span = self.diagram.edge_length - m.nodeWidth
             if span < 0:
                 msg = "WARNING: edge_length is too short: %d\n" % \
                       self.diagram.edge_length
@@ -25,10 +30,10 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
                 span = 0
 
-            self.metrix.spanWidth = span
+            m.spanWidth = span
 
     def pagesize(self, scaled=False):
-        self.preset_metrix()
+        self.preset_metrix(scaled)
 
         if scaled:
             m = self.metrix
@@ -69,7 +74,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         m = self.metrix.originalMetrix()
 
         edge = self.diagram.edges[starts]
-        base_xy = self.metrix.cell(node).bottom()
+        base_xy = m.cell(node).bottom()
         base_y = base_xy.y + m.spanHeight
         y1 = base_y + int(edge.y * self.edge_height) + self.edge_height / 2
         if edge.diagonal and edge.node2 == node:
@@ -89,7 +94,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         return box
 
     def node_activity_shadow(self, node, activity):
-        m = self.metrix
+        m = self.metrix.originalMetrix()
 
         if hasattr(m, 'shadowOffsetX'):
             shadowOffsetX = m.shadowOffsetX
@@ -105,10 +110,8 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
                               filter='transp-blur')
 
     def node_activity(self, node, activity):
-        m = self.metrix
-
         box = self.node_activity_box(node, activity)
-        self.drawer.rectangle(box, outline=self.fill, fill='moccasin')
+        self.drawer.rectangle(box, width=1, outline=self.fill, fill='moccasin')
 
     def lifelines(self, node):
         metrix = self.metrix.originalMetrix().node(node)
