@@ -66,7 +66,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
     def node_activity_box(self, node, activity):
         starts = activity['lifetime'][0]
         ends = activity['lifetime'][-1] + 1
-        m = self.metrix
+        m = self.metrix.originalMetrix()
 
         edge = self.diagram.edges[starts]
         base_xy = self.metrix.cell(node).bottom()
