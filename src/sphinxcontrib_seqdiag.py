@@ -280,7 +280,7 @@ def render_dot_latex(self, node, code, options, prefix='seqdiag'):
         raise nodes.SkipNode
 
     if fname is not None:
-        self.body.append('\\includegraphics{%s}' % fname)
+        self.body.append('\\par\\includegraphics{%s}\\par' % fname)
     raise nodes.SkipNode
 
 
