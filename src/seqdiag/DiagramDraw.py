@@ -17,7 +17,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             m = self.metrix.originalMetrix()
 
         if self.diagram.edge_height:
-            self.edge_height = self.diagram.edge_height
+            self.edge_height = self.diagram.edge_height * m.scale_ratio
         else:
             self.edge_height = m.nodeHeight
 
