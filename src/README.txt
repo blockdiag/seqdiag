@@ -86,6 +86,10 @@ History
 
 0.2.4 (2011-03-20)
 ------------------
+* Fix seqdiag could not run under blockdiag 0.7.6
+
+0.2.4 (2011-03-20)
+------------------
 * Fix bugs
 
 0.2.3 (2011-03-09)
