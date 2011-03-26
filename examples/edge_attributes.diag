@@ -1,0 +1,9 @@
+{
+  // edge label
+  A -> B [label = "call"];
+  A <- B [label = "return"];
+
+  // diagonal edge
+  A -> B [diagonal, label = "diagonal edge"];
+  A <- B [diagonal, label = "return diagonal edge"];
+}

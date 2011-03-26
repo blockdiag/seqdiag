@@ -1,0 +1,20 @@
+{
+  // normal edge
+  A -> B [label = "normal edge"];
+
+  // dotted edge
+  B --> C [label = "dotted edge"];
+
+  // asynchronus edge
+  A ->> B [label = "asynchronus edge"];
+  B -->> C [label = "asynchronus dotted edge"];
+
+  // return edge
+  B <- C [label = "return edge"];
+  A <-- B [label = "return dotted edge"];
+  B <<- C [label = "return asynchronus edge"];
+  A <<-- B [label = "return asynchronus dotted edge"];
+
+  // self referenced edge
+  A -> A [label = "self referenced edge"];
+}

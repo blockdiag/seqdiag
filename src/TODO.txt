@@ -1,0 +1,12 @@
+Todos
+======
+
+Functionals
+------------
+* lifeline stopper
+* combination fragments
+* instantiating and destroying object
+
+Known Issues
+-------------
+* Nothing yet
