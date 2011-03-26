@@ -121,6 +121,9 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         _to = XY(_from.x, pagesize.y - self.metrix.pageMargin.y)
         self.drawer.line((_from, _to), fill=self.fill, style='dotted')
 
+    def _prepare_edges(self):
+        pass
+
     def edge(self, edge):
         node1_xy = self.metrix.node(edge.node1).bottom()
         node2_xy = self.metrix.node(edge.node2).bottom()
