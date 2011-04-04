@@ -1,4 +1,6 @@
 .installed.cfg
+.coverage
+nosetests.xml
 .pyc
 .swp
 bin
