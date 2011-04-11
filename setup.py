@@ -27,7 +27,7 @@ setup(
      author='Takeshi Komiya',
      author_email='i.tkomiya at gmail.com',
      url='https://bitbucket.org/tk0miya/seqdiag',
-     license='PSL',
+     license='PSF',
      py_modules=['sphinxcontrib_seqdiag'],
      packages=find_packages('src'),
      package_dir={'': 'src'},
