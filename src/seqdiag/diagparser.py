@@ -38,7 +38,7 @@ At the moment, the parser builds only a parse tree, not an abstract syntax tree
 import os
 import sys
 import codecs
-from re import MULTILINE
+from re import MULTILINE, DOTALL
 from pprint import pformat
 from funcparserlib.util import pretty_tree
 from funcparserlib.lexer import make_tokenizer, Token, LexerError
@@ -69,7 +69,7 @@ def tokenize(str):
         ('Name',    (r'[A-Za-z\200-\377_][A-Za-z\200-\377_0-9]*',)),
         ('Op',      (r'(=>)|[{};,=\[\]]|(<<?--?)|(--?>>?)',)),
         ('Number',  (r'-?(\.[0-9]+)|([0-9]+(\.[0-9]*)?)',)),
-        ('String',  (r'(?P<quote>"|\')(?:.|\s)*?(?<!\\)(?P=quote)',)),
+        ('String',  (r'(?P<quote>"|\').*?(?<!\\)(?P=quote)', DOTALL)),
     ]
     useless = ['Comment', 'NL', 'Space']
     t = make_tokenizer(specs)
