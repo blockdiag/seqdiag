@@ -84,6 +84,11 @@ Python Software Foundation License.
 History
 =======
 
+0.2.5 (2011-04-14)
+------------------
+* Fix bugs
+* Allow unquoted utf8 characters
+
 0.2.4 (2011-03-20)
 ------------------
 * Fix seqdiag could not run under blockdiag 0.7.6
