@@ -141,17 +141,22 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             fold_width = m.nodeWidth / 2 + m.cellSize
             fold_height = self.edge_height / 4
 
-            points = [XY(node1_xy.x + m.cellSize, baseheight),
-                      XY(node1_xy.x + fold_width, baseheight),
-                      XY(node1_xy.x + fold_width, baseheight + fold_height),
-                      XY(node1_xy.x + m.cellSize, baseheight + fold_height)]
+            # adjust textbox to right on activity-lines
+            x1 = node1_xy.x + self.activity_line_width(edge.node1, edge.y) 
+
+            points = [XY(x1 + m.cellSize, baseheight),
+                      XY(x1 + fold_width, baseheight),
+                      XY(x1 + fold_width, baseheight + fold_height),
+                      XY(x1 + m.cellSize, baseheight + fold_height)]
 
             self.drawer.line(points, fill=color, style=edge.style)
             self.edge_head(points[-1], 'left', color, edge.async)
         else:
             if node1_xy.x < node2_xy.x:
+                left_node = edge.node1
                 headshapes = ['right', 'left']
             else:
+                left_node = edge.node2
                 headshapes = ['left', 'right']
 
             if edge.dir == 'forward':
@@ -165,6 +170,9 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
                 margin = m.cellSize
             else:
                 margin = - m.cellSize
+
+            # adjust textbox to right on activity-lines
+            x1 += self.activity_line_width(left_node, edge.y) 
 
             _from = XY(x1 + margin, baseheight)
             _to = XY(x2 - margin, baseheight)
@@ -201,12 +209,15 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
         x1, x2 = node1_xy.x, node2_xy.x
         if node1_xy.x < node2_xy.x:
+            left_node = edge.node1
             aligns = ['left', 'right']
         elif node1_xy.x == node2_xy.x:
             x2 = x1 + m.nodeWidth + m.spanWidth
+            left_node = edge.node1
             aligns = ['left', 'right']
         else:
             x1, x2 = x2, x1
+            left_node = edge.node2
             aligns = ['right', 'left']
 
         if edge.dir == 'forward':
@@ -219,7 +230,21 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         else:
             color = self.fill
 
+        # adjust textbox to right on activity-lines
+        x1 += self.activity_line_width(left_node, edge.y) 
+
         box = (x1, baseheight,
                x2, baseheight + int(self.edge_height * 0.45))
         self.drawer.textarea(box, edge.label, fill=color, halign=halign,
                              font=self.font, fontsize=m.fontSize)
+
+    def activity_line_width(self, node, index):
+        m = self.metrix
+
+        activities = (a for a in node.activities if index in a['lifetime'])
+        if activities:
+            level = max(a['level'] for a in activities)
+        else:
+            level = 0
+
+        return m.cellSize / 2 * level
