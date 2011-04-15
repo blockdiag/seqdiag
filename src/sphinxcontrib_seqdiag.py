@@ -149,7 +149,7 @@ def create_seqdiag(self, code, format, filename, options, prefix='seqdiag'):
         DiagramNode.clear()
         DiagramEdge.clear()
         tree = parse(tokenize(code))
-        diagram = DiagramTreeBuilder().build(tree)
+        diagram = ScreenNodeBuilder.build(tree)
 
         antialias = self.builder.config.seqdiag_antialias
         draw = DiagramDraw.DiagramDraw(format, diagram, filename, font=fontpath,
