@@ -142,7 +142,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             fold_height = self.edge_height / 4
 
             # adjust textbox to right on activity-lines
-            x1 = node1_xy.x + self.activity_line_width(edge.node1, edge.y) 
+            x1 = node1_xy.x + self.activity_line_width(edge.node1, edge.y)
 
             points = [XY(x1 + m.cellSize, baseheight),
                       XY(x1 + fold_width, baseheight),
@@ -172,7 +172,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
                 margin = - m.cellSize
 
             # adjust textbox to right on activity-lines
-            x1 += self.activity_line_width(left_node, edge.y) 
+            x1 += self.activity_line_width(left_node, edge.y)
 
             _from = XY(x1 + margin, baseheight)
             _to = XY(x2 - margin, baseheight)
@@ -231,7 +231,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             color = self.fill
 
         # adjust textbox to right on activity-lines
-        x1 += self.activity_line_width(left_node, edge.y) 
+        x1 += self.activity_line_width(left_node, edge.y)
 
         box = (x1, baseheight,
                x2, baseheight + int(self.edge_height * 0.45))
