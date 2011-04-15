@@ -153,10 +153,8 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             self.edge_head(points[-1], 'left', color, edge.async)
         else:
             if node1_xy.x < node2_xy.x:
-                left_node = edge.node1
                 headshapes = ['right', 'left']
             else:
-                left_node = edge.node2
                 headshapes = ['left', 'right']
 
             if edge.dir == 'forward':
@@ -172,7 +170,10 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
                 margin = - m.cellSize
 
             # adjust textbox to right on activity-lines
-            x1 += self.activity_line_width(left_node, edge.y)
+            if headshape == 'right':
+                x1 += self.activity_line_width(edge.node1, edge.y)
+            else:
+                x2 += self.activity_line_width(edge.node2, edge.y)
 
             _from = XY(x1 + margin, baseheight)
             _to = XY(x2 - margin, baseheight)
@@ -241,7 +242,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
     def activity_line_width(self, node, index):
         m = self.metrix
 
-        activities = (a for a in node.activities if index in a['lifetime'])
+        activities = [a for a in node.activities if index in a['lifetime']]
         if activities:
             level = max(a['level'] for a in activities)
         else:
