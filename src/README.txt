@@ -84,6 +84,10 @@ Python Software Foundation License.
 History
 =======
 
+0.2.6 (2011-04-15)
+------------------
+* Adjust start coordinates of edges
+
 0.2.5 (2011-04-14)
 ------------------
 * Fix bugs
