@@ -121,6 +121,12 @@ class DiagramTreeBuilder:
             group.edges.append(reverse)
 
 
+class ScreenNodeBuilder:
+    @classmethod
+    def build(klass, tree):
+        return DiagramTreeBuilder().build(tree)
+
+
 def parse_option():
     usage = "usage: %prog [options] infile"
     p = OptionParser(usage=usage)
@@ -205,7 +211,7 @@ def main():
     fontpath = detectfont(options)
 
     tree = diagparser.parse_file(infile)
-    diagram = DiagramTreeBuilder().build(tree)
+    diagram = ScreenNodeBuilder.build(tree)
 
     draw = DiagramDraw(options.type, diagram, outfile, font=fontpath,
                        antialias=options.antialias)
