@@ -2,7 +2,9 @@
 from setuptools import setup, find_packages
 import os, sys
 
-version = '0.2.7'
+sys.path.insert(0, 'src')
+import seqdiag
+
 long_description = \
         open(os.path.join("src","README.txt")).read() + \
         open(os.path.join("src","TODO.txt")).read()
@@ -19,7 +21,7 @@ classifiers = [
 
 setup(
      name='seqdiag',
-     version=version,
+     version=seqdiag.__version__,
      description='seqdiag generate sequence-diagram image file from spec-text file.',
      long_description=long_description,
      classifiers=classifiers,
