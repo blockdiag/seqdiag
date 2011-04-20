@@ -53,7 +53,7 @@ setup(
      tests_require=['Nose','minimock','pep8'],
      entry_points="""
         [console_scripts]
-        seqdiag = seqdiag.seqdiag:main
+        seqdiag = seqdiag.command:main
      """,
 )
 
