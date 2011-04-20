@@ -1,3 +1,3 @@
 # -*- coding: utf-8 -*-
 
-from seqdiag import main
+__version__ = '0.2.7'
