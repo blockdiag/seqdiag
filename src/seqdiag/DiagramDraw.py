@@ -53,6 +53,15 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         return XY(x, y)
 
     def _draw_background(self):
+        m = self.metrix.originalMetrix()
+        pagesize = self.pagesize()
+
+        for group in self.diagram.groups:
+            box = list(m.cell(group).marginBox())
+            box[3] = self.pagesize().y - m.pageMargin.y - m.cellSize
+
+            self.drawer.rectangle(box, fill=group.color, filter='blur')
+
         for node in self.nodes:
             node.activities.sort(lambda x, y: cmp(x['level'], y['level']))
 

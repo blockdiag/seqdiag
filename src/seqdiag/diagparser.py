@@ -126,8 +126,22 @@ def parse(seq):
         edge_stmt_list +
         op_('}')
         >> make_subedge)
+    subgraph_stmt = (
+          attr_stmt
+        | graph_attr
+        | node_stmt
+    )
+    subgraph_stmt_list = many(subgraph_stmt + skip(maybe(op(';'))))
+    subgraph = (
+        skip(n('group')) +
+        skip(maybe(id)) +
+        op_('{') +
+        subgraph_stmt_list +
+        op_('}')
+        >> SubGraph)
     stmt = (
           attr_stmt
+        | subgraph
         | edge_stmt
         | graph_attr
         | node_stmt
