@@ -12,6 +12,7 @@ class DiagramTreeBuilder:
         self.diagram = Diagram()
         self.diagram = self.instantiate(self.diagram, tree)
 
+        self.update_order()
         self.update_y_coordinates()
         if self.diagram.draw_activation:
             self.create_activities()
@@ -56,20 +57,54 @@ class DiagramTreeBuilder:
         for node in self.diagram.nodes:
             node.deactivate()
 
-    def append_node(self, node):
+    def update_order(self):
+        x = 0
+        uniq = []
+
+        for node in self.diagram.nodes:
+            if node not in uniq:
+                node.xy = XY(x, 0)
+                uniq.append(node)
+                x += 1
+
+                if node.group:
+                   for subnode in node.group.nodes:
+                       if subnode not in uniq:
+                           subnode.xy = XY(x, 0)
+                           uniq.append(subnode)
+                           x += 1
+
+        for group in self.diagram.groups:
+            x = min(node.xy.x for node in group.nodes)
+            group.xy = XY(x, 0)
+            group.width = len(group.nodes)
+
+    def append_node(self, node, group):
         if node not in self.diagram.nodes:
-            node.xy = XY(len(self.diagram.nodes), 0)
             self.diagram.nodes.append(node)
+
+        if isinstance(group, NodeGroup) and node not in group.nodes:
+            if node.group:
+                msg = "DiagramNode could not belong to two groups"
+                raise RuntimeError(msg)
+
+            group.nodes.append(node)
+            node.group = group
 
     def instantiate(self, group, tree):
         for stmt in tree.stmts:
             if isinstance(stmt, diagparser.Node):
                 node = DiagramNode.get(stmt.id)
                 node.set_attributes(stmt.attrs)
-                self.append_node(node)
+                self.append_node(node, group)
 
             elif isinstance(stmt, diagparser.Edge):
                 self.instantiate_edge(group, stmt)
+
+            elif isinstance(stmt, diagparser.SubGraph):
+                node = NodeGroup.get(None)
+                self.instantiate(node, stmt)
+                self.diagram.groups.append(node)
 
             elif isinstance(stmt, diagparser.DefAttrs):
                 group.set_attributes(stmt.attrs)
@@ -82,11 +117,11 @@ class DiagramTreeBuilder:
     def instantiate_edge(self, group, tree):
         node_id = tree.nodes[0]
         edge_from = DiagramNode.get(node_id)
-        self.append_node(edge_from)
+        self.append_node(edge_from, group)
 
         edge_type, node_id = tree.nodes[1]
         edge_to = DiagramNode.get(node_id)
-        self.append_node(edge_to)
+        self.append_node(edge_to, group)
 
         edge = DiagramEdge(edge_from, edge_to)
         if edge_type:

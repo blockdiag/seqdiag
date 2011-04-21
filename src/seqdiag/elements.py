@@ -49,6 +49,7 @@ class Diagram(blockdiag.elements.Diagram):
         self.draw_activation = True
         self.edge_height = None
         self.edge_length = None
+        self.groups = []
 
     def set_attributes(self, attrs):
         attrs = list(attrs)
