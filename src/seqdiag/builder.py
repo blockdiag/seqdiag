@@ -153,4 +153,8 @@ class DiagramTreeBuilder:
 class ScreenNodeBuilder:
     @classmethod
     def build(klass, tree):
+        DiagramNode.clear()
+        DiagramEdge.clear()
+        NodeGroup.clear()
+
         return DiagramTreeBuilder().build(tree)
