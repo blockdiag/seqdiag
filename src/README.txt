@@ -84,16 +84,16 @@ Python Software Foundation License.
 History
 =======
 
-0.2.6 (2011-04-15)
+0.2.7 (2011-04-15)
 ------------------
 * Adjust start coordinates of edges
 
-0.2.5 (2011-04-14)
+0.2.6 (2011-04-14)
 ------------------
 * Fix bugs
 * Allow unquoted utf8 characters
 
-0.2.4 (2011-03-20)
+0.2.5 (2011-03-26)
 ------------------
 * Fix seqdiag could not run under blockdiag 0.7.6
 
