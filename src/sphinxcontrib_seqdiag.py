@@ -17,9 +17,7 @@ from sphinx.errors import SphinxError
 from sphinx.util.osutil import ensuredir, ENOENT, EPIPE
 from sphinx.util.compat import Directive
 
-from seqdiag.seqdiag import *
-from seqdiag import DiagramDraw
-from seqdiag.diagparser import parse, tokenize
+from seqdiag import DiagramDraw, builder, diagparser
 
 class SeqdiagError(SphinxError):
     category = 'Seqdiag error'
@@ -146,10 +144,8 @@ def create_seqdiag(self, code, format, filename, options, prefix='seqdiag'):
 
     draw = None
     try:
-        DiagramNode.clear()
-        DiagramEdge.clear()
-        tree = parse(tokenize(code))
-        diagram = ScreenNodeBuilder.build(tree)
+        tree = diagparser.parse(diagparser.tokenize(code))
+        diagram = builder.ScreenNodeBuilder.build(tree)
 
         antialias = self.builder.config.seqdiag_antialias
         draw = DiagramDraw.DiagramDraw(format, diagram, filename, font=fontpath,
