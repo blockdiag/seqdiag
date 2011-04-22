@@ -84,6 +84,10 @@ Python Software Foundation License.
 History
 =======
 
+0.3.0 (2011-04-22)
+------------------
+* Add group syntax
+
 0.2.7 (2011-04-15)
 ------------------
 * Adjust start coordinates of edges
