@@ -68,11 +68,11 @@ class DiagramTreeBuilder:
                 x += 1
 
                 if node.group:
-                   for subnode in node.group.nodes:
-                       if subnode not in uniq:
-                           subnode.xy = XY(x, 0)
-                           uniq.append(subnode)
-                           x += 1
+                    for subnode in node.group.nodes:
+                        if subnode not in uniq:
+                            subnode.xy = XY(x, 0)
+                            uniq.append(subnode)
+                            x += 1
 
         for group in self.diagram.groups:
             x = min(node.xy.x for node in group.nodes)
