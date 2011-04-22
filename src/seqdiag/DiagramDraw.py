@@ -52,6 +52,12 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
         return XY(x, y)
 
+    def draw(self, **kwargs):
+        super(DiagramDraw, self).draw(**kwargs)
+
+        for group in self.diagram.groups:
+            self.group_label(group, **kwargs)
+
     def _draw_background(self):
         m = self.metrix.originalMetrix()
         pagesize = self.pagesize()
