@@ -84,6 +84,11 @@ Python Software Foundation License.
 History
 =======
 
+0.3.1 (2011-04-22)
+------------------
+* Render group label
+* Fix sphinxcontrib_seqdiag does not work with seqdiag 0.3.0
+
 0.3.0 (2011-04-22)
 ------------------
 * Add group syntax
