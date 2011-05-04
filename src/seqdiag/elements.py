@@ -51,25 +51,11 @@ class Diagram(blockdiag.elements.Diagram):
         self.edge_length = None
         self.groups = []
 
-    def set_attributes(self, attrs):
-        attrs = list(attrs)
-        for attr in list(attrs):
-            value = unquote(attr.value)
-
-            if attr.name == 'draw_activation':
-                if value == 'False':
-                    self.draw_activation = False
-                else:
-                    self.draw_activation = True
-            elif attr.name == 'default_shape':
-                try:
-                    noderenderer.get(value)
-                    DiagramNode.set_default_shape(value)
-                except RuntimeError:
-                    msg = "WARNING: unknown node shape: %s\n" % value
-                    sys.stderr.write(msg)
-            else:
-                self.set_attribute(attr)
+    def set_draw_activation(self, value):
+        if value == 'False':
+            self.draw_activation = False
+        else:
+            self.draw_activation = True
 
 
 class DiagramEdge(blockdiag.elements.DiagramEdge):
@@ -83,52 +69,52 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
         self.diagonal = False
         self.return_label = ''
 
-    def set_attributes(self, attrs):
-        attrs = list(attrs)
-        for attr in list(attrs):
-            value = unquote(attr.value)
+    def set_diagonal(self, value):
+        self.diagonal = True
+        self.height = 1.5
 
-            if attr.name == 'diagonal':
-                self.diagonal = True
-                self.height = 1.5
-            elif attr.name == 'async':
-                self.dir = 'forward'
-            elif attr.name == 'return':
-                self.return_label = value
-            elif attr.name == 'noactivate':
-                self.activate = False
-            elif attr.name == 'dir':
-                dir = value.lower()
-                if dir in ('back', 'both', 'forward'):
-                    self.dir = dir
-                elif dir == '=>':
-                    self.dir = 'both'
-                elif dir in ('->', '->>', '-->', '-->>'):
-                    self.dir = 'forward'
+    def set_async(self, value):
+        self.dir = 'forward'
 
-                    if re.search('--', dir):
-                        self.style = 'dashed'
-                    else:
-                        self.style = None
+    def set_return(self, value):
+        self.return_label = value
 
-                    if re.search('>>', dir):
-                        self.async = True
-                    else:
-                        self.async = False
-                elif dir in ('<-', '<<-', '<--', '<<--'):
-                    self.dir = 'back'
+    def set_activate(self, value):
+        self.activate = True
 
-                    if re.search('--', dir):
-                        self.style = 'dashed'
-                    else:
-                        self.style = None
+    def set_noactivate(self, value):
+        self.activate = False
 
-                    if re.search('<<', dir):
-                        self.async = True
-                    else:
-                        self.async = False
-                else:
-                    msg = "WARNING: unknown edge dir: %s\n" % dir
-                    sys.stderr.write(msg)
+    def set_dir(self, value):
+        dir = value.lower()
+        if dir in ('back', 'both', 'forward'):
+            self.dir = dir
+        elif dir == '=>':
+            self.dir = 'both'
+        elif dir in ('->', '->>', '-->', '-->>'):
+            self.dir = 'forward'
+
+            if re.search('--', dir):
+                self.style = 'dashed'
             else:
-                self.set_attribute(attr)
+                self.style = None
+
+            if re.search('>>', dir):
+                self.async = True
+            else:
+                self.async = False
+        elif dir in ('<-', '<<-', '<--', '<<--'):
+            self.dir = 'back'
+
+            if re.search('--', dir):
+                self.style = 'dashed'
+            else:
+                self.style = None
+
+            if re.search('<<', dir):
+                self.async = True
+            else:
+                self.async = False
+        else:
+            msg = "WARNING: unknown edge dir: %s\n" % dir
+            sys.stderr.write(msg)
