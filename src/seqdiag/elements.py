@@ -69,6 +69,25 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
         self.diagonal = False
         self.return_label = ''
 
+    @property
+    def direction(self):
+        if self.node1.xy.x == self.node2.xy.x:
+            direction = 'self'
+        elif self.node1.xy.x < self.node2.xy.x:
+            # n1 .. n2
+            if self.dir == 'forward':
+                direction = 'right'
+            else:
+                direction = 'left'
+        else:
+            # n2 .. n1
+            if self.dir == 'forward':
+                direction = 'left'
+            else:
+                direction = 'right'
+
+        return direction
+
     def set_diagonal(self, value):
         self.diagonal = True
         self.height = 1.5
