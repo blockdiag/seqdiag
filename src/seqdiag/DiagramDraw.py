@@ -10,47 +10,10 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
     def __init__(self, format, diagram, filename=None, **kwargs):
         super(DiagramDraw, self).__init__(format, diagram, filename, **kwargs)
 
-    def preset_metrix(self, scaled):
-        if scaled:
-            m = self.metrix
-        else:
-            m = self.metrix.originalMetrix()
-
-        if self.diagram.edge_height:
-            self.edge_height = self.diagram.edge_height * m.scale_ratio
-        else:
-            self.edge_height = m.nodeHeight
-
-        if self.diagram.edge_length:
-            span = self.diagram.edge_length - m.nodeWidth
-            if span < 0:
-                msg = "WARNING: edge_length is too short: %d\n" % \
-                      self.diagram.edge_length
-                sys.stderr.write(msg)
-
-                span = 0
-
-            m.spanWidth = span
+        self.metrix.set_edges(self.diagram.edges)
 
     def pagesize(self, scaled=False):
-        self.preset_metrix(scaled)
-
-        if scaled:
-            m = self.metrix
-        else:
-            m = self.metrix.originalMetrix()
-
-        nodes = [x for x in self.nodes]
-        nodes.sort(lambda x, y: cmp(x.xy.x, y.xy.y))
-
-        node = nodes[-1]
-        xy = m.cell(node).bottomRight()
-        x = xy.x + m.pageMargin.x
-        y = xy.y + m.spanHeight + self.edge_height / 2 + m.pageMargin.y
-
-        y += len(self.diagram.edges) * self.edge_height
-
-        return XY(x, y)
+        return self.metrix.pageSize(self.nodes, self.diagram.edges)
 
     def draw(self, **kwargs):
         super(DiagramDraw, self).draw(**kwargs)
@@ -63,9 +26,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         pagesize = self.pagesize()
 
         for group in self.diagram.groups:
-            box = list(m.cell(group).marginBox())
-            box[3] = self.pagesize().y - m.pageMargin.y - m.cellSize
-
+            box = m.groupBox(group)
             self.drawer.rectangle(box, fill=group.color, filter='blur')
 
         for node in self.nodes:
@@ -83,58 +44,17 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             for activity in node.activities:
                 self.node_activity(node, activity)
 
-    def node_activity_box(self, node, activity):
-        starts = activity['lifetime'][0]
-        ends = activity['lifetime'][-1] + 1
-        m = self.metrix.originalMetrix()
-
-        edge = self.diagram.edges[starts]
-        base_xy = m.cell(node).bottom()
-        base_y = base_xy.y + m.spanHeight
-        y1 = base_y + int(edge.y * self.edge_height) + self.edge_height / 2
-        if edge.diagonal and edge.node2 == node:
-            y1 += self.edge_height * 3 / 4
-
-        if ends < len(self.diagram.edges):
-            edge = self.diagram.edges[ends]
-            y2 = base_y + int(edge.y * self.edge_height) + self.edge_height / 2
-        else:
-            y2 = self.pagesize().y - m.pageMargin.y - self.edge_height / 2
-
-        x = base_xy.x
-        index = activity['level']
-        box = (x + (index - 1) * m.cellSize / 2, y1,
-               x + (index + 1) * m.cellSize / 2, y2)
-
-        return box
-
     def node_activity_shadow(self, node, activity):
-        m = self.metrix.originalMetrix()
-
-        if hasattr(m, 'shadowOffsetX'):
-            shadowOffsetX = m.shadowOffsetX
-            shadowOffsetY = m.shadowOffsetY
-        else:
-            shadowOffsetX = 6
-            shadowOffsetY = 3
-
-        box = self.node_activity_box(node, activity)
-        shadowbox = (box[0] + shadowOffsetX, box[1] + shadowOffsetY,
-                     box[2] + shadowOffsetX, box[3] + shadowOffsetY)
-        self.drawer.rectangle(shadowbox, fill=self.shadow,
-                              filter='transp-blur')
+        box = self.metrix.originalMetrix().activity_shadow(node, activity)
+        self.drawer.rectangle(box, fill=self.shadow, filter='transp-blur')
 
     def node_activity(self, node, activity):
-        box = self.node_activity_box(node, activity)
+        box = self.metrix.originalMetrix().activity_box(node, activity)
         self.drawer.rectangle(box, width=1, outline=self.fill, fill='moccasin')
 
     def lifelines(self, node):
-        metrix = self.metrix.originalMetrix().node(node)
-        pagesize = self.pagesize()
-
-        _from = metrix.bottom()
-        _to = XY(_from.x, pagesize.y - self.metrix.pageMargin.y)
-        self.drawer.line((_from, _to), fill=self.fill, style='dotted')
+        line = self.metrix.originalMetrix().lifeline(node)
+        self.drawer.line(line, fill=self.fill, style='dotted')
 
     def _prepare_edges(self):
         pass
@@ -150,11 +70,11 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
         m = self.metrix
         baseheight = node1_xy.y + m.spanHeight + \
-                     int(edge.y * self.edge_height) + self.edge_height / 2
+                     int(edge.y * m.edge_height) + m.edge_height / 2
 
         if edge.node1 == edge.node2:
             fold_width = m.nodeWidth / 2 + m.cellSize
-            fold_height = self.edge_height / 4
+            fold_height = m.edge_height / 4
 
             # adjust textbox to right on activity-lines
             x1 = node1_xy.x + self.activity_line_width(edge.node1, edge.y)
@@ -193,7 +113,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             _from = XY(x1 + margin, baseheight)
             _to = XY(x2 - margin, baseheight)
             if edge.diagonal:
-                _to = XY(_to.x, _to.y + self.edge_height * 3 / 4)
+                _to = XY(_to.x, _to.y + m.edge_height * 3 / 4)
             self.drawer.line((_from, _to), fill=color, style=edge.style)
             self.edge_head(_to, headshape, color, edge.async)
 
@@ -221,7 +141,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         node2_xy = self.metrix.node(edge.node2).bottom()
 
         m = self.metrix
-        baseheight = node1_xy.y + m.spanHeight + int(edge.y * self.edge_height)
+        baseheight = node1_xy.y + m.spanHeight + int(edge.y * m.edge_height)
 
         x1, x2 = node1_xy.x, node2_xy.x
         if node1_xy.x < node2_xy.x:
@@ -250,7 +170,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         x1 += self.activity_line_width(left_node, edge.y)
 
         box = (x1, baseheight,
-               x2, baseheight + int(self.edge_height * 0.45))
+               x2, baseheight + int(m.edge_height * 0.45))
         self.drawer.textarea(box, edge.label, fill=color, halign=halign,
                              font=self.font, fontsize=m.fontSize)
 
@@ -264,3 +184,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             level = 0
 
         return m.cellSize / 2 * level
+
+
+from DiagramMetrix import DiagramMetrix
+DiagramDraw.set_metrix_class(DiagramMetrix)
