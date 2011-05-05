@@ -72,7 +72,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         baseheight = node1_xy.y + m.spanHeight + \
                      int(edge.y * m.edge_height) + m.edge_height / 2
 
-        if edge.node1 == edge.node2:
+        if edge.direction == 'self':
             fold_width = m.nodeWidth / 2 + m.cellSize
             fold_height = m.edge_height / 4
 
@@ -87,27 +87,15 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             self.drawer.line(points, fill=color, style=edge.style)
             self.edge_head(points[-1], 'left', color, edge.async)
         else:
-            if node1_xy.x < node2_xy.x:
-                headshapes = ['right', 'left']
-            else:
-                headshapes = ['left', 'right']
-
-            if edge.dir == 'forward':
-                x1, x2 = node1_xy.x, node2_xy.x
-                headshape = headshapes[0]
-            else:
-                x1, x2 = node2_xy.x, node1_xy.x
-                headshape = headshapes[1]
-
-            if x1 < x2:
+            if edge.direction == 'right':
                 margin = m.cellSize
+
+                x1, x2 = node1_xy.x, node2_xy.x
+                x1 += self.activity_line_width(edge.node1, edge.y)
             else:
                 margin = - m.cellSize
 
-            # adjust textbox to right on activity-lines
-            if headshape == 'right':
-                x1 += self.activity_line_width(edge.node1, edge.y)
-            else:
+                x1, x2 = node2_xy.x, node1_xy.x
                 x2 += self.activity_line_width(edge.node2, edge.y)
 
             _from = XY(x1 + margin, baseheight)
@@ -115,7 +103,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             if edge.diagonal:
                 _to = XY(_to.x, _to.y + m.edge_height * 3 / 4)
             self.drawer.line((_from, _to), fill=color, style=edge.style)
-            self.edge_head(_to, headshape, color, edge.async)
+            self.edge_head(_to, edge.direction, color, edge.async)
 
     def edge_head(self, xy, direct, fill, async):
         head = []
