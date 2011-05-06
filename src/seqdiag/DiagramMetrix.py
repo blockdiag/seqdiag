@@ -98,3 +98,111 @@ class DiagramMetrix(blockdiag.DiagramMetrix.DiagramMetrix):
 
         return (box[0] + self.shadowOffsetX, box[1] + self.shadowOffsetY,
                 box[2] + self.shadowOffsetX, box[3] + self.shadowOffsetY)
+
+    def edge(self, edge):
+        return EdgeMetrix(edge, self)
+
+
+class EdgeMetrix(object):
+    def __init__(self, edge, metrix):
+        self.metrix = metrix
+        self.edge = edge
+
+    @property
+    def baseheight(self):
+        return self.metrix.node(self.edge.node1).bottom().y + \
+               self.metrix.spanHeight + self.metrix.edge_height / 2 + \
+               int(self.edge.y * self.metrix.edge_height)
+
+    @property
+    def shaft(self):
+        m = self.metrix
+        baseheight = self.baseheight
+
+        if self.edge.direction == 'self':
+            fold_width = m.nodeWidth / 2 + m.cellSize
+            fold_height = m.edge_height / 4
+
+            # adjust textbox to right on activity-lines
+            base_x = self.metrix.node(self.edge.node1).bottom().x
+            x1 = base_x + self.activity_line_width(self.edge.node1)
+
+            line = [XY(x1 + m.cellSize, baseheight),
+                    XY(x1 + fold_width, baseheight),
+                    XY(x1 + fold_width, baseheight + fold_height),
+                    XY(x1 + m.cellSize, baseheight + fold_height)]
+        else:
+            if self.edge.direction == 'right':
+                margin = m.cellSize
+
+                x1 = self.metrix.node(self.edge.node1).bottom().x
+                x2 = self.metrix.node(self.edge.node2).bottom().x
+                x1 += self.activity_line_width(self.edge.node1)
+            else:
+                margin = - m.cellSize
+
+                x1 = self.metrix.node(self.edge.node2).bottom().x
+                x2 = self.metrix.node(self.edge.node1).bottom().x
+                x2 += self.activity_line_width(self.edge.node2)
+
+            if self.edge.diagonal:
+                line = [XY(x1 + margin, baseheight),
+                        XY(x2 - margin, baseheight + m.edge_height * 3 / 4)]
+            else:
+                line = [XY(x1 + margin, baseheight),
+                        XY(x2 - margin, baseheight)]
+
+        return line
+
+    @property
+    def head(self):
+        xy = self.shaft[-1]
+        cell = self.metrix.cellSize
+
+        head = []
+        if self.edge.direction == 'right':
+            head.append(XY(xy.x - cell, xy.y - cell / 2))
+            head.append(xy)
+            head.append(XY(xy.x - cell, xy.y + cell / 2))
+        else:  # left or self
+            head.append(XY(xy.x + cell, xy.y - cell / 2))
+            head.append(xy)
+            head.append(XY(xy.x + cell, xy.y + cell / 2))
+
+        return head
+
+    @property
+    def textbox(self):
+        m = self.metrix
+
+        if self.edge.direction == 'self':
+            x1 = m.node(self.edge.node1).bottom().x
+            x2 = x1 + m.nodeWidth + m.spanWidth
+
+            x1 += self.activity_line_width(self.edge.node1)
+        elif self.edge.direction == 'right':
+            x1 = m.node(self.edge.node1).bottom().x
+            x2 = m.node(self.edge.node2).bottom().x
+
+            x1 += self.activity_line_width(self.edge.node1)
+        else:
+            x1 = m.node(self.edge.node2).bottom().x
+            x2 = m.node(self.edge.node1).bottom().x
+
+            x1 += self.activity_line_width(self.edge.node2)
+
+        baseheight = self.baseheight - self.metrix.edge_height / 2
+        return (x1, baseheight,
+                x2, baseheight + int(m.edge_height * 0.45))
+
+    def activity_line_width(self, node):
+        m = self.metrix
+
+        index = self.edge.y
+        activities = [a for a in node.activities if index in a['lifetime']]
+        if activities:
+            level = max(a['level'] for a in activities)
+        else:
+            level = 0
+
+        return m.cellSize / 2 * level
