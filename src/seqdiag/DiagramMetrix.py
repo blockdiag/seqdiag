@@ -70,24 +70,22 @@ class DiagramMetrix(blockdiag.DiagramMetrix.DiagramMetrix):
         return [pt1, pt2]
 
     def activity_box(self, node, activity):
+        # y coodinates for top of activity box
         starts = activity['lifetime'][0]
-        ends = activity['lifetime'][-1] + 1
-
         edge = self.edges[starts]
-        (base_x, base_y) = self.cell(node).bottom()
-        base_y += self.spanHeight
-
-        y1 = base_y + int(edge.y * self.edge_height) + self.edge_height / 2
+        y1 = self.edge(edge).baseheight
         if edge.diagonal and edge.node2 == node:
             y1 += self.edge_height * 3 / 4
 
+        # y coodinates for bottom of activity box
+        ends = activity['lifetime'][-1] + 1
         if ends < len(self.edges):
-            edge = self.edges[ends]
-            y2 = base_y + int(edge.y * self.edge_height) + self.edge_height / 2
+            y2 = self.edge(self.edges[ends]).baseheight
         else:
             y2 = self.pageSize().y - self.pageMargin.y - self.edge_height / 2
 
         index = activity['level']
+        base_x = self.cell(node).bottom().x
         box = (base_x + (index - 1) * self.cellSize / 2, y1,
                base_x + (index + 1) * self.cellSize / 2, y2)
 
