@@ -13,7 +13,12 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         self.metrix.set_edges(self.diagram.edges)
 
     def pagesize(self, scaled=False):
-        return self.metrix.pageSize(self.nodes, self.diagram.edges)
+        if scaled:
+            m = self.metrix
+        else:
+            m = self.metrix.originalMetrix()
+
+        return m.pageSize(self.nodes, self.diagram.edges)
 
     def draw(self, **kwargs):
         super(DiagramDraw, self).draw(**kwargs)
