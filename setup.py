@@ -12,7 +12,7 @@ long_description = \
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: System Administrators",
-    "License :: OSI Approved :: Python Software Foundation License",
+    "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python",
     "Topic :: Software Development",
     "Topic :: Software Development :: Documentation",
@@ -29,7 +29,7 @@ setup(
      author='Takeshi Komiya',
      author_email='i.tkomiya at gmail.com',
      url='https://bitbucket.org/tk0miya/seqdiag',
-     license='PSF',
+     license='Apache License 2.0',
      py_modules=['sphinxcontrib_seqdiag'],
      packages=find_packages('src'),
      package_dir={'': 'src'},
