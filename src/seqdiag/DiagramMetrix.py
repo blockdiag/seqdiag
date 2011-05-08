@@ -21,6 +21,8 @@ class DiagramMetrix(blockdiag.DiagramMetrix.DiagramMetrix):
     def __init__(self, diagram, **kwargs):
         super(DiagramMetrix, self).__init__(diagram, **kwargs)
 
+        self.setdefault('edges', diagram.edges)
+
         scale_ratio = self.scale_ratio
         if diagram.edge_height:
             self.setdefault('edge_height', diagram.edge_height)
@@ -44,14 +46,9 @@ class DiagramMetrix(blockdiag.DiagramMetrix.DiagramMetrix):
             kwargs[key] = self[key]
         kwargs['scale_ratio'] = 1
 
-        m = DiagramMetrix(self, **kwargs)
-        m.set_edges(self.edges)
-        return m
+        return DiagramMetrix(self, **kwargs)
 
-    def set_edges(self, edges):
-        self.edges = edges
-
-    def pageSize(self, nodes=None, edges=None):
+    def pageSize(self, nodes=None):
         if nodes:
             width = max(x.xy.x for x in nodes)
         else:
@@ -59,10 +56,7 @@ class DiagramMetrix(blockdiag.DiagramMetrix.DiagramMetrix):
 
         size = super(DiagramMetrix, self).pageSize(width + 1, 1)
 
-        if edges is None:
-            edges = self.edges
-
-        height = int(sum(e.height for e in edges) * self.edge_height)
+        height = int(sum(e.height for e in self.edges) * self.edge_height)
         height += self.spanHeight + self.edge_height / 2
 
         return XY(size.x, size.y + height)

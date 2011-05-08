@@ -19,18 +19,13 @@ from blockdiag.utils.XY import XY
 
 
 class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
-    def __init__(self, format, diagram, filename=None, **kwargs):
-        super(DiagramDraw, self).__init__(format, diagram, filename, **kwargs)
-
-        self.metrix.set_edges(self.diagram.edges)
-
     def pagesize(self, scaled=False):
         if scaled:
             m = self.metrix
         else:
             m = self.metrix.originalMetrix()
 
-        return m.pageSize(self.nodes, self.diagram.edges)
+        return m.pageSize(self.nodes)
 
     def draw(self, **kwargs):
         super(DiagramDraw, self).draw(**kwargs)
