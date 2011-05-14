@@ -30,7 +30,7 @@ setup(
      author_email='i.tkomiya at gmail.com',
      url='https://bitbucket.org/tk0miya/seqdiag',
      license='Apache License 2.0',
-     py_modules=['sphinxcontrib_seqdiag'],
+     py_modules=['sphinxcontrib_seqdiag', 'seqdiag_sphinxhelper'],
      packages=find_packages('src'),
      package_dir={'': 'src'},
      package_data = {'': ['buildout.cfg']},
