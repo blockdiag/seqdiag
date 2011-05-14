@@ -78,11 +78,16 @@ Requirements
 
 License
 =======
-Python Software Foundation License.
+Apache License 2.0
 
 
 History
 =======
+
+0.3.2 (2011-05-14)
+------------------
+* Render group label
+* Support blockdiag 0.8.1 core interface 
 
 0.3.1 (2011-04-22)
 ------------------
