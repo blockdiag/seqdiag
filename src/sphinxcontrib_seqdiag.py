@@ -306,3 +306,5 @@ def setup(app):
     app.add_config_value('seqdiag_fontpath', None, 'html')
     app.add_config_value('seqdiag_antialias', False, 'html')
     app.add_config_value('seqdiag_tex_image_format', 'PNG', 'html')
+
+    app.warn('sphinxcontrib_seqdiag was deprecated; Use sphinxcontrib.seqdiag package (including DOT)')
