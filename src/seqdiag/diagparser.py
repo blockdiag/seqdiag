@@ -212,22 +212,3 @@ def parse_file(path):
         raise ParseException, message
     except Exception, e:
         raise ParseException, str(e)
-
-
-def main():
-    #import logging
-    #logging.basicConfig(level=logging.DEBUG)
-    #import funcparserlib
-    #funcparserlib.parser.debug = True
-    try:
-        stdin = os.fdopen(sys.stdin.fileno(), 'rb')
-        input = stdin.read().decode(ENCODING)
-        tree = parse(tokenize(input))
-        print pretty_parse_tree(tree).encode(ENCODING)
-    except (NoParseError, LexerError), e:
-        msg = (u'syntax error: %s' % e).encode(ENCODING)
-        print >> sys.stderr, msg
-        sys.exit(1)
-
-if __name__ == '__main__':
-    main()
