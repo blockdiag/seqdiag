@@ -84,6 +84,11 @@ Apache License 2.0
 History
 =======
 
+0.3.3 (2011-05-16)
+------------------
+* Add --version option
+* Add sphinxhelper module
+
 0.3.2 (2011-05-14)
 ------------------
 * Render group label
