@@ -18,14 +18,17 @@ import re
 import sys
 from ConfigParser import SafeConfigParser
 from optparse import OptionParser
-from DiagramDraw import DiagramDraw
+import seqdiag
+import DiagramDraw
 import diagparser
+from blockdiag import utils
 from builder import ScreenNodeBuilder
 
 
 def parse_option():
+    version = "%%prog %s" % seqdiag.__version__
     usage = "usage: %prog [options] infile"
-    p = OptionParser(usage=usage)
+    p = OptionParser(usage=usage, version=version)
     p.add_option('-a', '--antialias', action='store_true',
                  help='Pass diagram image to anti-alias filter')
     p.add_option('-c', '--config',
@@ -114,8 +117,8 @@ def main():
 
     diagram = ScreenNodeBuilder.build(tree)
 
-    draw = DiagramDraw(options.type, diagram, outfile, font=fontpath,
-                       antialias=options.antialias)
+    draw = DiagramDraw.DiagramDraw(options.type, diagram, outfile,
+                                   font=fontpath, antialias=options.antialias)
     draw.draw()
     draw.save()
 
