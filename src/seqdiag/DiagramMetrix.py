@@ -183,21 +183,17 @@ class EdgeMetrix(object):
             x1 = m.node(self.edge.node1).bottom().x
             x2 = x1 + m.nodeWidth + m.spanWidth
 
-            x1 += self.activity_line_width(self.edge.node1)
-        elif self.edge.direction == 'right':
-            x1 = m.node(self.edge.node1).bottom().x
-            x2 = m.node(self.edge.node2).bottom().x
-
-            x1 += self.activity_line_width(self.edge.node1)
+            x = [x1, x2]
         else:
-            x1 = m.node(self.edge.node2).bottom().x
-            x2 = m.node(self.edge.node1).bottom().x
+            x = [m.node(self.edge.node1).bottom().x,
+                 m.node(self.edge.node2).bottom().x]
+            x.sort()
 
-            x1 += self.activity_line_width(self.edge.node2)
+        x[0] += self.activity_line_width(self.edge.node1)
 
         baseheight = self.baseheight - self.metrix.edge_height / 2
-        return (x1, baseheight,
-                x2, baseheight + int(m.edge_height * 0.45))
+        return (x[0], baseheight,
+                x[1], baseheight + int(m.edge_height * 0.45))
 
     def activity_line_width(self, node):
         m = self.metrix
