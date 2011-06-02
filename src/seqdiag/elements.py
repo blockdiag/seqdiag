@@ -82,6 +82,20 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
         self.return_label = ''
 
     @property
+    def left_node(self):
+        if self.node1.xy.x <= self.node2.xy.x:
+            return self.node1
+        else:
+            return self.node2
+
+    @property
+    def right_node(self):
+        if self.node1.xy.x > self.node2.xy.x:
+            return self.node1
+        else:
+            return self.node2
+
+    @property
     def direction(self):
         if self.node1.xy.x == self.node2.xy.x:
             direction = 'self'
