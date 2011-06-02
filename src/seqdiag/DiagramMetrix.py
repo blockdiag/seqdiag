@@ -136,19 +136,11 @@ class EdgeMetrix(object):
                     XY(x1 + fold_width, baseheight + fold_height),
                     XY(x1 + m.cellSize, baseheight + fold_height)]
         else:
-            if self.edge.direction == 'right':
-                margin = m.cellSize
+            x1 = self.metrix.node(self.edge.left_node).bottom().x + \
+                 self.activity_line_width(self.edge.left_node)
+            x2 = self.metrix.node(self.edge.right_node).bottom().x
 
-                x1 = self.metrix.node(self.edge.node1).bottom().x
-                x2 = self.metrix.node(self.edge.node2).bottom().x
-                x1 += self.activity_line_width(self.edge.node1)
-            else:
-                margin = - m.cellSize
-
-                x1 = self.metrix.node(self.edge.node2).bottom().x
-                x2 = self.metrix.node(self.edge.node1).bottom().x
-                x2 += self.activity_line_width(self.edge.node2)
-
+            margin = m.cellSize
             if self.edge.diagonal:
                 line = [XY(x1 + margin, baseheight),
                         XY(x2 - margin, baseheight + m.edge_height * 3 / 4)]
@@ -160,15 +152,16 @@ class EdgeMetrix(object):
 
     @property
     def head(self):
-        xy = self.shaft[-1]
         cell = self.metrix.cellSize
 
         head = []
         if self.edge.direction == 'right':
+            xy = self.shaft[-1]
             head.append(XY(xy.x - cell, xy.y - cell / 2))
             head.append(xy)
             head.append(XY(xy.x - cell, xy.y + cell / 2))
         else:  # left or self
+            xy = self.shaft[0]
             head.append(XY(xy.x + cell, xy.y - cell / 2))
             head.append(xy)
             head.append(XY(xy.x + cell, xy.y + cell / 2))
