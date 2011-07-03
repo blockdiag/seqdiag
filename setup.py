@@ -28,7 +28,7 @@ setup(
      keywords=['diagram','generator'],
      author='Takeshi Komiya',
      author_email='i.tkomiya at gmail.com',
-     url='https://bitbucket.org/tk0miya/seqdiag',
+     url='https://blockdiag.com/',
      license='Apache License 2.0',
      py_modules=['sphinxcontrib_seqdiag', 'seqdiag_sphinxhelper'],
      packages=find_packages('src'),
