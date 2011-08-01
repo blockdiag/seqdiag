@@ -30,15 +30,15 @@ class DiagramMetrix(blockdiag.DiagramMetrix.DiagramMetrix):
             self.setdefault('edge_height', self.nodeHeight / scale_ratio)
 
         if diagram.edge_length:
-            span_width = diagram.edge_length - self.nodeWidth / scale_ratio
+            span_width = diagram.edge_length - self['nodeWidth']
             if span_width < 0:
                 msg = "WARNING: edge_length is too short: %d\n" % \
-                      self.diagram.edge_length
+                      diagram.edge_length
                 sys.stderr.write(msg)
 
                 span_width = 0
 
-            self.spanWidth = span_width
+            self['spanWidth'] = span_width
 
     def originalMetrix(self):
         kwargs = {}
