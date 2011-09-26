@@ -62,7 +62,8 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
     def node_activity(self, node, activity):
         box = self.metrix.originalMetrix().activity_box(node, activity)
-        self.drawer.rectangle(box, width=1, outline=self.diagram.linecolor, fill='moccasin')
+        self.drawer.rectangle(box, width=1, outline=self.diagram.linecolor,
+                              fill='moccasin')
 
     def lifelines(self, node):
         line = self.metrix.originalMetrix().lifeline(node)
@@ -92,7 +93,8 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             halign = 'right'
 
         textbox = self.metrix.edge(edge).textbox
-        self.drawer.textarea(textbox, edge.label, fill=edge.color, halign=halign,
+        self.drawer.textarea(textbox, edge.label,
+                             fill=edge.color, halign=halign,
                              font=self.font, fontsize=self.metrix.fontSize)
 
 
