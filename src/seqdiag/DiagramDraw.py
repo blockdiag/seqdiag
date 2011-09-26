@@ -62,25 +62,20 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
     def node_activity(self, node, activity):
         box = self.metrix.originalMetrix().activity_box(node, activity)
-        self.drawer.rectangle(box, width=1, outline=self.fill, fill='moccasin')
+        self.drawer.rectangle(box, width=1, outline=self.diagram.linecolor, fill='moccasin')
 
     def lifelines(self, node):
         line = self.metrix.originalMetrix().lifeline(node)
-        self.drawer.line(line, fill=self.fill, style='dotted')
+        self.drawer.line(line, fill=self.diagram.linecolor, style='dotted')
 
     def _prepare_edges(self):
         pass
 
     def edge(self, edge):
-        if edge.color:
-            color = edge.color
-        else:
-            color = self.fill
-
         # render shaft of edges
         m = self.metrix.edge(edge)
         shaft = m.shaft
-        self.drawer.line(shaft, fill=color, style=edge.style)
+        self.drawer.line(shaft, fill=edge.color, style=edge.style)
 
         # render head of edges
         head = m.head
@@ -88,21 +83,16 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             self.drawer.line((head[0], head[1]), fill=color)
             self.drawer.line((head[1], head[2]), fill=color)
         else:
-            self.drawer.polygon(head, outline=color, fill=color)
+            self.drawer.polygon(head, outline=edge.color, fill=edge.color)
 
     def edge_label(self, edge):
-        if edge.color:
-            color = edge.color
-        else:
-            color = self.fill
-
         if edge.direction in ('right', 'self'):
             halign = 'left'
         else:
             halign = 'right'
 
         textbox = self.metrix.edge(edge).textbox
-        self.drawer.textarea(textbox, edge.label, fill=color, halign=halign,
+        self.drawer.textarea(textbox, edge.label, fill=edge.color, halign=halign,
                              font=self.font, fontsize=self.metrix.fontSize)
 
 
