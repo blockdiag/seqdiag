@@ -81,8 +81,8 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         # render head of edges
         head = m.head
         if edge.async:
-            self.drawer.line((head[0], head[1]), fill=color)
-            self.drawer.line((head[1], head[2]), fill=color)
+            self.drawer.line((head[0], head[1]), fill=edge.color)
+            self.drawer.line((head[1], head[2]), fill=edge.color)
         else:
             self.drawer.polygon(head, outline=edge.color, fill=edge.color)
 
