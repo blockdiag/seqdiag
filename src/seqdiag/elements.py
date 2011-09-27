@@ -147,6 +147,9 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
 
 
 class Diagram(blockdiag.elements.Diagram):
+    _DiagramNode = DiagramNode
+    _DiagramEdge = DiagramEdge
+
     def __init__(self):
         super(Diagram, self).__init__()
 
