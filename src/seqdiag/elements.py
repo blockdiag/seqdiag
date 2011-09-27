@@ -51,25 +51,6 @@ class DiagramNode(blockdiag.elements.DiagramNode):
         self.activity[index] = []
 
 
-class Diagram(blockdiag.elements.Diagram):
-    def __init__(self):
-        super(Diagram, self).__init__()
-
-        self.int_attrs.append('edge_height')
-        self.int_attrs.append('edge_length')
-
-        self.draw_activation = True
-        self.edge_height = None
-        self.edge_length = None
-        self.groups = []
-
-    def set_draw_activation(self, value):
-        if value == 'False':
-            self.draw_activation = False
-        else:
-            self.draw_activation = True
-
-
 class DiagramEdge(blockdiag.elements.DiagramEdge):
     def __init__(self, node1, node2):
         super(DiagramEdge, self).__init__(node1, node2)
@@ -163,3 +144,22 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
         else:
             msg = "WARNING: unknown edge dir: %s\n" % dir
             sys.stderr.write(msg)
+
+
+class Diagram(blockdiag.elements.Diagram):
+    def __init__(self):
+        super(Diagram, self).__init__()
+
+        self.int_attrs.append('edge_height')
+        self.int_attrs.append('edge_length')
+
+        self.draw_activation = True
+        self.edge_height = None
+        self.edge_length = None
+        self.groups = []
+
+    def set_draw_activation(self, value):
+        if value == 'False':
+            self.draw_activation = False
+        else:
+            self.draw_activation = True
