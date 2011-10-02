@@ -86,16 +86,20 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         else:
             self.drawer.polygon(head, outline=edge.color, fill=edge.color)
 
-    def edge_label(self, edge):
-        if edge.direction in ('right', 'self'):
-            halign = 'left'
-        else:
-            halign = 'right'
+        if edge.label:
+            if edge.direction in ('right', 'self'):
+                halign = 'left'
+            else:
+                halign = 'right'
 
-        textbox = self.metrix.edge(edge).textbox
-        self.drawer.textarea(textbox, edge.label,
-                             fill=edge.color, halign=halign,
-                             font=self.font, fontsize=self.metrix.fontSize)
+            textbox = self.metrix.edge(edge).textbox
+            self.drawer.textarea(textbox, edge.label,
+                                 fill=edge.color, halign=halign,
+                                 font=self.font, fontsize=self.metrix.fontSize)
+
+    # edge_label is obsoleted (keep for compatibility)
+    def edge_label(self, edge):
+        pass
 
 
 from DiagramMetrix import DiagramMetrix
