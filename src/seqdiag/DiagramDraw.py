@@ -27,12 +27,6 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
         return m.pageSize(self.nodes)
 
-    def draw(self, **kwargs):
-        super(DiagramDraw, self).draw(**kwargs)
-
-        for group in self.diagram.groups:
-            self.group_label(group, **kwargs)
-
     def _draw_background(self):
         m = self.metrix.originalMetrix()
         pagesize = self.pagesize()
@@ -50,27 +44,30 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
         super(DiagramDraw, self)._draw_background()
 
+    def _draw_elements(self, **kwargs):
+        super(DiagramDraw, self)._draw_elements(**kwargs)
+
         for node in self.nodes:
             self.lifelines(node)
 
             for activity in node.activities:
                 self.node_activity(node, activity)
 
+        for group in self.diagram.groups:
+            self.group_label(group, **kwargs)
+
     def node_activity_shadow(self, node, activity):
         box = self.metrix.originalMetrix().activity_shadow(node, activity)
         self.drawer.rectangle(box, fill=self.shadow, filter='transp-blur')
 
     def node_activity(self, node, activity):
-        box = self.metrix.originalMetrix().activity_box(node, activity)
+        box = self.metrix.activity_box(node, activity)
         self.drawer.rectangle(box, width=1, outline=self.diagram.linecolor,
                               fill='moccasin')
 
     def lifelines(self, node):
-        line = self.metrix.originalMetrix().lifeline(node)
+        line = self.metrix.lifeline(node)
         self.drawer.line(line, fill=self.diagram.linecolor, style='dotted')
-
-    def _prepare_edges(self):
-        pass
 
     def edge(self, edge):
         # render shaft of edges
