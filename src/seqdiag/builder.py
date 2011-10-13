@@ -30,8 +30,8 @@ class DiagramTreeBuilder:
             self.create_activities()
         max_y = self.diagram.edges[-1].y
 
-        self.diagram.width = len(self.diagram.nodes)
-        self.diagram.height = int(math.ceil(max_y * 0.5 + 1.5))
+        self.diagram.colwidth = len(self.diagram.nodes)
+        self.diagram.colheight = int(math.ceil(max_y * 0.5 + 1.5))
 
         return self.diagram
 
@@ -89,7 +89,7 @@ class DiagramTreeBuilder:
         for group in self.diagram.groups:
             x = min(node.xy.x for node in group.nodes)
             group.xy = XY(x, 0)
-            group.width = len(group.nodes)
+            group.colwidth = len(group.nodes)
 
     def append_node(self, node, group):
         if node not in self.diagram.nodes:
