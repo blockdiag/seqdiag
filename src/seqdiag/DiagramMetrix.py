@@ -21,16 +21,14 @@ class DiagramMetrix(blockdiag.DiagramMetrix.DiagramMetrix):
     def __init__(self, diagram, **kwargs):
         super(DiagramMetrix, self).__init__(diagram, **kwargs)
 
-        self.setdefault('edges', diagram.edges)
+        self.edges = diagram.edges
+        self.edge_height = self.nodeHeight
 
-        scale_ratio = self.scale_ratio
         if diagram.edge_height:
-            self.setdefault('edge_height', diagram.edge_height)
-        else:
-            self.setdefault('edge_height', self.nodeHeight / scale_ratio)
+            self.edge_height = diagram.edge_height
 
         if diagram.edge_length:
-            span_width = diagram.edge_length - self['nodeWidth']
+            span_width = diagram.edge_length - self.nodeWidth
             if span_width < 0:
                 msg = "WARNING: edge_length is too short: %d\n" % \
                       diagram.edge_length
@@ -38,15 +36,7 @@ class DiagramMetrix(blockdiag.DiagramMetrix.DiagramMetrix):
 
                 span_width = 0
 
-            self['spanWidth'] = span_width
-
-    def originalMetrix(self):
-        kwargs = {}
-        for key in self:
-            kwargs[key] = self[key]
-        kwargs['scale_ratio'] = 1
-
-        return DiagramMetrix(self, **kwargs)
+            self.spanWidth = span_width
 
     def pageSize(self, nodes=None):
         if nodes:
