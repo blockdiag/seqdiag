@@ -150,8 +150,13 @@ class EdgeMetrix(object):
             head.append(XY(xy.x - cell, xy.y - cell / 2))
             head.append(xy)
             head.append(XY(xy.x - cell, xy.y + cell / 2))
-        else:  # left or self
+        elif self.edge.direction == 'left':
             xy = self.shaft[0]
+            head.append(XY(xy.x + cell, xy.y - cell / 2))
+            head.append(xy)
+            head.append(XY(xy.x + cell, xy.y + cell / 2))
+        else:  # self
+            xy = self.shaft[-1]
             head.append(XY(xy.x + cell, xy.y - cell / 2))
             head.append(xy)
             head.append(XY(xy.x + cell, xy.y + cell / 2))
