@@ -45,13 +45,13 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         super(DiagramDraw, self)._draw_background()
 
     def _draw_elements(self, **kwargs):
-        super(DiagramDraw, self)._draw_elements(**kwargs)
-
         for node in self.nodes:
             self.lifelines(node)
 
             for activity in node.activities:
                 self.node_activity(node, activity)
+
+        super(DiagramDraw, self)._draw_elements(**kwargs)
 
         for group in self.diagram.groups:
             self.group_label(group, **kwargs)
