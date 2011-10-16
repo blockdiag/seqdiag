@@ -13,22 +13,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import blockdiag.DiagramMetrix
+import blockdiag.DiagramMetrics
 from blockdiag.utils.XY import XY
 
 
-class DiagramMetrix(blockdiag.DiagramMetrix.DiagramMetrix):
+class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
     def __init__(self, diagram, **kwargs):
-        super(DiagramMetrix, self).__init__(diagram, **kwargs)
+        super(DiagramMetrics, self).__init__(diagram, **kwargs)
 
         self.edges = diagram.edges
-        self.edge_height = self.nodeHeight
+        self.edge_height = self.node_height
 
         if diagram.edge_height:
             self.edge_height = diagram.edge_height
 
         if diagram.edge_length:
-            span_width = diagram.edge_length - self.nodeWidth
+            span_width = diagram.edge_length - self.node_width
             if span_width < 0:
                 msg = "WARNING: edge_length is too short: %d\n" % \
                       diagram.edge_length
@@ -36,31 +36,31 @@ class DiagramMetrix(blockdiag.DiagramMetrix.DiagramMetrix):
 
                 span_width = 0
 
-            self.spanWidth = span_width
+            self.span_width = span_width
 
-    def pageSize(self, nodes=None):
+    def pagesize(self, nodes=None):
         if nodes:
             width = max(x.xy.x for x in nodes)
         else:
             width = 0
 
-        size = super(DiagramMetrix, self).pageSize(width + 1, 1)
+        size = super(DiagramMetrics, self).pagesize(width + 1, 1)
 
         height = int(sum(e.height for e in self.edges) * self.edge_height)
-        height += self.spanHeight + self.edge_height / 2
+        height += self.span_height + self.edge_height / 2
 
         return XY(size.x, size.y + height)
 
-    def groupBox(self, group):
-        box = list(self.cell(group).marginBox())
-        box[3] = self.pageSize().y - self.pageMargin.y - self.pagePadding[2]
+    def groupbox(self, group):
+        box = list(self.cell(group).marginbox)
+        box[3] = self.pagesize().y - self.page_margin.y - self.page_padding[2]
 
         return box
 
     def lifeline(self, node):
-        y = self.pageSize().y - self.pageMargin.y - self.pagePadding[2]
+        y = self.pagesize().y - self.page_margin.y - self.page_padding[2]
 
-        pt1 = self.node(node).bottom()
+        pt1 = self.node(node).bottom
         pt2 = XY(pt1.x, y)
 
         return [pt1, pt2]
@@ -78,59 +78,59 @@ class DiagramMetrix(blockdiag.DiagramMetrix.DiagramMetrix):
         if ends < len(self.edges):
             y2 = self.edge(self.edges[ends]).baseheight
         else:
-            y2 = self.pageSize().y - self.pageMargin.y - self.edge_height / 2
+            y2 = self.pagesize().y - self.page_margin.y - self.edge_height / 2
 
         index = activity['level']
-        base_x = self.cell(node).bottom().x
-        box = (base_x + (index - 1) * self.cellSize / 2, y1,
-               base_x + (index + 1) * self.cellSize / 2, y2)
+        base_x = self.cell(node).bottom.x
+        box = (base_x + (index - 1) * self.cellsize / 2, y1,
+               base_x + (index + 1) * self.cellsize / 2, y2)
 
         return box
 
     def activity_shadow(self, node, activity):
         box = self.activity_box(node, activity)
 
-        return (box[0] + self.shadowOffsetX, box[1] + self.shadowOffsetY,
-                box[2] + self.shadowOffsetX, box[3] + self.shadowOffsetY)
+        return (box[0] + self.shadow_offset.x, box[1] + self.shadow_offset.y,
+                box[2] + self.shadow_offset.x, box[3] + self.shadow_offset.y)
 
     def edge(self, edge):
-        return EdgeMetrix(edge, self)
+        return EdgeMetrics(edge, self)
 
 
-class EdgeMetrix(object):
-    def __init__(self, edge, metrix):
-        self.metrix = metrix
+class EdgeMetrics(object):
+    def __init__(self, edge, metrics):
+        self.metrics = metrics
         self.edge = edge
 
     @property
     def baseheight(self):
-        return self.metrix.node(self.edge.node1).bottom().y + \
-               self.metrix.spanHeight + self.metrix.edge_height / 2 + \
-               int(self.edge.y * self.metrix.edge_height)
+        return self.metrics.node(self.edge.node1).bottom.y + \
+               self.metrics.span_height + self.metrics.edge_height / 2 + \
+               int(self.edge.y * self.metrics.edge_height)
 
     @property
     def shaft(self):
-        m = self.metrix
+        m = self.metrics
         baseheight = self.baseheight
 
         if self.edge.direction == 'self':
-            fold_width = m.nodeWidth / 2 + m.cellSize
+            fold_width = m.node_width / 2 + m.cellsize
             fold_height = m.edge_height / 4
 
             # adjust textbox to right on activity-lines
-            base_x = self.metrix.node(self.edge.node1).bottom().x
+            base_x = self.metrics.node(self.edge.node1).bottom.x
             x1 = base_x + self.activity_line_width(self.edge.node1)
 
-            line = [XY(x1 + m.cellSize, baseheight),
+            line = [XY(x1 + m.cellsize, baseheight),
                     XY(x1 + fold_width, baseheight),
                     XY(x1 + fold_width, baseheight + fold_height),
-                    XY(x1 + m.cellSize, baseheight + fold_height)]
+                    XY(x1 + m.cellsize, baseheight + fold_height)]
         else:
-            x1 = self.metrix.node(self.edge.left_node).bottom().x + \
+            x1 = self.metrics.node(self.edge.left_node).bottom.x + \
                  self.activity_line_width(self.edge.left_node)
-            x2 = self.metrix.node(self.edge.right_node).bottom().x
+            x2 = self.metrics.node(self.edge.right_node).bottom.x
 
-            margin = m.cellSize
+            margin = m.cellsize
             if self.edge.diagonal:
                 line = [XY(x1 + margin, baseheight),
                         XY(x2 - margin, baseheight + m.edge_height * 3 / 4)]
@@ -142,7 +142,7 @@ class EdgeMetrix(object):
 
     @property
     def head(self):
-        cell = self.metrix.cellSize
+        cell = self.metrics.cellsize
 
         head = []
         if self.edge.direction == 'right':
@@ -165,26 +165,26 @@ class EdgeMetrix(object):
 
     @property
     def textbox(self):
-        m = self.metrix
+        m = self.metrics
 
         if self.edge.direction == 'self':
-            x1 = m.node(self.edge.node1).bottom().x
-            x2 = x1 + m.nodeWidth + m.spanWidth
+            x1 = m.node(self.edge.node1).bottom.x
+            x2 = x1 + m.node_width + m.span_width
 
             x = [x1, x2]
         else:
-            x = [m.node(self.edge.node1).bottom().x,
-                 m.node(self.edge.node2).bottom().x]
+            x = [m.node(self.edge.node1).bottom.x,
+                 m.node(self.edge.node2).bottom.x]
             x.sort()
 
         x[0] += self.activity_line_width(self.edge.node1)
 
-        baseheight = self.baseheight - self.metrix.edge_height / 2
+        baseheight = self.baseheight - self.metrics.edge_height / 2
         return (x[0], baseheight,
                 x[1], baseheight + int(m.edge_height * 0.45))
 
     def activity_line_width(self, node):
-        m = self.metrix
+        m = self.metrics
 
         index = self.edge.y
         activities = [a for a in node.activities if index in a['lifetime']]
@@ -193,4 +193,4 @@ class EdgeMetrix(object):
         else:
             level = 0
 
-        return m.cellSize / 2 * level
+        return m.cellsize / 2 * level

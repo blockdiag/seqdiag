@@ -21,18 +21,18 @@ from blockdiag.utils.XY import XY
 class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
     def pagesize(self, scaled=False):
         if scaled:
-            m = self.metrix
+            m = self.metrics
         else:
-            m = self.metrix.originalMetrix()
+            m = self.metrics.originalMetrics()
 
-        return m.pageSize(self.nodes)
+        return m.pagesize(self.nodes)
 
     def _draw_background(self):
-        m = self.metrix.originalMetrix()
+        m = self.metrics.originalMetrics()
         pagesize = self.pagesize()
 
         for group in self.diagram.groups:
-            box = m.groupBox(group)
+            box = m.groupbox(group)
             self.drawer.rectangle(box, fill=group.color, filter='blur')
 
         for node in self.nodes:
@@ -57,21 +57,21 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             self.group_label(group, **kwargs)
 
     def node_activity_shadow(self, node, activity):
-        box = self.metrix.originalMetrix().activity_shadow(node, activity)
+        box = self.metrics.originalMetrics().activity_shadow(node, activity)
         self.drawer.rectangle(box, fill=self.shadow, filter='transp-blur')
 
     def node_activity(self, node, activity):
-        box = self.metrix.activity_box(node, activity)
+        box = self.metrics.activity_box(node, activity)
         self.drawer.rectangle(box, width=1, outline=self.diagram.linecolor,
                               fill='moccasin')
 
     def lifelines(self, node):
-        line = self.metrix.lifeline(node)
+        line = self.metrics.lifeline(node)
         self.drawer.line(line, fill=self.diagram.linecolor, style='dotted')
 
     def edge(self, edge):
         # render shaft of edges
-        m = self.metrix.edge(edge)
+        m = self.metrics.edge(edge)
         shaft = m.shaft
         self.drawer.line(shaft, fill=edge.color, style=edge.style)
 
@@ -89,15 +89,16 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             else:
                 halign = 'right'
 
-            textbox = self.metrix.edge(edge).textbox
+            textbox = self.metrics.edge(edge).textbox
             self.drawer.textarea(textbox, edge.label,
                                  fill=edge.color, halign=halign,
-                                 font=self.font, fontsize=self.metrix.fontSize)
+                                 font=self.font,
+                                 fontsize=self.metrics.fontsize)
 
     # edge_label is obsoleted (keep for compatibility)
     def edge_label(self, edge):
         pass
 
 
-from DiagramMetrix import DiagramMetrix
-DiagramDraw.set_metrix_class(DiagramMetrix)
+from DiagramMetrics import DiagramMetrics
+DiagramDraw.set_metrics_class(DiagramMetrics)
