@@ -157,12 +157,19 @@ class Diagram(blockdiag.elements.Diagram):
         self.int_attrs.append('edge_length')
 
         self.draw_activation = True
+        self.autonumber = False
         self.edge_height = None
         self.edge_length = None
         self.groups = []
 
     def set_draw_activation(self, value):
-        if value == 'False':
+        if value.lower() == 'false':
             self.draw_activation = False
         else:
             self.draw_activation = True
+
+    def set_autonumber(self, value):
+        if value.lower() == 'false':
+            self.autonumber = False
+        else:
+            self.autonumber = True
