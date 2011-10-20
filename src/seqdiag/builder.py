@@ -28,6 +28,8 @@ class DiagramTreeBuilder:
         self.update_y_coordinates()
         if self.diagram.draw_activation:
             self.create_activities()
+        if self.diagram.autonumber:
+            self.update_label_numbered()
         max_y = self.diagram.edges[-1].y
 
         self.diagram.colwidth = len(self.diagram.nodes)
@@ -40,6 +42,10 @@ class DiagramTreeBuilder:
         for edge in self.diagram.edges:
             edge.y = height
             height += edge.height
+
+    def update_label_numbered(self):
+        for i, edge in enumerate(self.diagram.edges):
+            edge.label = u"%d. %s" % (i + 1, edge.label or "")
 
     def create_activities(self):
         first_node = self.diagram.edges[0].node1
