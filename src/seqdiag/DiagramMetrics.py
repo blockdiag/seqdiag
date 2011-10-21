@@ -55,6 +55,10 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
 
         return XY(size.x, size.y + height)
 
+    @property
+    def edge_length(self):
+        return self.node_width + self.span_width
+ 
     def groupbox(self, group):
         box = list(self.cell(group).marginbox)
         box[3] = self.pagesize.y - self.page_margin.y - self.page_padding[2]
@@ -165,11 +169,12 @@ class EdgeMetrics(object):
                         XY(x2 - margin, baseheight)]
 
             if self.edge.failed:
+                edge_length = self.metrics.edge_length
                 pt1, pt2 = line
                 if self.edge.direction == 'right':
-                    pt2 = XY((pt1.x + pt2.x) / 2, (pt1.y + pt2.y) / 2)
+                    pt2 = XY(pt2.x - edge_length / 2, (pt1.y + pt2.y) / 2)
                 else:
-                    pt1 = XY((pt1.x + pt2.x) / 2, (pt1.y + pt2.y) / 2)
+                    pt1 = XY(pt1.x + edge_length / 2, (pt1.y + pt2.y) / 2)
                 line = [pt1, pt2]
 
         return line
