@@ -63,19 +63,20 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
     def lifeline(self, node):
         delayed = []
         for e in self.edges:
-             if isinstance(e, elements.EdgeSeparator) and e.type == 'delay':
-                 delayed.append(e.y)
+            if isinstance(e, elements.EdgeSeparator) and e.type == 'delay':
+                delayed.append(e.y)
 
         lines = []
         d = self.cellsize
         pt = self.node(node).bottom
         for i in delayed:
-             y1 = self.edge_baseheight + self.span_height + int(i * self.edge_height)
-             y2 = y1 + self.edge_height
-             lines.append(((pt, XY(pt.x, y1)), 'dashed'))
-             lines.append(((XY(pt.x, y1 + d), XY(pt.x, y2 - d)), 'dotted'))
+            y1 = self.edge_baseheight + self.span_height + \
+                 int(i * self.edge_height)
+            y2 = y1 + self.edge_height
+            lines.append(((pt, XY(pt.x, y1)), 'dashed'))
+            lines.append(((XY(pt.x, y1 + d), XY(pt.x, y2 - d)), 'dotted'))
 
-             pt = XY(pt.x, y2)
+            pt = XY(pt.x, y2)
 
         y = self.pagesize.y - self.page_margin.y - self.page_padding[2]
         lines.append(((pt, XY(pt.x, y)), 'dashed'))
