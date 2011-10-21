@@ -13,7 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import elements
 import blockdiag.DiagramMetrics
 from blockdiag.utils.XY import XY
 
@@ -29,6 +28,7 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
 
         self.node_count = len(diagram.nodes)
         self.edges = diagram.edges
+        self.separators = diagram.separators
         self.edge_height = self.node_height
 
         if diagram.edge_height:
@@ -49,7 +49,8 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
     def pagesize(self):
         size = super(DiagramMetrics, self).pagesize(self.node_count, 1)
 
-        height = int(sum(e.height for e in self.edges) * self.edge_height)
+        edges = self.edges + self.separators
+        height = int(sum(e.height for e in edges) * self.edge_height)
         height += self.span_height + self.edge_height / 2
 
         return XY(size.x, size.y + height)
@@ -62,9 +63,9 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
 
     def lifeline(self, node):
         delayed = []
-        for e in self.edges:
-            if isinstance(e, elements.EdgeSeparator) and e.type == 'delay':
-                delayed.append(e.y)
+        for sep in self.separators:
+            if sep.type == 'delay':
+                delayed.append(sep.y)
 
         lines = []
         d = self.cellsize

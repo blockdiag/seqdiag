@@ -185,6 +185,7 @@ class Diagram(blockdiag.elements.Diagram):
         self.edge_height = None
         self.edge_length = None
         self.groups = []
+        self.separators = []
 
     def set_draw_activation(self, value):
         if value.lower() == 'false':
