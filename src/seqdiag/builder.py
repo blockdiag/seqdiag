@@ -33,7 +33,7 @@ class DiagramTreeBuilder:
         for sep in self.diagram.separators:
             self.diagram.edges.remove(sep)
 
-        if self.diagram.draw_activation:
+        if self.diagram.activation != 'none':
             self.create_activities()
 
         if self.diagram.autonumber:
