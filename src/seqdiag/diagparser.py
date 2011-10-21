@@ -57,6 +57,7 @@ Node = namedtuple('Node', 'id attrs')
 Attr = namedtuple('Attr', 'name value')
 Edge = namedtuple('Edge', 'nodes attrs subedge')
 DefAttrs = namedtuple('DefAttrs', 'object attrs')
+Separator = namedtuple('Separator', 'type value')
 
 
 class ParseException(Exception):
@@ -72,7 +73,7 @@ def tokenize(str):
         ('Space',   (r'[ \t\r\n]+',)),
         ('Name',    (ur'[A-Za-z_\u0080-\uffff]'
                      ur'[A-Za-z_\-.0-9\u0080-\uffff]*',)),
-        ('Op',      (r'(=>)|[{};,=\[\]]|(<<?--?)|(--?>>?)',)),
+        ('Op',      (r'===|\.\.\.|(=>)|[{};,=\[\]]|(<<?--?)|(--?>>?)',)),
         ('Number',  (r'-?(\.[0-9]+)|([0-9]+(\.[0-9]*)?)',)),
         ('String',  (r'(?P<quote>"|\').*?(?<!\\)(?P=quote)', DOTALL)),
     ]
@@ -88,6 +89,7 @@ def parse(seq):
     flatten = lambda list: sum(list, [])
     n = lambda s: a(Token('Name', s)) >> tokval
     op = lambda s: a(Token('Op', s)) >> tokval
+    sepstr = lambda s: a(Token('SepStr', s)) >> tokval
     op_ = lambda s: skip(op(s))
     id = some(lambda t:
         t.type in ['Name', 'Number', 'String']).named('id') >> tokval
@@ -137,6 +139,10 @@ def parse(seq):
         | node_stmt
     )
     subgraph_stmt_list = many(subgraph_stmt + skip(maybe(op(';'))))
+    separator_stmt = (
+        (op('===') | op('...')) +
+        many(node_id) +
+        (op_('===') | op_('...')) >> unarg(Separator))
     subgraph = (
         skip(n('group')) +
         skip(maybe(id)) +
@@ -148,6 +154,7 @@ def parse(seq):
           attr_stmt
         | subgraph
         | edge_stmt
+        | separator_stmt
         | graph_attr
         | node_stmt
     )

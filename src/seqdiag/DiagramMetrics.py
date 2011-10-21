@@ -13,14 +13,21 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import elements
 import blockdiag.DiagramMetrics
 from blockdiag.utils.XY import XY
+
+try:
+    from blockdiag.utils.PILTextFolder import PILTextFolder as TextFolder
+except ImportError:
+    from blockdiag.utils.TextFolder import TextFolder
 
 
 class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
     def __init__(self, diagram, **kwargs):
         super(DiagramMetrics, self).__init__(diagram, **kwargs)
 
+        self.node_count = len(diagram.nodes)
         self.edges = diagram.edges
         self.edge_height = self.node_height
 
@@ -38,13 +45,9 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
 
             self.span_width = span_width
 
-    def pagesize(self, nodes=None):
-        if nodes:
-            width = max(x.xy.x for x in nodes)
-        else:
-            width = 0
-
-        size = super(DiagramMetrics, self).pagesize(width + 1, 1)
+    @property
+    def pagesize(self):
+        size = super(DiagramMetrics, self).pagesize(self.node_count, 1)
 
         height = int(sum(e.height for e in self.edges) * self.edge_height)
         height += self.span_height + self.edge_height / 2
@@ -53,17 +56,31 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
 
     def groupbox(self, group):
         box = list(self.cell(group).marginbox)
-        box[3] = self.pagesize().y - self.page_margin.y - self.page_padding[2]
+        box[3] = self.pagesize.y - self.page_margin.y - self.page_padding[2]
 
         return box
 
     def lifeline(self, node):
-        y = self.pagesize().y - self.page_margin.y - self.page_padding[2]
+        delayed = []
+        for e in self.edges:
+             if isinstance(e, elements.EdgeSeparator) and e.type == 'delay':
+                 delayed.append(e.y)
 
-        pt1 = self.node(node).bottom
-        pt2 = XY(pt1.x, y)
+        lines = []
+        d = self.cellsize
+        pt = self.node(node).bottom
+        for i in delayed:
+             y1 = self.edge_baseheight + self.span_height + int(i * self.edge_height)
+             y2 = y1 + self.edge_height
+             lines.append(((pt, XY(pt.x, y1)), 'dashed'))
+             lines.append(((XY(pt.x, y1 + d), XY(pt.x, y2 - d)), 'dotted'))
 
-        return [pt1, pt2]
+             pt = XY(pt.x, y2)
+
+        y = self.pagesize.y - self.page_margin.y - self.page_padding[2]
+        lines.append(((pt, XY(pt.x, y)), 'dashed'))
+
+        return lines
 
     def activity_box(self, node, activity):
         # y coodinates for top of activity box
@@ -78,7 +95,7 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
         if ends < len(self.edges):
             y2 = self.edge(self.edges[ends]).baseheight
         else:
-            y2 = self.pagesize().y - self.page_margin.y - self.edge_height / 2
+            y2 = self.pagesize.y - self.page_margin.y - self.edge_height / 2
 
         index = activity['level']
         base_x = self.cell(node).bottom.x
@@ -93,8 +110,15 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
         return (box[0] + self.shadow_offset.x, box[1] + self.shadow_offset.y,
                 box[2] + self.shadow_offset.x, box[3] + self.shadow_offset.y)
 
+    @property
+    def edge_baseheight(self):
+        return self.cell(self.edges[0].node1).bottom.y
+
     def edge(self, edge):
         return EdgeMetrics(edge, self)
+
+    def separator(self, separator):
+        return SeparatorMetrics(separator, self)
 
 
 class EdgeMetrics(object):
@@ -104,7 +128,7 @@ class EdgeMetrics(object):
 
     @property
     def baseheight(self):
-        return self.metrics.node(self.edge.node1).bottom.y + \
+        return self.metrics.edge_baseheight + \
                self.metrics.span_height + self.metrics.edge_height / 2 + \
                int(self.edge.y * self.metrics.edge_height)
 
@@ -194,3 +218,47 @@ class EdgeMetrics(object):
             level = 0
 
         return m.cellsize / 2 * level
+
+
+class SeparatorMetrics(object):
+    def __init__(self, separator, metrics):
+        self.metrics = metrics
+        self.separator = separator
+
+        x1, x2 = self.baseline
+        y1 = self.baseheight
+        y2 = y1 + self.metrics.edge_height
+        d = self.metrics.cellsize / 4
+
+        lines = TextFolder((x1, y1, x2, y2), separator.label,
+                           adjustBaseline=True, font=self.metrics.font,
+                           fontsize=self.metrics.fontsize)
+        box = lines.outlineBox()
+        self.labelbox = (box[0] - d, box[1] - d, box[2] + d, box[3] + d)
+
+    @property
+    def baseheight(self):
+        return self.metrics.edge_baseheight + self.metrics.span_height + \
+               int(self.separator.y * self.metrics.edge_height)
+
+    @property
+    def baseline(self):
+        pagesize = self.metrics.pagesize
+        padding = self.metrics.page_padding
+        margin = self.metrics.page_margin
+        return (margin.x + padding[3], pagesize.x - margin.x - padding[1])
+
+    @property
+    def lines(self):
+        lines = []
+        if self.separator.type == 'divider':
+            y = (self.labelbox[1] + self.labelbox[3]) / 2
+            x1, x2 = self.baseline
+            d = self.metrics.cellsize / 4
+
+            lines.append((XY(x1, y - d), XY(self.labelbox[0], y - d)))
+            lines.append((XY(x1, y + d), XY(self.labelbox[0], y + d)))
+            lines.append((XY(self.labelbox[2], y - d), XY(x2, y - d)))
+            lines.append((XY(self.labelbox[2], y + d), XY(x2, y + d)))
+
+        return lines
