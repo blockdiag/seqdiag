@@ -85,6 +85,10 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         else:
             self.drawer.polygon(head, outline=edge.color, fill=edge.color)
 
+        if edge.failed:
+            for line in m.failedmark:
+                self.drawer.line(line, fill=edge.color)
+
         if edge.label:
             if edge.direction in ('right', 'self'):
                 halign = 'left'

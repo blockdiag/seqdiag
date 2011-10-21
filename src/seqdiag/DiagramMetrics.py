@@ -164,7 +164,31 @@ class EdgeMetrics(object):
                 line = [XY(x1 + margin, baseheight),
                         XY(x2 - margin, baseheight)]
 
+            if self.edge.failed:
+                pt1, pt2 = line
+                if self.edge.direction == 'right':
+                    pt2 = XY((pt1.x + pt2.x) / 2, (pt1.y + pt2.y) / 2)
+                else:
+                    pt1 = XY((pt1.x + pt2.x) / 2, (pt1.y + pt2.y) / 2)
+                line = [pt1, pt2]
+
         return line
+
+    @property
+    def failedmark(self):
+        lines = []
+        if self.edge.failed:
+            r = self.metrics.cellsize
+            if self.edge.direction == 'right':
+                pt = self.shaft[-1]
+                lines.append((XY(pt.x + r, pt.y - r), XY(pt.x + r * 3, pt.y + r)))
+                lines.append((XY(pt.x + r, pt.y + r), XY(pt.x + r * 3, pt.y - r)))
+            else:
+                pt = self.shaft[0]
+                lines.append((XY(pt.x - r * 3, pt.y - r), XY(pt.x - r, pt.y + r)))
+                lines.append((XY(pt.x - r * 3, pt.y + r), XY(pt.x - r, pt.y - r)))
+
+        return lines
 
     @property
     def head(self):
