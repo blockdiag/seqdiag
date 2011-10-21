@@ -95,20 +95,16 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             else:
                 halign = 'right'
 
-            textbox = self.metrics.edge(edge).textbox
-            self.drawer.textarea(textbox, edge.label,
+            self.drawer.textarea(m.textbox, edge.label,
                                  fill=edge.color, halign=halign,
                                  font=self.font,
                                  fontsize=self.metrics.fontsize)
-
-    # edge_label is obsoleted (keep for compatibility)
-    def edge_label(self, edge):
-        pass
 
     def separator(self, sep):
         m = self.metrics.separator(sep)
         for line in m.lines:
             self.drawer.line(line, fill=self.fill, style=sep.style)
+
         if sep.type == 'delay':
             self.drawer.rectangle(m.labelbox, fill='white', outline='white')
         elif sep.type == 'divider':
