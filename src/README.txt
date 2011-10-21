@@ -84,6 +84,12 @@ Apache License 2.0
 History
 =======
 
+0.5.0 (2011-10-21)
+------------------
+* Add diagram attributes: activation, autonumber
+* Add edge attribute: failed
+* Add separator syntax
+
 0.4.3 (2011-10-19)
 ------------------
 * Follow blockdiag-0.9.5 interface
