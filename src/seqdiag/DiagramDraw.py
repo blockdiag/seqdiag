@@ -14,6 +14,7 @@
 #  limitations under the License.
 
 import sys
+import elements
 import blockdiag.DiagramDraw
 from blockdiag.utils.XY import XY
 
@@ -25,11 +26,10 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         else:
             m = self.metrics.originalMetrics()
 
-        return m.pagesize(self.nodes)
+        return m.pagesize
 
     def _draw_background(self):
         m = self.metrics.originalMetrics()
-        pagesize = self.pagesize()
 
         for group in self.diagram.groups:
             box = m.groupbox(group)
@@ -66,10 +66,16 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
                               fill='moccasin')
 
     def lifelines(self, node):
-        line = self.metrics.lifeline(node)
-        self.drawer.line(line, fill=self.diagram.linecolor, style='dotted')
+        for line, style in self.metrics.lifeline(node):
+            self.drawer.line(line, fill=self.diagram.linecolor, style=style)
 
     def edge(self, edge):
+        if isinstance(edge, elements.DiagramEdge):
+            self._edge(edge)
+        else:
+            self._separator(edge)
+
+    def _edge(self, edge):
         # render shaft of edges
         m = self.metrics.edge(edge)
         shaft = m.shaft
@@ -98,6 +104,20 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
     # edge_label is obsoleted (keep for compatibility)
     def edge_label(self, edge):
         pass
+
+    def _separator(self, sep):
+        m = self.metrics.separator(sep)
+        for line in m.lines:
+            self.drawer.line(line, fill=self.fill, style=sep.style)
+        if sep.type == 'delay':
+            self.drawer.rectangle(m.labelbox, fill='white', outline='white')
+        elif sep.type == 'divider':
+            self.drawer.rectangle(m.labelbox, fill=sep.color,
+                                  outline=sep.linecolor)
+
+        self.drawer.textarea(m.labelbox, sep.label,
+                             fill=sep.textcolor, font=self.font,
+                             fontsize=self.metrics.fontsize)
 
 
 from DiagramMetrics import DiagramMetrics

@@ -44,7 +44,8 @@ class DiagramTreeBuilder:
             height += edge.height
 
     def update_label_numbered(self):
-        for i, edge in enumerate(self.diagram.edges):
+        seq = (e for e in self.diagram.edges  if isinstance(e, DiagramEdge))
+        for i, edge in enumerate(seq):
             edge.label = u"%d. %s" % (i + 1, edge.label or "")
 
     def create_activities(self):
@@ -126,6 +127,11 @@ class DiagramTreeBuilder:
 
             elif isinstance(stmt, diagparser.DefAttrs):
                 group.set_attributes(stmt.attrs)
+
+            elif isinstance(stmt, diagparser.Separator):
+                sep = EdgeSeparator(stmt.type, " ".join(stmt.value))
+                sep.group = group
+                group.edges.append(sep)
 
             else:
                 raise AttributeError("Unknown sentense: " + str(type(stmt)))

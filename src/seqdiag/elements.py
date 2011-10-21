@@ -51,6 +51,30 @@ class DiagramNode(blockdiag.elements.DiagramNode):
         self.activity[index] = []
 
 
+class EdgeSeparator(blockdiag.elements.Base):
+    basecolor = (208, 208, 208)
+    linecolor = (0, 0, 0)
+
+    @classmethod
+    def clear(cls):
+        super(EdgeSeparator, cls).clear()
+        cls.basecolor = (208, 208, 208)
+        cls.linecolor = (0, 0, 0)
+
+    def __init__(self, _type, label):
+        super(EdgeSeparator, self).__init__()
+        self.label = label
+        self.group = None
+        self.style = None
+        self.height = 1
+        self.color = self.basecolor
+
+        if _type == '===':
+            self.type = 'divider'
+        elif _type == '...':
+            self.type = 'delay'
+
+
 class DiagramEdge(blockdiag.elements.DiagramEdge):
     def __init__(self, node1, node2):
         super(DiagramEdge, self).__init__(node1, node2)
