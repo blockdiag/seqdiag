@@ -84,6 +84,7 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
         self.activate = True
         self.async = False
         self.diagonal = False
+        self.failed = False
         self.return_label = ''
 
     @property
@@ -128,6 +129,10 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
 
     def set_return(self, value):
         self.return_label = value
+
+    def set_failed(self, value):
+        self.failed = True
+        self.activate = False
 
     def set_activate(self, value):
         self.activate = True
