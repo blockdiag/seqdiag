@@ -58,7 +58,7 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
     @property
     def edge_length(self):
         return self.node_width + self.span_width
- 
+
     def groupbox(self, group):
         box = list(self.cell(group).marginbox)
         box[3] = self.pagesize.y - self.page_margin.y - self.page_padding[2]
@@ -186,12 +186,16 @@ class EdgeMetrics(object):
             r = self.metrics.cellsize
             if self.edge.direction == 'right':
                 pt = self.shaft[-1]
-                lines.append((XY(pt.x + r, pt.y - r), XY(pt.x + r * 3, pt.y + r)))
-                lines.append((XY(pt.x + r, pt.y + r), XY(pt.x + r * 3, pt.y - r)))
+                lines.append((XY(pt.x + r, pt.y - r),
+                              XY(pt.x + r * 3, pt.y + r)))
+                lines.append((XY(pt.x + r, pt.y + r),
+                              XY(pt.x + r * 3, pt.y - r)))
             else:
                 pt = self.shaft[0]
-                lines.append((XY(pt.x - r * 3, pt.y - r), XY(pt.x - r, pt.y + r)))
-                lines.append((XY(pt.x - r * 3, pt.y + r), XY(pt.x - r, pt.y - r)))
+                lines.append((XY(pt.x - r * 3, pt.y - r),
+                              XY(pt.x - r, pt.y + r)))
+                lines.append((XY(pt.x - r * 3, pt.y + r),
+                              XY(pt.x - r, pt.y - r)))
 
         return lines
 
