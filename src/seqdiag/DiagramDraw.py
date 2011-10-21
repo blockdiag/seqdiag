@@ -14,7 +14,6 @@
 #  limitations under the License.
 
 import sys
-import elements
 import blockdiag.DiagramDraw
 from blockdiag.utils.XY import XY
 
@@ -53,6 +52,9 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
         super(DiagramDraw, self)._draw_elements(**kwargs)
 
+        for sep in self.diagram.separators:
+            self.separator(sep)
+
         for group in self.diagram.groups:
             self.group_label(group, **kwargs)
 
@@ -70,12 +72,6 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             self.drawer.line(line, fill=self.diagram.linecolor, style=style)
 
     def edge(self, edge):
-        if isinstance(edge, elements.DiagramEdge):
-            self._edge(edge)
-        else:
-            self._separator(edge)
-
-    def _edge(self, edge):
         # render shaft of edges
         m = self.metrics.edge(edge)
         shaft = m.shaft
@@ -105,7 +101,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
     def edge_label(self, edge):
         pass
 
-    def _separator(self, sep):
+    def separator(self, sep):
         m = self.metrics.separator(sep)
         for line in m.lines:
             self.drawer.line(line, fill=self.fill, style=sep.style)

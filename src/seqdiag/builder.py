@@ -26,14 +26,18 @@ class DiagramTreeBuilder:
 
         self.update_order()
         self.update_y_coordinates()
-        if self.diagram.draw_activation:
-            self.create_activities()
-        if self.diagram.autonumber:
-            self.update_label_numbered()
         max_y = self.diagram.edges[-1].y
-
         self.diagram.colwidth = len(self.diagram.nodes)
         self.diagram.colheight = int(math.ceil(max_y * 0.5 + 1.5))
+
+        for sep in self.diagram.separators:
+            self.diagram.edges.remove(sep)
+
+        if self.diagram.draw_activation:
+            self.create_activities()
+
+        if self.diagram.autonumber:
+            self.update_label_numbered()
 
         return self.diagram
 
@@ -44,8 +48,7 @@ class DiagramTreeBuilder:
             height += edge.height
 
     def update_label_numbered(self):
-        seq = (e for e in self.diagram.edges  if isinstance(e, DiagramEdge))
-        for i, edge in enumerate(seq):
+        for i, edge in enumerate(self.diagram.edges):
             edge.label = u"%d. %s" % (i + 1, edge.label or "")
 
     def create_activities(self):
@@ -131,6 +134,7 @@ class DiagramTreeBuilder:
             elif isinstance(stmt, diagparser.Separator):
                 sep = EdgeSeparator(stmt.type, " ".join(stmt.value))
                 sep.group = group
+                self.diagram.separators.append(sep)
                 group.edges.append(sep)
 
             else:
