@@ -69,6 +69,10 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
     def lifelines(self, node):
         for line, style in self.metrics.lifeline(node):
+            # FIXME: hotfix to blockdiag-0.9.6
+            if hasattr(style, 'subject'):
+                style = style.subject
+
             self.drawer.line(line, fill=self.diagram.linecolor, style=style)
 
     def edge(self, edge):
