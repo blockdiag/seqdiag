@@ -86,6 +86,10 @@ History
 
 0.5.0 (2011-10-21)
 ------------------
+* Fix bugs
+
+0.5.0 (2011-10-21)
+------------------
 * Add diagram attributes: activation, autonumber
 * Add edge attribute: failed
 * Add separator syntax
