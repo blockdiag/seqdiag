@@ -46,7 +46,7 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
             self.span_width = span_width
 
         for edge in diagram.edges:
-            edge.textheight = self.edge_textheight(edge)
+            edge.textwidth, edge.textheight = self.edge_textsize(edge)
 
             height = self.edge_height + edge.textheight
             if edge.diagonal:
@@ -120,7 +120,8 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
         return (box[0] + self.shadow_offset.x, box[1] + self.shadow_offset.y,
                 box[2] + self.shadow_offset.x, box[3] + self.shadow_offset.y)
 
-    def edge_textheight(self, edge):
+    def edge_textsize(self, edge):
+        width = 0
         height = 0
         if edge.label:
             if edge.direction == 'self':
@@ -130,13 +131,14 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
                 width = self.cell(edge.right_node).center.x - \
                         self.cell(edge.left_node).center.x
 
+            width = width * 3 / 4
             lines = TextFolder((0, 0, width, 1024), edge.label,
                                adjustBaseline=True, font=self.font,
                                fontsize=self.fontsize)
             textbox = lines.outlineBox()
             height = textbox[3] - textbox[1] + self.line_spacing
 
-        return height
+        return (width, height)
 
     def cell(self, obj, use_padding=True):
         if isinstance(obj, (elements.DiagramEdge, elements.EdgeSeparator)):
@@ -256,20 +258,16 @@ class EdgeMetrics(object):
         m = self.metrics
 
         if self.edge.direction == 'self':
-            x1 = m.node(self.edge.node1).bottom.x
-            x2 = x1 + m.node_width + m.span_width
-
-            x = [x1, x2]
-        else:
-            x = [m.node(self.edge.node1).bottom.x,
-                 m.node(self.edge.node2).bottom.x]
-            x.sort()
-
-        x[0] += self.activity_line_width(self.edge.node1)
+            x = m.node(self.edge.node1).bottom.x + \
+                self.activity_line_width(self.edge.node1)
+        elif self.edge.direction == 'right':
+            x = m.node(self.edge.left_node).bottom.x + \
+                self.activity_line_width(self.edge.node1)
+        else:  # left
+            x = m.node(self.edge.right_node).bottom.x - self.edge.textwidth
 
         y1 = self.metrics.cell(self.edge).top.y
-        return (x[0], y1,
-                x[1], y1 + self.edge.textheight)
+        return (x, y1, x + self.edge.textwidth, y1 + self.edge.textheight)
 
     def activity_line_width(self, node):
         m = self.metrics
