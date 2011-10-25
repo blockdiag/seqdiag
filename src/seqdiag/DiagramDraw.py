@@ -19,14 +19,6 @@ from blockdiag.utils.XY import XY
 
 
 class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
-    def pagesize(self, scaled=False):
-        if scaled:
-            m = self.metrics
-        else:
-            m = self.metrics.originalMetrics()
-
-        return m.pagesize
-
     def _draw_background(self):
         m = self.metrics.originalMetrics()
 

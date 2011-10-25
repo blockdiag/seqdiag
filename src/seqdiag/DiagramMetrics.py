@@ -13,8 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import elements
 import blockdiag.DiagramMetrics
 from blockdiag.utils.XY import XY
+from blockdiag.utils.collections import namedtuple
 
 try:
     from blockdiag.utils.PILTextFolder import PILTextFolder as TextFolder
@@ -45,15 +47,18 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
 
             self.span_width = span_width
 
-    @property
-    def pagesize(self):
-        size = super(DiagramMetrics, self).pagesize(self.node_count, 1)
+        edge_height = self.edge_height
+        for edge in diagram.edges:
+            y = edge.order + 1
+            if edge.diagonal:
+                self.spreadsheet.set_node_height(y, edge_height * 3 / 2)
+            else:
+                self.spreadsheet.set_node_height(y, edge_height)
 
-        edges = self.edges + self.separators
-        height = int(sum(e.height for e in edges) * self.edge_height)
-        height += self.span_height + self.edge_height / 2
-
-        return XY(size.x, size.y + height)
+    def pagesize(self, width=None, height=None):
+        width = self.node_count
+        height = len(self.edges) + len(self.separators) + 1
+        return super(DiagramMetrics, self).pagesize(width, height)
 
     @property
     def edge_length(self):
@@ -61,7 +66,7 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
 
     def groupbox(self, group):
         box = list(self.cell(group).marginbox)
-        box[3] = self.pagesize.y - self.page_margin.y - self.page_padding[2]
+        box[3] = self.pagesize().y - self.page_margin.y - self.page_padding[2]
 
         return box
 
@@ -69,7 +74,7 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
         delayed = []
         for sep in self.separators:
             if sep.type == 'delay':
-                delayed.append(sep.y)
+                delayed.append(sep.order)
 
         lines = []
         d = self.cellsize
@@ -83,7 +88,7 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
 
             pt = XY(pt.x, y2)
 
-        y = self.pagesize.y - self.page_margin.y - self.page_padding[2]
+        y = self.pagesize().y - self.page_margin.y - self.page_padding[2]
         lines.append(((pt, XY(pt.x, y)), 'dashed'))
 
         return lines
@@ -101,7 +106,7 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
         if ends < len(self.edges):
             y2 = self.edge(self.edges[ends]).baseheight
         else:
-            y2 = self.pagesize.y - self.page_margin.y - self.edge_height / 2
+            y2 = self.pagesize().y - self.page_margin.y - self.edge_height / 2
 
         index = activity['level']
         base_x = self.cell(node).bottom.x
@@ -120,6 +125,14 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
     def edge_baseheight(self):
         return self.cell(self.edges[0].node1).bottom.y
 
+    def cell(self, obj, use_padding=True):
+        if isinstance(obj, (elements.DiagramEdge, elements.EdgeSeparator)):
+            klass = namedtuple('_', 'xy width height colwidth colheight')
+            edge = klass(XY(1, obj.order + 1), None, None, 1, 1)
+            return super(DiagramMetrics, self).cell(edge)
+        else:
+            return super(DiagramMetrics, self).cell(obj, use_padding)
+
     def edge(self, edge):
         return EdgeMetrics(edge, self)
 
@@ -134,9 +147,7 @@ class EdgeMetrics(object):
 
     @property
     def baseheight(self):
-        return self.metrics.edge_baseheight + \
-               self.metrics.span_height + self.metrics.edge_height / 2 + \
-               int(self.edge.y * self.metrics.edge_height)
+        return self.metrics.cell(self.edge).top.y
 
     @property
     def shaft(self):
@@ -245,7 +256,7 @@ class EdgeMetrics(object):
     def activity_line_width(self, node):
         m = self.metrics
 
-        index = self.edge.y
+        index = self.edge.order
         activities = [a for a in node.activities if index in a['lifetime']]
         if activities:
             level = max(a['level'] for a in activities)
@@ -273,12 +284,11 @@ class SeparatorMetrics(object):
 
     @property
     def baseheight(self):
-        return self.metrics.edge_baseheight + self.metrics.span_height + \
-               int(self.separator.y * self.metrics.edge_height)
+        return self.metrics.cell(self.separator).top.y
 
     @property
     def baseline(self):
-        pagesize = self.metrics.pagesize
+        pagesize = self.metrics.pagesize()
         padding = self.metrics.page_padding
         margin = self.metrics.page_margin
         return (margin.x + padding[3], pagesize.x - margin.x - padding[1])
