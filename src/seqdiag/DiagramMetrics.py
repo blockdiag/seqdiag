@@ -173,8 +173,13 @@ class EdgeMetrics(object):
 
             margin = m.cellsize
             if self.edge.diagonal:
-                line = [XY(x1 + margin, baseheight),
-                        XY(x2 - margin, baseheight + m.edge_height * 3 / 4)]
+                height = m.edge_height * 3 / 4
+                if self.edge.direction == 'right':
+                    line = [XY(x1 + margin, baseheight),
+                            XY(x2 - margin, baseheight + height)]
+                else:
+                    line = [XY(x1 + margin, baseheight + height),
+                            XY(x2 - margin, baseheight)]
             else:
                 line = [XY(x1 + margin, baseheight),
                         XY(x2 - margin, baseheight)]
