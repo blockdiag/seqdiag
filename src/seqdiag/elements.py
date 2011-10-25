@@ -66,7 +66,6 @@ class EdgeSeparator(blockdiag.elements.Base):
         self.label = label
         self.group = None
         self.style = None
-        self.height = 1
         self.color = self.basecolor
 
         if _type == '===':
@@ -79,7 +78,7 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
     def __init__(self, node1, node2):
         super(DiagramEdge, self).__init__(node1, node2)
 
-        self.height = 1
+        self.textheight = 0
         self.order = 0
         self.activate = True
         self.async = False
@@ -122,7 +121,6 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
 
     def set_diagonal(self, value):
         self.diagonal = True
-        self.height = 1.5
 
     def set_async(self, value):
         self.dir = 'forward'
@@ -182,12 +180,10 @@ class Diagram(blockdiag.elements.Diagram):
     def __init__(self):
         super(Diagram, self).__init__()
 
-        self.int_attrs.append('edge_height')
         self.int_attrs.append('edge_length')
 
         self.activation = True
         self.autonumber = False
-        self.edge_height = None
         self.edge_length = None
         self.groups = []
         self.separators = []
@@ -205,3 +201,9 @@ class Diagram(blockdiag.elements.Diagram):
             self.autonumber = False
         else:
             self.autonumber = True
+
+    def set_edge_height(self, value):
+        msg = "WARNING: edge_height is obsoleted; use span_height\n"
+        sys.stderr.write(msg)
+
+        self.span_width = int(value)

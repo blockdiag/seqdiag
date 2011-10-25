@@ -93,7 +93,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
             self.drawer.textarea(m.textbox, edge.label,
                                  fill=edge.color, halign=halign,
-                                 font=self.font,
+                                 valign='top', font=self.font,
                                  fontsize=self.metrics.fontsize)
 
     def separator(self, sep):

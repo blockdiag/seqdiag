@@ -25,16 +25,14 @@ except ImportError:
 
 
 class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
+    edge_height = 10
+
     def __init__(self, diagram, **kwargs):
         super(DiagramMetrics, self).__init__(diagram, **kwargs)
 
         self.node_count = len(diagram.nodes)
         self.edges = diagram.edges
         self.separators = diagram.separators
-        self.edge_height = self.node_height
-
-        if diagram.edge_height:
-            self.edge_height = diagram.edge_height
 
         if diagram.edge_length:
             span_width = diagram.edge_length - self.node_width
@@ -47,13 +45,14 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
 
             self.span_width = span_width
 
-        edge_height = self.edge_height
         for edge in diagram.edges:
-            y = edge.order + 1
+            edge.textheight = self.edge_textheight(edge)
+
+            height = self.edge_height + edge.textheight
             if edge.diagonal:
-                self.spreadsheet.set_node_height(y, edge_height * 3 / 2)
-            else:
-                self.spreadsheet.set_node_height(y, edge_height)
+                height += self.node_height * 3 / 4
+
+            self.spreadsheet.set_node_height(edge.order + 1, height)
 
     def pagesize(self, width=None, height=None):
         width = self.node_count
@@ -125,11 +124,29 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
     def edge_baseheight(self):
         return self.cell(self.edges[0].node1).bottom.y
 
+    def edge_textheight(self, edge):
+        height = 0
+        if edge.label:
+            if edge.direction == 'self':
+                cell = self.cell(edge.left_node)
+                width = (cell.right.x - cell.left.x) / 2 + self.span_width / 2
+            else:
+                width = self.cell(edge.right_node).center.x - \
+                        self.cell(edge.left_node).center.x
+
+            lines = TextFolder((0, 0, width, 1024), edge.label,
+                               adjustBaseline=True, font=self.font,
+                               fontsize=self.fontsize)
+            textbox = lines.outlineBox()
+            height = textbox[3] - textbox[1] + self.line_spacing
+
+        return height
+
     def cell(self, obj, use_padding=True):
         if isinstance(obj, (elements.DiagramEdge, elements.EdgeSeparator)):
             klass = namedtuple('_', 'xy width height colwidth colheight')
             edge = klass(XY(1, obj.order + 1), None, None, 1, 1)
-            return super(DiagramMetrics, self).cell(edge)
+            return super(DiagramMetrics, self).cell(edge, use_padding=False)
         else:
             return super(DiagramMetrics, self).cell(obj, use_padding)
 
@@ -147,7 +164,7 @@ class EdgeMetrics(object):
 
     @property
     def baseheight(self):
-        return self.metrics.cell(self.edge).top.y
+        return self.metrics.cell(self.edge).top.y + self.edge.textheight
 
     @property
     def shaft(self):
@@ -173,7 +190,7 @@ class EdgeMetrics(object):
 
             margin = m.cellsize
             if self.edge.diagonal:
-                height = m.edge_height * 3 / 4
+                height = m.node_height * 3 / 4
                 if self.edge.direction == 'right':
                     line = [XY(x1 + margin, baseheight),
                             XY(x2 - margin, baseheight + height)]
@@ -254,9 +271,9 @@ class EdgeMetrics(object):
 
         x[0] += self.activity_line_width(self.edge.node1)
 
-        baseheight = self.baseheight - self.metrics.edge_height / 2
-        return (x[0], baseheight,
-                x[1], baseheight + int(m.edge_height * 0.45))
+        y1 = self.metrics.cell(self.edge).top.y
+        return (x[0], y1,
+                x[1], y1 + self.edge.textheight)
 
     def activity_line_width(self, node):
         m = self.metrics
@@ -278,7 +295,7 @@ class SeparatorMetrics(object):
 
         x1, x2 = self.baseline
         y1 = self.baseheight
-        y2 = y1 + self.metrics.edge_height
+        y2 = y1 + self.metrics.node_height
         d = self.metrics.cellsize / 4
 
         lines = TextFolder((x1, y1, x2, y2), separator.label,
