@@ -80,7 +80,7 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
         super(DiagramEdge, self).__init__(node1, node2)
 
         self.height = 1
-        self.y = 0
+        self.order = 0
         self.activate = True
         self.async = False
         self.diagonal = False

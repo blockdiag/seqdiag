@@ -24,11 +24,10 @@ class DiagramTreeBuilder:
         self.diagram = Diagram()
         self.diagram = self.instantiate(self.diagram, tree)
 
-        self.update_order()
-        self.update_y_coordinates()
-        max_y = self.diagram.edges[-1].y
+        self.update_node_order()
+        self.update_edge_order()
         self.diagram.colwidth = len(self.diagram.nodes)
-        self.diagram.colheight = int(math.ceil(max_y * 0.5 + 1.5))
+        self.diagram.colheight = len(self.diagram.edges) + 1
 
         for sep in self.diagram.separators:
             self.diagram.edges.remove(sep)
@@ -41,11 +40,9 @@ class DiagramTreeBuilder:
 
         return self.diagram
 
-    def update_y_coordinates(self):
-        height = 0
-        for edge in self.diagram.edges:
-            edge.y = height
-            height += edge.height
+    def update_edge_order(self):
+        for i, edge in enumerate(self.diagram.edges):
+            edge.order = i
 
     def update_label_numbered(self):
         for i, edge in enumerate(self.diagram.edges):
@@ -79,7 +76,7 @@ class DiagramTreeBuilder:
         for node in self.diagram.nodes:
             node.deactivate()
 
-    def update_order(self):
+    def update_node_order(self):
         x = 0
         uniq = []
 
