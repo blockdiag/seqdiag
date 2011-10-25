@@ -78,6 +78,7 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
     def __init__(self, node1, node2):
         super(DiagramEdge, self).__init__(node1, node2)
 
+        self.textwidth = 0
         self.textheight = 0
         self.order = 0
         self.activate = True
