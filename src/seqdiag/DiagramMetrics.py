@@ -73,15 +73,15 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
         delayed = []
         for sep in self.separators:
             if sep.type == 'delay':
-                delayed.append(sep.order)
+                delayed.append(sep)
 
         lines = []
         d = self.cellsize
         pt = self.node(node).bottom
-        for i in delayed:
-            y1 = self.edge_baseheight + self.span_height + \
-                 int(i * self.edge_height)
-            y2 = y1 + self.edge_height
+        for sep in delayed:
+            m = self.cell(sep)
+            y1 = m.top.y
+            y2 = m.bottom.y
             lines.append(((pt, XY(pt.x, y1)), 'dashed'))
             lines.append(((XY(pt.x, y1 + d), XY(pt.x, y2 - d)), 'dotted'))
 
@@ -119,10 +119,6 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
 
         return (box[0] + self.shadow_offset.x, box[1] + self.shadow_offset.y,
                 box[2] + self.shadow_offset.x, box[3] + self.shadow_offset.y)
-
-    @property
-    def edge_baseheight(self):
-        return self.cell(self.edges[0].node1).bottom.y
 
     def edge_textheight(self, edge):
         height = 0
