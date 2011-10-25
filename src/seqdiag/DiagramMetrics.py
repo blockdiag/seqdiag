@@ -82,8 +82,8 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
             m = self.cell(sep)
             y1 = m.top.y
             y2 = m.bottom.y
-            lines.append(((pt, XY(pt.x, y1)), 'dashed'))
-            lines.append(((XY(pt.x, y1 + d), XY(pt.x, y2 - d)), 'dotted'))
+            lines.append(((pt, XY(pt.x, y1)), '8,4'))
+            lines.append(((XY(pt.x, y1 + d), XY(pt.x, y2 - d)), '2,8'))
 
             pt = XY(pt.x, y2)
 
