@@ -88,7 +88,7 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
             pt = XY(pt.x, y2)
 
         y = self.pagesize().y - self.page_margin.y - self.page_padding[2]
-        lines.append(((pt, XY(pt.x, y)), 'dashed'))
+        lines.append(((pt, XY(pt.x, y)), '8,4'))
 
         return lines
 
