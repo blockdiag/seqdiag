@@ -207,4 +207,4 @@ class Diagram(blockdiag.elements.Diagram):
         msg = "WARNING: edge_height is obsoleted; use span_height\n"
         sys.stderr.write(msg)
 
-        self.span_width = int(value)
+        self.span_height = int(value)
