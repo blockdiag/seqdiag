@@ -84,7 +84,12 @@ Apache License 2.0
 History
 =======
 
-0.5.1 (2011-10-21)
+0.5.2 (2011-10-27)
+------------------
+* Implement auto edge height adjusting
+* Fix bugs
+
+0.5.1 (2011-10-24)
 ------------------
 * Fix bugs
 
