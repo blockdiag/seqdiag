@@ -96,6 +96,18 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
                                  valign='top', font=self.font,
                                  fontsize=self.metrics.fontsize)
 
+        if edge.lnote:
+            self.drawer.rectangle(m.lnotebox, fill='yellow', outline='black')
+            self.drawer.textarea(m.lnotebox, edge.lnote,
+                                 fill=edge.color, valign='top', font=self.font,
+                                 fontsize=self.metrics.fontsize)
+
+        if edge.rnote:
+            self.drawer.rectangle(m.rnotebox, fill='yellow', outline='black')
+            self.drawer.textarea(m.rnotebox, edge.rnote,
+                                 fill=edge.color, valign='top', font=self.font,
+                                 fontsize=self.metrics.fontsize)
+
     def separator(self, sep):
         m = self.metrics.separator(sep)
         for line in m.lines:

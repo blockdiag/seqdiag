@@ -15,6 +15,7 @@
 
 import elements
 import blockdiag.DiagramMetrics
+from blockdiag.utils import Box
 from blockdiag.utils.XY import XY
 from blockdiag.utils.collections import namedtuple
 
@@ -51,6 +52,16 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
             height = self.edge_height + edge.textheight
             if edge.diagonal:
                 height += self.node_height * 3 / 4
+
+            if edge.lnote:
+                edge.lnotesize = self.edge_lnotesize(edge)
+                if height < edge.lnotesize.y:
+                    height = edge.lnotesize.y
+
+            if edge.rnote:
+                edge.rnotesize = self.edge_rnotesize(edge)
+                if height < edge.rnotesize.y:
+                    height = edge.rnotesize.y
 
             self.spreadsheet.set_node_height(edge.order + 1, height)
 
@@ -120,6 +131,16 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
         return (box[0] + self.shadow_offset.x, box[1] + self.shadow_offset.y,
                 box[2] + self.shadow_offset.x, box[3] + self.shadow_offset.y)
 
+    def textsize(self, string, width=65535):
+        width = width * 3 / 4
+        lines = TextFolder((0, 0, width, 65535), string,
+                           font=self.font, fontsize=self.fontsize)
+        textbox = lines.outlineBox()
+
+        width = textbox[2] - textbox[0]
+        height = textbox[3] - textbox[1] + self.line_spacing
+        return XY(width, height)
+
     def edge_textsize(self, edge):
         width = 0
         height = 0
@@ -130,15 +151,32 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
             else:
                 width = self.cell(edge.right_node).center.x - \
                         self.cell(edge.left_node).center.x
+            width, height = self.textsize(edge.label, width)
 
-            width = width * 3 / 4
-            lines = TextFolder((0, 0, width, 1024), edge.label,
-                               adjustBaseline=True, font=self.font,
-                               fontsize=self.fontsize)
-            textbox = lines.outlineBox()
-            height = textbox[3] - textbox[1] + self.line_spacing
+        return XY(width, height)
 
-        return (width, height)
+    def edge_lnotesize(self, edge):
+        width = 0
+        height = 0
+        if edge.lnote:
+            cell = self.cell(edge.left_node)
+            width = cell.center.x - self.cellsize * 3
+            width, height = self.textsize(edge.lnote, width)
+
+        return XY(width, height)
+
+    def edge_rnotesize(self, edge):
+        width = 0
+        height = 0
+        if edge.rnote:
+            cell = self.cell(edge.right_node)
+            if edge.direction == 'self':
+                width = self.pagesize().x - cell.right.x - self.cellsize * 3
+            else:
+                width = self.pagesize().x - cell.center.x - self.cellsize * 3
+            width, height = self.textsize(edge.rnote, width)
+
+        return XY(width, height)
 
     def cell(self, obj, use_padding=True):
         if isinstance(obj, (elements.DiagramEdge, elements.EdgeSeparator)):
@@ -162,7 +200,12 @@ class EdgeMetrics(object):
 
     @property
     def baseheight(self):
-        return self.metrics.cell(self.edge).top.y + self.edge.textheight
+        cell = self.metrics.cell(self.edge)
+        if cell.height == self.edge.lnotesize.y or \
+           cell.height == self.edge.rnotesize.y:
+            return cell.center.y
+        else:
+            return cell.top.y + self.edge.textheight
 
     @property
     def shaft(self):
@@ -266,7 +309,7 @@ class EdgeMetrics(object):
         else:  # left
             x = m.node(self.edge.right_node).bottom.x - self.edge.textwidth
 
-        y1 = self.metrics.cell(self.edge).top.y
+        y1 = self.baseheight - self.edge.textheight
         return (x, y1, x + self.edge.textwidth, y1 + self.edge.textheight)
 
     def activity_line_width(self, node):
@@ -280,6 +323,32 @@ class EdgeMetrics(object):
             level = 0
 
         return m.cellsize / 2 * level
+
+    @property
+    def lnotebox(self):
+        if not self.edge.lnote:
+            return Box(0, 0, 0, 0)
+
+        m = self.metrics
+        cell = m.cell(self.edge.left_node)
+        x = cell.center.x - m.cellsize * 2 - self.edge.lnotesize.x
+        y = self.baseheight - self.edge.lnotesize.y / 2
+        return Box(x, y, x + self.edge.lnotesize.x, y + self.edge.lnotesize.y)
+
+    @property
+    def rnotebox(self):
+        if not self.edge.rnote:
+            return Box(0, 0, 0, 0)
+
+        m = self.metrics
+        cell = m.cell(self.edge.right_node)
+        if self.edge.direction == 'self':
+            x = cell.right.x + m.cellsize * 2
+        else:
+            x = cell.center.x + m.cellsize * 2
+
+        y = self.baseheight - self.edge.rnotesize.y / 2
+        return Box(x, y, x + self.edge.rnotesize.x, y + self.edge.rnotesize.y)
 
 
 class SeparatorMetrics(object):
