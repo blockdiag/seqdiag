@@ -97,13 +97,23 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
                                  fontsize=self.metrics.fontsize)
 
         if edge.lnote:
-            self.drawer.rectangle(m.lnotebox, fill='yellow', outline='black')
+            polygon = m.lnoteshape
+            self.drawer.polygon(polygon, fill='yellow', outline=self.fill)
+
+            folded = [polygon[1], XY(polygon[1].x, polygon[2].y), polygon[2]]
+            self.drawer.line(folded, fill=self.fill)
+
             self.drawer.textarea(m.lnotebox, edge.lnote,
                                  fill=edge.color, valign='top', font=self.font,
                                  fontsize=self.metrics.fontsize)
 
         if edge.rnote:
-            self.drawer.rectangle(m.rnotebox, fill='yellow', outline='black')
+            polygon = m.rnoteshape
+            self.drawer.polygon(polygon, fill='yellow', outline=self.fill)
+
+            folded = [polygon[1], XY(polygon[1].x, polygon[2].y), polygon[2]]
+            self.drawer.line(folded, fill=self.fill)
+
             self.drawer.textarea(m.rnotebox, edge.rnote,
                                  fill=edge.color, valign='top', font=self.font,
                                  fontsize=self.metrics.fontsize)
