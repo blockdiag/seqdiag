@@ -331,9 +331,20 @@ class EdgeMetrics(object):
 
         m = self.metrics
         cell = m.cell(self.edge.left_node)
-        x = cell.center.x - m.cellsize * 2 - self.edge.lnotesize.x
+        x = cell.center.x - m.cellsize * 3 - self.edge.lnotesize.x
         y = self.baseheight - self.edge.lnotesize.y / 2
         return Box(x, y, x + self.edge.lnotesize.x, y + self.edge.lnotesize.y)
+
+    @property
+    def lnoteshape(self):
+        if not self.edge.lnote:
+            return []
+
+        r = self.metrics.cellsize
+        box = self.lnotebox
+        return [XY(box[0], box[1]), XY(box[2], box[1]),
+                XY(box[2] + r, box[1] + r), XY(box[2] + r, box[3]),
+                XY(box[0],  box[3])]
 
     @property
     def rnotebox(self):
@@ -349,6 +360,17 @@ class EdgeMetrics(object):
 
         y = self.baseheight - self.edge.rnotesize.y / 2
         return Box(x, y, x + self.edge.rnotesize.x, y + self.edge.rnotesize.y)
+
+    @property
+    def rnoteshape(self):
+        if not self.edge.rnote:
+            return []
+
+        r = self.metrics.cellsize
+        box = self.rnotebox
+        return [XY(box[0], box[1]), XY(box[2], box[1]),
+                XY(box[2] + r, box[1] + r), XY(box[2] + r, box[3]),
+                XY(box[0],  box[3])]
 
 
 class SeparatorMetrics(object):
