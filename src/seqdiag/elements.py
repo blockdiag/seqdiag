@@ -78,6 +78,10 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
     def __init__(self, node1, node2):
         super(DiagramEdge, self).__init__(node1, node2)
 
+        self.lnote = None
+        self.lnotesize = XY(0, 0)
+        self.rnote = None
+        self.rnotesize = XY(0, 0)
         self.textwidth = 0
         self.textheight = 0
         self.order = 0
@@ -119,6 +123,9 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
                 direction = 'right'
 
         return direction
+
+    def set_note(self, value):
+        self.rnote = value
 
     def set_diagonal(self, value):
         self.diagonal = True
