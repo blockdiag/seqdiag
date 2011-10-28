@@ -74,14 +74,14 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         m = self.metrics.originalMetrics()
         dx, dy = m.shadow_offset
 
-        if edge.lnote:
-            polygon = m.edge(edge).lnoteshape
+        if edge.leftnote:
+            polygon = m.edge(edge).leftnoteshape
             shadow = [XY(pt.x + dx, pt.y + dy) for pt in polygon]
             self.drawer.polygon(shadow, fill=self.shadow,
                                 outline=self.shadow, filter='transp-blur')
 
-        if edge.rnote:
-            polygon = m.edge(edge).rnoteshape
+        if edge.rightnote:
+            polygon = m.edge(edge).rightnoteshape
             shadow = [XY(pt.x + dx, pt.y + dy) for pt in polygon]
             self.drawer.polygon(shadow, fill=self.shadow,
                                 outline=self.shadow, filter='transp-blur')
@@ -115,25 +115,25 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
                                  valign='top', font=self.font,
                                  fontsize=self.metrics.fontsize)
 
-        if edge.lnote:
-            polygon = m.lnoteshape
+        if edge.leftnote:
+            polygon = m.leftnoteshape
             self.drawer.polygon(polygon, fill='yellow', outline=self.fill)
 
             folded = [polygon[1], XY(polygon[1].x, polygon[2].y), polygon[2]]
             self.drawer.line(folded, fill=self.fill)
 
-            self.drawer.textarea(m.lnotebox, edge.lnote,
+            self.drawer.textarea(m.leftnotebox, edge.leftnote,
                                  fill=edge.color, valign='top', font=self.font,
                                  fontsize=self.metrics.fontsize)
 
-        if edge.rnote:
-            polygon = m.rnoteshape
+        if edge.rightnote:
+            polygon = m.rightnoteshape
             self.drawer.polygon(polygon, fill='yellow', outline=self.fill)
 
             folded = [polygon[1], XY(polygon[1].x, polygon[2].y), polygon[2]]
             self.drawer.line(folded, fill=self.fill)
 
-            self.drawer.textarea(m.rnotebox, edge.rnote,
+            self.drawer.textarea(m.rightnotebox, edge.rightnote,
                                  fill=edge.color, valign='top', font=self.font,
                                  fontsize=self.metrics.fontsize)
 
