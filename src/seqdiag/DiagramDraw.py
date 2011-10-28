@@ -117,7 +117,8 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
         if edge.leftnote:
             polygon = m.leftnoteshape
-            self.drawer.polygon(polygon, fill='yellow', outline=self.fill)
+            self.drawer.polygon(polygon, fill=edge.notecolor,
+                                outline=self.fill)
 
             folded = [polygon[1], XY(polygon[1].x, polygon[2].y), polygon[2]]
             self.drawer.line(folded, fill=self.fill)
@@ -128,7 +129,8 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
         if edge.rightnote:
             polygon = m.rightnoteshape
-            self.drawer.polygon(polygon, fill='yellow', outline=self.fill)
+            self.drawer.polygon(polygon, fill=edge.notecolor,
+                                outline=self.fill)
 
             folded = [polygon[1], XY(polygon[1].x, polygon[2].y), polygon[2]]
             self.drawer.line(folded, fill=self.fill)

@@ -17,6 +17,7 @@ import re
 import sys
 import blockdiag.elements
 from blockdiag.elements import *
+from blockdiag.utils import images
 from blockdiag.utils.XY import XY
 
 
@@ -75,6 +76,18 @@ class EdgeSeparator(blockdiag.elements.Base):
 
 
 class DiagramEdge(blockdiag.elements.DiagramEdge):
+    notecolor = (255, 182, 193)  # LightPink
+
+    @classmethod
+    def clear(cls):
+        super(DiagramEdge, cls).clear()
+        cls.notecolor = (255, 182, 193)
+
+    @classmethod
+    def set_default_note_color(cls, color):
+        color = images.color_to_rgb(color)
+        cls.notecolor = color
+
     def __init__(self, node1, node2):
         super(DiagramEdge, self).__init__(node1, node2)
 
@@ -195,6 +208,10 @@ class Diagram(blockdiag.elements.Diagram):
         self.edge_length = None
         self.groups = []
         self.separators = []
+
+    def set_default_note_color(self, color):
+        color = images.color_to_rgb(color)
+        self._DiagramEdge.set_default_note_color(color)
 
     def set_activation(self, value):
         value = value.lower()
