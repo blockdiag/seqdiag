@@ -33,6 +33,9 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             for activity in node.activities:
                 self.node_activity_shadow(node, activity)
 
+        for edge in self.edges:
+            self.edge_shadow(edge)
+
         super(DiagramDraw, self)._draw_background()
 
     def _draw_elements(self, **kwargs):
@@ -66,6 +69,22 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
                 style = style.subject
 
             self.drawer.line(line, fill=self.diagram.linecolor, style=style)
+
+    def edge_shadow(self, edge):
+        m = self.metrics.originalMetrics()
+        dx, dy = m.shadow_offset
+
+        if edge.lnote:
+            polygon = m.edge(edge).lnoteshape
+            shadow = [XY(pt.x + dx, pt.y + dy) for pt in polygon]
+            self.drawer.polygon(shadow, fill=self.shadow,
+                                outline=self.shadow, filter='transp-blur')
+
+        if edge.rnote:
+            polygon = m.edge(edge).rnoteshape
+            shadow = [XY(pt.x + dx, pt.y + dy) for pt in polygon]
+            self.drawer.polygon(shadow, fill=self.shadow,
+                                outline=self.shadow, filter='transp-blur')
 
     def edge(self, edge):
         # render shaft of edges
