@@ -84,6 +84,11 @@ Apache License 2.0
 History
 =======
 
+0.6.0 (2011-10-28)
+------------------
+* Add edge attributes: note, rightnote, leftnote, notecolor
+* Add diagram atteribute: default_note_color
+
 0.5.2 (2011-10-27)
 ------------------
 * Implement auto edge height adjusting
