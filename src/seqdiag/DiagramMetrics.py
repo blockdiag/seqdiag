@@ -53,15 +53,15 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
             if edge.diagonal:
                 height += self.node_height * 3 / 4
 
-            if edge.lnote:
-                edge.lnotesize = self.edge_lnotesize(edge)
-                if height < edge.lnotesize.y:
-                    height = edge.lnotesize.y
+            if edge.leftnote:
+                edge.leftnotesize = self.edge_leftnotesize(edge)
+                if height < edge.leftnotesize.y:
+                    height = edge.leftnotesize.y
 
-            if edge.rnote:
-                edge.rnotesize = self.edge_rnotesize(edge)
-                if height < edge.rnotesize.y:
-                    height = edge.rnotesize.y
+            if edge.rightnote:
+                edge.rightnotesize = self.edge_rightnotesize(edge)
+                if height < edge.rightnotesize.y:
+                    height = edge.rightnotesize.y
 
             self.spreadsheet.set_node_height(edge.order + 1, height)
 
@@ -155,26 +155,26 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
 
         return XY(width, height)
 
-    def edge_lnotesize(self, edge):
+    def edge_leftnotesize(self, edge):
         width = 0
         height = 0
-        if edge.lnote:
+        if edge.leftnote:
             cell = self.cell(edge.left_node)
             width = cell.center.x - self.cellsize * 3
-            width, height = self.textsize(edge.lnote, width)
+            width, height = self.textsize(edge.leftnote, width)
 
         return XY(width, height)
 
-    def edge_rnotesize(self, edge):
+    def edge_rightnotesize(self, edge):
         width = 0
         height = 0
-        if edge.rnote:
+        if edge.rightnote:
             cell = self.cell(edge.right_node)
             if edge.direction == 'self':
                 width = self.pagesize().x - cell.right.x - self.cellsize * 3
             else:
                 width = self.pagesize().x - cell.center.x - self.cellsize * 3
-            width, height = self.textsize(edge.rnote, width)
+            width, height = self.textsize(edge.rightnote, width)
 
         return XY(width, height)
 
@@ -201,8 +201,8 @@ class EdgeMetrics(object):
     @property
     def baseheight(self):
         cell = self.metrics.cell(self.edge)
-        if cell.height == self.edge.lnotesize.y or \
-           cell.height == self.edge.rnotesize.y:
+        if cell.height == self.edge.leftnotesize.y or \
+           cell.height == self.edge.rightnotesize.y:
             return cell.center.y
         else:
             return cell.top.y + self.edge.textheight
@@ -325,30 +325,32 @@ class EdgeMetrics(object):
         return m.cellsize / 2 * level
 
     @property
-    def lnotebox(self):
-        if not self.edge.lnote:
+    def leftnotebox(self):
+        if not self.edge.leftnote:
             return Box(0, 0, 0, 0)
 
         m = self.metrics
         cell = m.cell(self.edge.left_node)
-        x = cell.center.x - m.cellsize * 3 - self.edge.lnotesize.x
-        y = self.baseheight - self.edge.lnotesize.y / 2
-        return Box(x, y, x + self.edge.lnotesize.x, y + self.edge.lnotesize.y)
+        notesize = self.edge.leftnotesize
+
+        x = cell.center.x - m.cellsize * 3 - notesize.x
+        y = self.baseheight - notesize.y / 2
+        return Box(x, y, x + notesize.x, y + notesize.y)
 
     @property
-    def lnoteshape(self):
-        if not self.edge.lnote:
+    def leftnoteshape(self):
+        if not self.edge.leftnote:
             return []
 
         r = self.metrics.cellsize
-        box = self.lnotebox
+        box = self.leftnotebox
         return [XY(box[0], box[1]), XY(box[2], box[1]),
                 XY(box[2] + r, box[1] + r), XY(box[2] + r, box[3]),
                 XY(box[0],  box[3]), XY(box[0], box[1])]
 
     @property
-    def rnotebox(self):
-        if not self.edge.rnote:
+    def rightnotebox(self):
+        if not self.edge.rightnote:
             return Box(0, 0, 0, 0)
 
         m = self.metrics
@@ -358,16 +360,17 @@ class EdgeMetrics(object):
         else:
             x = cell.center.x + m.cellsize * 2
 
-        y = self.baseheight - self.edge.rnotesize.y / 2
-        return Box(x, y, x + self.edge.rnotesize.x, y + self.edge.rnotesize.y)
+        notesize = self.edge.rightnotesize
+        y = self.baseheight - notesize.y / 2
+        return Box(x, y, x + notesize.x, y + notesize.y)
 
     @property
-    def rnoteshape(self):
-        if not self.edge.rnote:
+    def rightnoteshape(self):
+        if not self.edge.rightnote:
             return []
 
         r = self.metrics.cellsize
-        box = self.rnotebox
+        box = self.rightnotebox
         return [XY(box[0], box[1]), XY(box[2], box[1]),
                 XY(box[2] + r, box[1] + r), XY(box[2] + r, box[3]),
                 XY(box[0],  box[3]), XY(box[0], box[1])]
