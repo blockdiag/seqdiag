@@ -15,8 +15,7 @@
 
 import elements
 import blockdiag.DiagramMetrics
-from blockdiag.utils import Box
-from blockdiag.utils.XY import XY
+from blockdiag.utils import Box, XY
 from blockdiag.utils.collections import namedtuple
 
 try:
@@ -34,6 +33,7 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
         self.node_count = len(diagram.nodes)
         self.edges = diagram.edges
         self.separators = diagram.separators
+        self.page_padding = [0, 0, self.cellsize * 3, 0]
 
         if diagram.edge_length:
             span_width = diagram.edge_length - self.node_width
@@ -71,14 +71,16 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
         return super(DiagramMetrics, self).pagesize(width, height)
 
     @property
+    def bottomheight(self):
+        height = len(self.edges) + len(self.separators)
+        dummy = elements.DiagramNode(None)
+        dummy.xy = XY(1, height)
+        x, y = self.spreadsheet._node_bottomright(dummy, use_padding=False)
+        return y
+
+    @property
     def edge_length(self):
         return self.node_width + self.span_width
-
-    def groupbox(self, group):
-        box = list(self.cell(group).marginbox)
-        box[3] = self.pagesize().y - self.page_margin.y - self.page_padding[2]
-
-        return box
 
     def lifeline(self, node):
         delayed = []
@@ -98,7 +100,7 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
 
             pt = XY(pt.x, y2)
 
-        y = self.pagesize().y - self.page_margin.y - self.page_padding[2]
+        y = self.bottomheight + self.cellsize * 4
         lines.append(((pt, XY(pt.x, y)), '8,4'))
 
         return lines
@@ -116,7 +118,7 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
         if ends < len(self.edges):
             y2 = self.edge(self.edges[ends]).baseheight
         else:
-            y2 = self.pagesize().y - self.page_margin.y - self.edge_height / 2
+            y2 = self.bottomheight + self.cellsize * 2
 
         index = activity['level']
         base_x = self.cell(node).bottom.x
@@ -131,16 +133,6 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
         return (box[0] + self.shadow_offset.x, box[1] + self.shadow_offset.y,
                 box[2] + self.shadow_offset.x, box[3] + self.shadow_offset.y)
 
-    def textsize(self, string, width=65535):
-        width = width * 3 / 4
-        lines = TextFolder((0, 0, width, 65535), string,
-                           font=self.font, fontsize=self.fontsize)
-        textbox = lines.outlineBox()
-
-        width = textbox[2] - textbox[0]
-        height = textbox[3] - textbox[1] + self.line_spacing
-        return XY(width, height)
-
     def edge_textsize(self, edge):
         width = 0
         height = 0
@@ -151,7 +143,8 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
             else:
                 width = self.cell(edge.right_node).center.x - \
                         self.cell(edge.left_node).center.x
-            width, height = self.textsize(edge.label, width)
+            width, height = self.textsize(edge.label, width,
+                                          fontsize=edge.fontsize)
 
         return XY(width, height)
 
@@ -161,7 +154,8 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
         if edge.leftnote:
             cell = self.cell(edge.left_node)
             width = cell.center.x - self.cellsize * 3
-            width, height = self.textsize(edge.leftnote, width)
+            width, height = self.textsize(edge.leftnote, width,
+                                          fontsize=edge.fontsize)
 
         return XY(width, height)
 
@@ -173,8 +167,9 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
             if edge.direction == 'self':
                 width = self.pagesize().x - cell.right.x - self.cellsize * 3
             else:
-                width = self.pagesize().x - cell.center.x - self.cellsize * 3
-            width, height = self.textsize(edge.rightnote, width)
+                width = self.pagesize().x - cell.center.x - self.cellsize * 6
+            width, height = self.textsize(edge.rightnote, width,
+                                          fontsize=edge.fontsize)
 
         return XY(width, height)
 
@@ -386,10 +381,8 @@ class SeparatorMetrics(object):
         y2 = y1 + self.metrics.node_height
         d = self.metrics.cellsize / 4
 
-        lines = TextFolder((x1, y1, x2, y2), separator.label,
-                           adjustBaseline=True, font=self.metrics.font,
-                           fontsize=self.metrics.fontsize)
-        box = lines.outlineBox()
+        lines = TextFolder((x1, y1, x2, y2), separator.label)
+        box = lines.outlinebox
         self.labelbox = (box[0] - d, box[1] - d, box[2] + d, box[3] + d)
 
     @property
@@ -398,10 +391,12 @@ class SeparatorMetrics(object):
 
     @property
     def baseline(self):
-        pagesize = self.metrics.pagesize()
-        padding = self.metrics.page_padding
-        margin = self.metrics.page_margin
-        return (margin.x + padding[3], pagesize.x - margin.x - padding[1])
+        dummy = elements.DiagramNode(None)
+        dummy.xy = XY(0, 1)
+        dummy.colwidth = self.metrics.node_count
+        m = self.metrics.cell(dummy)
+        r = self.metrics.cellsize * 3
+        return (m.x1 - r, m.x2 + r)
 
     @property
     def lines(self):

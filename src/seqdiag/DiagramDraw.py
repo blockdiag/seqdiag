@@ -15,17 +15,11 @@
 
 import sys
 import blockdiag.DiagramDraw
-from blockdiag.utils.XY import XY
+from blockdiag.utils import XY
 
 
 class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
     def _draw_background(self):
-        m = self.metrics.originalMetrics()
-
-        for group in self.diagram.groups:
-            box = m.groupbox(group)
-            self.drawer.rectangle(box, fill=group.color, filter='blur')
-
         for node in self.nodes:
             node.activities.sort(lambda x, y: cmp(x['level'], y['level']))
 
@@ -42,9 +36,6 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
         for node in self.nodes:
             self.lifelines(node)
 
-            for activity in node.activities:
-                self.node_activity(node, activity)
-
         super(DiagramDraw, self)._draw_elements(**kwargs)
 
         for sep in self.diagram.separators:
@@ -54,7 +45,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             self.group_label(group, **kwargs)
 
     def node_activity_shadow(self, node, activity):
-        box = self.metrics.originalMetrics().activity_shadow(node, activity)
+        box = self.metrics.activity_shadow(node, activity)
         self.drawer.rectangle(box, fill=self.shadow, filter='transp-blur')
 
     def node_activity(self, node, activity):
@@ -64,14 +55,13 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
     def lifelines(self, node):
         for line, style in self.metrics.lifeline(node):
-            # FIXME: hotfix to blockdiag-0.9.6
-            if hasattr(style, 'subject'):
-                style = style.subject
-
             self.drawer.line(line, fill=self.diagram.linecolor, style=style)
 
+        for activity in node.activities:
+            self.node_activity(node, activity)
+
     def edge_shadow(self, edge):
-        m = self.metrics.originalMetrics()
+        m = self.metrics
         dx, dy = m.shadow_offset
 
         if edge.leftnote:
@@ -110,10 +100,9 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             else:
                 halign = 'right'
 
-            self.drawer.textarea(m.textbox, edge.label,
-                                 fill=edge.color, halign=halign,
-                                 valign='top', font=self.font,
-                                 fontsize=self.metrics.fontsize)
+            self.drawer.textarea(m.textbox, edge.label, fill=edge.color,
+                                 halign=halign, valign='top',
+                                 fontsize=edge.fontsize)
 
         if edge.leftnote:
             polygon = m.leftnoteshape
@@ -124,8 +113,8 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             self.drawer.line(folded, fill=self.fill)
 
             self.drawer.textarea(m.leftnotebox, edge.leftnote,
-                                 fill=edge.color, valign='top', font=self.font,
-                                 fontsize=self.metrics.fontsize)
+                                 fill=edge.color, valign='top',
+                                 fontsize=edge.fontsize)
 
         if edge.rightnote:
             polygon = m.rightnoteshape
@@ -136,8 +125,8 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             self.drawer.line(folded, fill=self.fill)
 
             self.drawer.textarea(m.rightnotebox, edge.rightnote,
-                                 fill=edge.color, valign='top', font=self.font,
-                                 fontsize=self.metrics.fontsize)
+                                 fill=edge.color, valign='top',
+                                 fontsize=edge.fontsize)
 
     def separator(self, sep):
         m = self.metrics.separator(sep)
@@ -150,9 +139,8 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             self.drawer.rectangle(m.labelbox, fill=sep.color,
                                   outline=sep.linecolor)
 
-        self.drawer.textarea(m.labelbox, sep.label,
-                             fill=sep.textcolor, font=self.font,
-                             fontsize=self.metrics.fontsize)
+        self.drawer.textarea(m.labelbox, sep.label, fill=sep.textcolor,
+                             fontsize=sep.fontsize)
 
 
 from DiagramMetrics import DiagramMetrics

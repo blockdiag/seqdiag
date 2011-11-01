@@ -16,7 +16,7 @@
 import math
 from elements import *
 import diagparser
-from blockdiag.utils.XY import XY
+from blockdiag.utils import XY
 
 
 class DiagramTreeBuilder:
@@ -43,6 +43,9 @@ class DiagramTreeBuilder:
     def update_edge_order(self):
         for i, edge in enumerate(self.diagram.edges):
             edge.order = i
+
+        for group in self.diagram.groups:
+            group.colheight = i + 2
 
     def update_label_numbered(self):
         for i, edge in enumerate(self.diagram.edges):
