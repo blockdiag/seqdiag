@@ -17,8 +17,7 @@ import re
 import sys
 import blockdiag.elements
 from blockdiag.elements import *
-from blockdiag.utils import images
-from blockdiag.utils.XY import XY
+from blockdiag.utils import images, XY
 
 
 class DiagramNode(blockdiag.elements.DiagramNode):
@@ -208,6 +207,9 @@ class Diagram(blockdiag.elements.Diagram):
         self.edge_length = None
         self.groups = []
         self.separators = []
+
+    def traverse_groups(self, preorder=False):
+        return self.groups
 
     def set_default_note_color(self, color):
         color = images.color_to_rgb(color)
