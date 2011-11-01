@@ -84,6 +84,10 @@ Apache License 2.0
 History
 =======
 
+0.6.1 (2011-11-01)
+------------------
+* Follow blockdiag-0.9.7 interface
+
 0.6.0 (2011-10-28)
 ------------------
 * Add edge attributes: note, rightnote, leftnote, notecolor
