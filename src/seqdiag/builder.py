@@ -137,6 +137,10 @@ class DiagramTreeBuilder:
                 self.diagram.separators.append(sep)
                 group.edges.append(sep)
 
+            elif isinstance(stmt, diagparser.AttrClass):
+                name = unquote(stmt.name)
+                Diagram.classes[name] = stmt
+
             else:
                 raise AttributeError("Unknown sentense: " + str(type(stmt)))
 

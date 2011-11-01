@@ -57,6 +57,7 @@ Node = namedtuple('Node', 'id attrs')
 Attr = namedtuple('Attr', 'name value')
 Edge = namedtuple('Edge', 'nodes attrs subedge')
 DefAttrs = namedtuple('DefAttrs', 'object attrs')
+AttrClass = namedtuple('AttrClass', 'name attrs')
 Separator = namedtuple('Separator', 'type value')
 
 
@@ -150,8 +151,14 @@ def parse(seq):
         subgraph_stmt_list +
         op_('}')
         >> SubGraph)
+    class_stmt = (
+        skip(n('class')) +
+        node_id +
+        attr_list
+        >> unarg(AttrClass))
     stmt = (
           attr_stmt
+        | class_stmt
         | subgraph
         | edge_stmt
         | separator_stmt
