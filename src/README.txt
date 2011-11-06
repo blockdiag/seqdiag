@@ -84,6 +84,11 @@ Apache License 2.0
 History
 =======
 
+0.6.3 (2011-11-06)
+------------------
+* Add docutils extention
+* Fix bugs
+
 0.6.2 (2011-11-01)
 ------------------
 * Add class feature (experimental)
