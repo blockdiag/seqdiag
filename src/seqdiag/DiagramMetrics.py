@@ -52,6 +52,8 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
             height = self.edge_height + edge.textheight
             if edge.diagonal:
                 height += self.node_height * 3 / 4
+            elif edge.direction == 'self':
+                height += self.cellsize * 2
 
             if edge.leftnote:
                 edge.leftnotesize = self.edge_leftnotesize(edge)
@@ -208,8 +210,10 @@ class EdgeMetrics(object):
         baseheight = self.baseheight
 
         if self.edge.direction == 'self':
-            fold_width = m.node_width / 2 + m.cellsize
-            fold_height = m.edge_height / 4
+            node = self.edge.node1
+            fold_width = m.spreadsheet.node_width[node.xy.x] / 2 + \
+                         m.spreadsheet.span_width[node.xy.x + 1] / 2
+            fold_height = m.cellsize * 2
 
             # adjust textbox to right on activity-lines
             base_x = self.metrics.node(self.edge.node1).bottom.x
