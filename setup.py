@@ -30,16 +30,14 @@ setup(
      author_email='i.tkomiya at gmail.com',
      url='http://blockdiag.com/',
      license='Apache License 2.0',
-     py_modules=['sphinxcontrib_seqdiag', 'seqdiag_sphinxhelper'],
+     py_modules=['seqdiag_sphinxhelper'],
      packages=find_packages('src'),
      package_dir={'': 'src'},
      package_data = {'': ['buildout.cfg']},
      include_package_data=True,
      install_requires=[
         'setuptools',
-        'PIL',
-        'blockdiag>=0.9.6',
-        'funcparserlib',
+        'blockdiag>=1.0.1',
          # -*- Extra requirements: -*-
      ],
      extras_require=dict(
