@@ -35,19 +35,12 @@ At the moment, the parser builds only a parse tree, not an abstract syntax tree
   [1]: http://www.graphviz.org/doc/info/lang.html
 '''
 
-import os
-import sys
 import codecs
 from re import MULTILINE, DOTALL
-from pprint import pformat
-from funcparserlib.util import pretty_tree
 from funcparserlib.lexer import make_tokenizer, Token, LexerError
 from funcparserlib.parser import (some, a, maybe, many, finished, skip,
     oneplus, forward_decl, NoParseError)
-try:
-    from collections import namedtuple
-except ImportError:
-    from blockdiag.utils.namedtuple import namedtuple
+from blockdiag.utils.namedtuple import namedtuple
 
 ENCODING = 'utf-8'
 
@@ -90,7 +83,6 @@ def parse(seq):
     flatten = lambda list: sum(list, [])
     n = lambda s: a(Token('Name', s)) >> tokval
     op = lambda s: a(Token('Op', s)) >> tokval
-    sepstr = lambda s: a(Token('SepStr', s)) >> tokval
     op_ = lambda s: skip(op(s))
     id = some(lambda t:
         t.type in ['Name', 'Number', 'String']).named('id') >> tokval
@@ -176,46 +168,6 @@ def parse(seq):
     dotfile = graph + skip(finished)
 
     return dotfile.parse(seq)
-
-
-def pretty_parse_tree(x):
-    'object -> str'
-    Pair = namedtuple('Pair', 'first second')
-    p = lambda x, y: Pair(x, y)
-
-    def kids(x):
-        'object -> list(object)'
-        if isinstance(x, (Graph, SubGraph)):
-            return [p('stmts', x.stmts)]
-        elif isinstance(x, (Node, DefAttrs)):
-            return [p('attrs', x.attrs)]
-        elif isinstance(x, Edge):
-            return [p('nodes', x.nodes), p('attrs', x.attrs)]
-        elif isinstance(x, Pair):
-            return x.second
-        else:
-            return []
-
-    def show(x):
-        'object -> str'
-        if isinstance(x, Pair):
-            return x.first
-        elif isinstance(x, Graph):
-            return 'Graph [id=%s, type=%s]' % (
-                x.id, x.type)
-        elif isinstance(x, SubGraph):
-            return 'SubGraph [id=%s]' % x.id
-        elif isinstance(x, Edge):
-            return 'Edge'
-        elif isinstance(x, Attr):
-            return 'Attr [name=%s, value=%s]' % (x.name, x.value)
-        elif isinstance(x, DefAttrs):
-            return 'DefAttrs [object=%s]' % x.object
-        elif isinstance(x, Node):
-            return 'Node [id=%s]' % x.id
-        else:
-            return unicode(x)
-    return pretty_tree(x, kids, show)
 
 
 def parse_string(string):
