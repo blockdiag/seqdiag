@@ -112,7 +112,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             self.drawer.line(folded, fill=self.fill)
 
             self.drawer.textarea(m.leftnotebox, edge.leftnote,
-                                 fill=edge.color, valign='top',
+                                 fill=edge.color, valign='top', halign='left',
                                  fontsize=self.metrics.fontsize_for(edge))
 
         if edge.rightnote:
@@ -124,7 +124,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             self.drawer.line(folded, fill=self.fill)
 
             self.drawer.textarea(m.rightnotebox, edge.rightnote,
-                                 fill=edge.color, valign='top',
+                                 fill=edge.color, valign='top', halign='left',
                                  fontsize=self.metrics.fontsize_for(edge))
 
     def separator(self, sep):
