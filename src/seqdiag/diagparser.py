@@ -51,6 +51,7 @@ Attr = namedtuple('Attr', 'name value')
 Edge = namedtuple('Edge', 'nodes attrs subedge')
 DefAttrs = namedtuple('DefAttrs', 'object attrs')
 AttrClass = namedtuple('AttrClass', 'name attrs')
+AttrPlugin = namedtuple('AttrPlugin', 'name attrs')
 Separator = namedtuple('Separator', 'type value')
 
 
@@ -65,7 +66,7 @@ def tokenize(str):
         ('Comment', (r'//.*',)),
         ('NL',      (r'[\r\n]+',)),
         ('Space',   (r'[ \t\r\n]+',)),
-        ('Name',    (ur'[A-Za-z_\u0080-\uffff]'
+        ('Name',    (ur'[A-Za-z_0-9\u0080-\uffff]'
                      ur'[A-Za-z_\-.0-9\u0080-\uffff]*',)),
         ('Op',      (r'===|\.\.\.|(=>)|[{};,=\[\]]|(<<?--?)|(--?>>?)',)),
         ('Number',  (r'-?(\.[0-9]+)|([0-9]+(\.[0-9]*)?)',)),
@@ -148,9 +149,15 @@ def parse(seq):
         node_id +
         attr_list
         >> unarg(AttrClass))
+    plugin_stmt = (
+        skip(n('plugin')) +
+        node_id +
+        attr_list
+        >> unarg(AttrPlugin))
     stmt = (
           attr_stmt
         | class_stmt
+        | plugin_stmt
         | subgraph
         | edge_stmt
         | separator_stmt
