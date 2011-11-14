@@ -140,8 +140,8 @@ class DiagramTreeBuilder:
                 name = unquote(stmt.name)
                 Diagram.classes[name] = stmt
 
-            else:
-                raise AttributeError("Unknown sentense: " + str(type(stmt)))
+            elif isinstance(stmt, diagparser.AttrPlugin):
+                self.diagram.set_plugin(stmt.name, stmt.attrs)
 
         return group
 
