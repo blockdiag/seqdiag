@@ -147,7 +147,7 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
                 width = self.cell(edge.right_node).center.x - \
                         self.cell(edge.left_node).center.x
             width, height = self.textsize(edge.label, width,
-                                          fontsize=edge.fontsize)
+                                          font=self.font_for(edge))
 
         return XY(width, height)
 
@@ -158,7 +158,7 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
             cell = self.cell(edge.left_node)
             width = cell.center.x - self.cellsize * 3
             width, height = self.textsize(edge.leftnote, width,
-                                          fontsize=edge.fontsize)
+                                          font=self.font_for(edge))
 
         return XY(width, height)
 
@@ -172,7 +172,7 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
             else:
                 width = self.pagesize().x - cell.center.x - self.cellsize * 6
             width, height = self.textsize(edge.rightnote, width,
-                                          fontsize=edge.fontsize)
+                                          font=self.font_for(edge))
 
         return XY(width, height)
 

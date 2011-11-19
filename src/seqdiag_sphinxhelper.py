@@ -13,5 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from seqdiag import diagparser, builder, DiagramDraw
+from blockdiag.utils import collections
+from blockdiag.utils.fontmap import FontMap
+from seqdiag import command, diagparser, builder, DiagramDraw
 from seqdiag.utils.rst.directives import seqdiag, SeqdiagDirective
