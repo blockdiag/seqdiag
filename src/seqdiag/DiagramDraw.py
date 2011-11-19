@@ -101,7 +101,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
             self.drawer.textarea(m.textbox, edge.label, fill=edge.color,
                                  halign=halign, valign='top',
-                                 fontsize=self.metrics.fontsize_for(edge))
+                                 font=self.metrics.font_for(edge))
 
         if edge.leftnote:
             polygon = m.leftnoteshape
@@ -113,7 +113,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
             self.drawer.textarea(m.leftnotebox, edge.leftnote,
                                  fill=edge.color, valign='top', halign='left',
-                                 fontsize=self.metrics.fontsize_for(edge))
+                                 font=self.metrics.font_for(edge))
 
         if edge.rightnote:
             polygon = m.rightnoteshape
@@ -125,7 +125,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
             self.drawer.textarea(m.rightnotebox, edge.rightnote,
                                  fill=edge.color, valign='top', halign='left',
-                                 fontsize=self.metrics.fontsize_for(edge))
+                                 font=self.metrics.font_for(edge))
 
     def separator(self, sep):
         m = self.metrics.separator(sep)
@@ -139,7 +139,7 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
                                   outline=sep.linecolor)
 
         self.drawer.textarea(m.labelbox, sep.label, fill=sep.textcolor,
-                             fontsize=self.metrics.fontsize_for(sep))
+                             font=self.metrics.font_for(sep))
 
 from DiagramMetrics import DiagramMetrics
 DiagramDraw.set_metrics_class(DiagramMetrics)
