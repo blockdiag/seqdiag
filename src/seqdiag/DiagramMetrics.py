@@ -386,7 +386,8 @@ class SeparatorMetrics(object):
         y2 = y1 + self.metrics.node_height
         d = self.metrics.cellsize / 4
 
-        lines = TextFolder((x1, y1, x2, y2), separator.label)
+        lines = TextFolder((x1, y1, x2, y2), separator.label,
+                           metrics.font_for(self))
         box = lines.outlinebox
         self.labelbox = (box[0] - d, box[1] - d, box[2] + d, box[3] + d)
 
