@@ -99,9 +99,9 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             else:
                 halign = 'right'
 
-            self.drawer.textarea(m.textbox, edge.label, fill=edge.color,
-                                 halign=halign, valign='top',
-                                 font=self.metrics.font_for(edge))
+            self.drawer.textarea(m.textbox, edge.label,
+                                 self.metrics.font_for(edge), fill=edge.color,
+                                 halign=halign, valign='top')
 
         if edge.leftnote:
             polygon = m.leftnoteshape
@@ -112,8 +112,8 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             self.drawer.line(folded, fill=self.fill)
 
             self.drawer.textarea(m.leftnotebox, edge.leftnote,
-                                 fill=edge.color, valign='top', halign='left',
-                                 font=self.metrics.font_for(edge))
+                                 self.metrics.font_for(edge), fill=edge.color,
+                                 valign='top', halign='left')
 
         if edge.rightnote:
             polygon = m.rightnoteshape
@@ -124,8 +124,8 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             self.drawer.line(folded, fill=self.fill)
 
             self.drawer.textarea(m.rightnotebox, edge.rightnote,
-                                 fill=edge.color, valign='top', halign='left',
-                                 font=self.metrics.font_for(edge))
+                                 self.metrics.font_for(edge), fill=edge.color,
+                                 valign='top', halign='left')
 
     def separator(self, sep):
         m = self.metrics.separator(sep)
@@ -138,8 +138,8 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
             self.drawer.rectangle(m.labelbox, fill=sep.color,
                                   outline=sep.linecolor)
 
-        self.drawer.textarea(m.labelbox, sep.label, fill=sep.textcolor,
-                             font=self.metrics.font_for(sep))
+        self.drawer.textarea(m.labelbox, sep.label,
+                             self.metrics.font_for(sep), fill=sep.textcolor)
 
 from DiagramMetrics import DiagramMetrics
 DiagramDraw.set_metrics_class(DiagramMetrics)
