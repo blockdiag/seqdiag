@@ -1,0 +1,7 @@
+{
+  A -> B [label = "multi\nline\nlabel", leftnote = "hello", rightnote= "world"];
+  A -> C [note = "hello world"];
+  A -> D [label = "short label", note = "goodbye\nworld"];
+  A -> B [note = "very very very very long long long long text"];
+  A -> B [leftnote = "very very very very long long long long text"];
+}

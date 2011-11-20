@@ -1,0 +1,5 @@
+{
+  class emphasis [color = pink, style = dashed];
+
+  A => B [class = emphasis];
+}
