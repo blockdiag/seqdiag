@@ -1,0 +1,8 @@
+{
+  edge_length = 200;
+
+  A => B [label = "hello\nworld"];
+  A -> B -> A [diagonal, label = "very long long long long long long long long word"];
+  A -> C [label = "good-bye"];
+  A -> A;
+}

@@ -1,0 +1,5 @@
+{
+  A [fontsize = 20];
+  A -> B;
+  A -> C [fontsize = 20, label = "hello world", note = "hello world"];
+}

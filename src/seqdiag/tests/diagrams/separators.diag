@@ -1,0 +1,9 @@
+{
+  A -> B [failed];
+  A <- B [failed, color= red];
+  === separator ===
+  A -> C;
+  ... separator ...
+  A -> C;
+}
+
