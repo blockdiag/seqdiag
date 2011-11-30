@@ -66,9 +66,11 @@ def tokenize(str):
         ('Comment', (r'(//|#).*',)),
         ('NL',      (r'[\r\n]+',)),
         ('Space',   (r'[ \t\r\n]+',)),
+        ('Separator',
+                    (r'(?P<sep>===|\.\.\.)[^\r\n]+(?P=sep)',)),
         ('Name',    (ur'[A-Za-z_0-9\u0080-\uffff]'
                      ur'[A-Za-z_\-.0-9\u0080-\uffff]*',)),
-        ('Op',      (r'===|\.\.\.|(=>)|[{};,=\[\]]|(<<?--?)|(--?>>?)',)),
+        ('Op',      (r'(=>)|[{};,=\[\]]|(<<?--?)|(--?>>?)',)),
         ('Number',  (r'-?(\.[0-9]+)|([0-9]+(\.[0-9]*)?)',)),
         ('String',  (r'(?P<quote>"|\').*?(?<!\\)(?P=quote)', DOTALL)),
     ]
@@ -87,10 +89,12 @@ def parse(seq):
     op_ = lambda s: skip(op(s))
     id = some(lambda t:
         t.type in ['Name', 'Number', 'String']).named('id') >> tokval
+    sep = some(lambda t: t.type == 'Separator').named('sep') >> tokval
     make_graph_attr = lambda args: DefAttrs(u'graph', [Attr(*args)])
     make_edge = lambda x, x2, xs, attrs, subedge: \
                        Edge([x, x2] + xs, attrs, subedge)
     make_subedge = lambda args: SubGraph(args)
+    make_separator = lambda str: Separator(str[0:3], str[3:-3].strip())
 
     node_id = id  # + maybe(port)
     a_list = (
@@ -134,9 +138,7 @@ def parse(seq):
     )
     subgraph_stmt_list = many(subgraph_stmt + skip(maybe(op(';'))))
     separator_stmt = (
-        (op('===') | op('...')) +
-        many(node_id) +
-        (op_('===') | op_('...')) >> unarg(Separator))
+        sep >> make_separator)
     subgraph = (
         skip(n('group')) +
         skip(maybe(id)) +
