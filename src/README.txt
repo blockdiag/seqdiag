@@ -84,6 +84,10 @@ Apache License 2.0
 History
 =======
 
+0.7.1 (2011-11-30)
+------------------
+* Fix bugs
+
 0.7.0 (2011-11-19)
 ------------------
 * Add fontfamily attribute for switching fontface
