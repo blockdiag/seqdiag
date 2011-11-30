@@ -2,8 +2,8 @@
 import re
 from StringIO import StringIO
 from nose.tools import eq_
-from blockdiag.builder import *
-from blockdiag.diagparser import parse_string
+from seqdiag.builder import *
+from seqdiag.diagparser import parse_string
 
 
 def argv_wrapper(func, argv=[]):

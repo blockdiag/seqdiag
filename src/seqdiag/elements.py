@@ -67,6 +67,7 @@ class EdgeSeparator(blockdiag.elements.Base):
         self.group = None
         self.style = None
         self.color = self.basecolor
+        self.order = 0
 
         if _type == '===':
             self.type = 'divider'

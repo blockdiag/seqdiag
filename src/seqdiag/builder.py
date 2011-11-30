@@ -131,7 +131,7 @@ class DiagramTreeBuilder:
                 group.set_attributes(stmt.attrs)
 
             elif isinstance(stmt, diagparser.Separator):
-                sep = EdgeSeparator(stmt.type, " ".join(stmt.value))
+                sep = EdgeSeparator(stmt.type, unquote(" ".join(stmt.value)))
                 sep.group = group
                 self.diagram.separators.append(sep)
                 group.edges.append(sep)
