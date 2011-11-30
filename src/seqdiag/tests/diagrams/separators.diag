@@ -6,5 +6,7 @@
   ... separator ...
   A -> C;
   === "quoted separator" ===
+  A -> C;
+  === separator(1) ===
 }
 
