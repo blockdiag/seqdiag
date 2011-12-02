@@ -45,6 +45,8 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
 
                 span_width = 0
 
+            self.spreadsheet.set_span_width(0, self.span_width)
+            self.spreadsheet.set_span_width(self.node_count, self.span_width)
             self.span_width = span_width
 
         for edge in diagram.edges:
