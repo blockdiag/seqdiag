@@ -51,22 +51,23 @@ def parse_option():
 
     options.type = options.type.upper()
     if not options.type in ('SVG', 'PNG', 'PDF'):
-        msg = "ERROR: unknown format: %s\n" % options.type
-        sys.stderr.write(msg)
-        sys.exit(0)
+        msg = "unknown format: %s" % options.type
+        raise RuntimeError(msg)
 
     if options.type == 'PDF':
         try:
             import reportlab.pdfgen.canvas
         except ImportError:
-            msg = "ERROR: could not output PDF format; Install reportlab\n"
-            sys.stderr.write(msg)
-            sys.exit(0)
+            msg = "could not output PDF format; Install reportlab."
+            raise RuntimeError(msg)
+
+    if options.nodoctype and options.type != 'SVG':
+        msg = "--nodoctype option work in SVG images."
+        raise RuntimeError(msg)
 
     if options.config and not os.path.isfile(options.config):
-        msg = "ERROR: config file is not found: %s\n" % options.config
-        sys.stderr.write(msg)
-        sys.exit(0)
+        msg = "config file is not found: %s" % options.config
+        raise RuntimeError(msg)
 
     configpath = options.config or "%s/.seqdiagrc" % os.environ.get('HOME')
     if os.path.isfile(configpath):
@@ -92,7 +93,11 @@ def parse_option():
 
 
 def main():
-    options, args = parse_option()
+    try:
+        options, args = parse_option()
+    except RuntimeError, e:
+        sys.stderr.write("ERROR: %s\n" % e)
+        return
 
     infile = args[0]
     if options.filename:
