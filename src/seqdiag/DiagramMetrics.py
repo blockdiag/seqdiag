@@ -145,8 +145,12 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
         height = 0
         if edge.label:
             if edge.direction == 'self':
-                cell = self.cell(edge.left_node)
-                width = (cell.right.x - cell.left.x) / 2 + self.span_width / 2
+                cell = self.cell(edge.node1)
+                if edge.node1.xy.x + 1 == self.node_count:
+                    width = cell.width / 2 + self.cellsize * 3
+                else:
+                    span_width = self.spreadsheet.span_width[edge.node1.xy.x]
+                    width = cell.width / 2 + span_width / 2
             else:
                 width = self.cell(edge.right_node).center.x - \
                         self.cell(edge.left_node).center.x
@@ -156,7 +160,7 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
         return XY(width, height)
 
     def expand_pagesize_for_note(self, edge):
-        if edge.leftnote and edge.left_node.xy.x == 0:
+        if edge.leftnote:
             cell = self.cell(edge.left_node)
             width = cell.center.x - self.cellsize * 6
 
@@ -164,12 +168,18 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
                 span_width = edge.leftnotesize.x - width
                 self.spreadsheet.span_width[0] += span_width
 
-        if edge.rightnote and self.node_count == edge.right_node.xy.x + 1:
+        if edge.rightnote:
             cell = self.cell(edge.right_node)
             if edge.direction == 'self':
-                width = self.pagesize().x - cell.right.x - self.cellsize * 3
+                if edge.node1.xy.x + 1 == self.node_count:
+                    right = cell.right.x + self.cellsize * 3
+                else:
+                    span_width = self.spreadsheet.span_width[edge.node1.xy.x]
+                    right = cell.right.x + span_width / 2
+
+                width = self.pagesize().x - right - self.cellsize * 3
             else:
-                width = self.pagesize().x - cell.center.x - self.cellsize * 6
+                width = self.pagesize().x - cell.center.x - self.cellsize * 3
 
             if width < edge.rightnotesize.x:
                 span_width = edge.rightnotesize.x - width
@@ -210,13 +220,17 @@ class EdgeMetrics(object):
         baseheight = self.baseheight
 
         if self.edge.direction == 'self':
-            node = self.edge.node1
-            fold_width = m.spreadsheet.node_width[node.xy.x] / 2 + \
-                         m.spreadsheet.span_width[node.xy.x + 1] / 2
+            cell = m.cell(self.edge.node1)
             fold_height = m.cellsize * 2
 
+            if self.edge.node1.xy.x + 1 == m.node_count:
+                fold_width = cell.width / 2 + m.cellsize * 3
+            else:
+                span_width = m.spreadsheet.span_width[self.edge.node1.xy.x]
+                fold_width = cell.width / 2 + span_width / 2
+
             # adjust textbox to right on activity-lines
-            base_x = self.metrics.node(self.edge.node1).bottom.x
+            base_x = cell.bottom.x
             x1 = base_x + self.activity_line_width(self.edge.node1)
 
             line = [XY(x1 + m.cellsize, baseheight),
@@ -355,7 +369,11 @@ class EdgeMetrics(object):
         m = self.metrics
         cell = m.cell(self.edge.right_node)
         if self.edge.direction == 'self':
-            x = cell.right.x + m.cellsize * 2
+            if self.edge.node1.xy.x + 1 == m.node_count:
+                x = cell.right.x + m.cellsize * 5
+            else:
+                span_width = m.spreadsheet.span_width[self.edge.node1.xy.x]
+                x = cell.right.x + span_width / 2 + m.cellsize * 2
         else:
             x = cell.center.x + m.cellsize * 2
 
