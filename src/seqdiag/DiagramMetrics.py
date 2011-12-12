@@ -58,17 +58,19 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
             elif edge.direction == 'self':
                 height += self.cellsize * 2
 
+            font = self.font_for(edge)
             if edge.leftnote:
-                edge.leftnotesize = self.edge_leftnotesize(edge)
+                edge.leftnotesize = self.textsize(edge.leftnote, font=font)
                 if height < edge.leftnotesize.y:
                     height = edge.leftnotesize.y
 
             if edge.rightnote:
-                edge.rightnotesize = self.edge_rightnotesize(edge)
+                edge.rightnotesize = self.textsize(edge.rightnote, font=font)
                 if height < edge.rightnotesize.y:
                     height = edge.rightnotesize.y
 
             self.spreadsheet.set_node_height(edge.order + 1, height)
+            self.expand_pagesize_for_note(edge)
 
     def pagesize(self, width=None, height=None):
         width = self.node_count
@@ -153,30 +155,25 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
 
         return XY(width, height)
 
-    def edge_leftnotesize(self, edge):
-        width = 0
-        height = 0
-        if edge.leftnote:
+    def expand_pagesize_for_note(self, edge):
+        if edge.leftnote and edge.left_node.xy.x == 0:
             cell = self.cell(edge.left_node)
-            width = cell.center.x - self.cellsize * 3
-            width, height = self.textsize(edge.leftnote, width,
-                                          font=self.font_for(edge))
+            width = cell.center.x - self.cellsize * 6
 
-        return XY(width, height)
+            if width < edge.leftnotesize.x:
+                span_width = edge.leftnotesize.x - width
+                self.spreadsheet.span_width[0] += span_width
 
-    def edge_rightnotesize(self, edge):
-        width = 0
-        height = 0
-        if edge.rightnote:
+        if edge.rightnote and self.node_count == edge.right_node.xy.x + 1:
             cell = self.cell(edge.right_node)
             if edge.direction == 'self':
                 width = self.pagesize().x - cell.right.x - self.cellsize * 3
             else:
                 width = self.pagesize().x - cell.center.x - self.cellsize * 6
-            width, height = self.textsize(edge.rightnote, width,
-                                          font=self.font_for(edge))
 
-        return XY(width, height)
+            if width < edge.rightnotesize.x:
+                span_width = edge.rightnotesize.x - width
+                self.spreadsheet.span_width[self.node_count] += span_width
 
     def cell(self, obj, use_padding=True):
         if isinstance(obj, (elements.DiagramEdge, elements.EdgeSeparator)):
