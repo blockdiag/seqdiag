@@ -146,11 +146,7 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
         if edge.label:
             if edge.direction == 'self':
                 cell = self.cell(edge.node1)
-                if edge.node1.xy.x + 1 == self.node_count:
-                    width = cell.width / 2 + self.cellsize * 3
-                else:
-                    span_width = self.spreadsheet.span_width[edge.node1.xy.x]
-                    width = cell.width / 2 + span_width / 2
+                width = self.edge(edge).right - cell.center.x
             else:
                 width = self.cell(edge.right_node).center.x - \
                         self.cell(edge.left_node).center.x
@@ -171,12 +167,7 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
         if edge.rightnote:
             cell = self.cell(edge.right_node)
             if edge.direction == 'self':
-                if edge.node1.xy.x + 1 == self.node_count:
-                    right = cell.right.x + self.cellsize * 3
-                else:
-                    span_width = self.spreadsheet.span_width[edge.node1.xy.x]
-                    right = cell.right.x + span_width / 2
-
+                right = self.edge(edge).right
                 width = self.pagesize().x - right - self.cellsize * 3
             else:
                 width = self.pagesize().x - cell.center.x - self.cellsize * 3
@@ -215,6 +206,28 @@ class EdgeMetrics(object):
             return cell.top.y + self.edge.textheight
 
     @property
+    def right(self):
+        m = self.metrics
+        cell = m.cell(self.edge.right_node)
+
+        if self.edge.direction == 'self':
+
+            if self.edge.node1.xy.x + 1 == m.node_count:
+                width = cell.width / 2 + m.cellsize * 3
+            else:
+                span_width = m.spreadsheet.span_width[self.edge.node1.xy.x]
+                width = cell.width / 2 + span_width / 2
+
+            x = cell.bottom.x + width
+        else:
+            x = cell.bottom.x - m.cell.cellsize
+
+            if self.edge.failed:
+                x -= self.metrics.edge_length / 2
+
+        return x
+
+    @property
     def shaft(self):
         m = self.metrics
         baseheight = self.baseheight
@@ -223,19 +236,14 @@ class EdgeMetrics(object):
             cell = m.cell(self.edge.node1)
             fold_height = m.cellsize * 2
 
-            if self.edge.node1.xy.x + 1 == m.node_count:
-                fold_width = cell.width / 2 + m.cellsize * 3
-            else:
-                span_width = m.spreadsheet.span_width[self.edge.node1.xy.x]
-                fold_width = cell.width / 2 + span_width / 2
-
             # adjust textbox to right on activity-lines
             base_x = cell.bottom.x
             x1 = base_x + self.activity_line_width(self.edge.node1)
+            x2 = self.right
 
             line = [XY(x1 + m.cellsize, baseheight),
-                    XY(x1 + fold_width, baseheight),
-                    XY(x1 + fold_width, baseheight + fold_height),
+                    XY(x2, baseheight),
+                    XY(x2, baseheight + fold_height),
                     XY(x1 + m.cellsize, baseheight + fold_height)]
         else:
             x1 = self.metrics.node(self.edge.left_node).bottom.x + \
@@ -323,7 +331,7 @@ class EdgeMetrics(object):
             x = m.node(self.edge.right_node).bottom.x - self.edge.textwidth
 
         y1 = self.baseheight - self.edge.textheight
-        return (x, y1, x + self.edge.textwidth, y1 + self.edge.textheight)
+        return Box(x, y1, x + self.edge.textwidth, y1 + self.edge.textheight)
 
     def activity_line_width(self, node):
         m = self.metrics
@@ -369,11 +377,7 @@ class EdgeMetrics(object):
         m = self.metrics
         cell = m.cell(self.edge.right_node)
         if self.edge.direction == 'self':
-            if self.edge.node1.xy.x + 1 == m.node_count:
-                x = cell.right.x + m.cellsize * 5
-            else:
-                span_width = m.spreadsheet.span_width[self.edge.node1.xy.x]
-                x = cell.right.x + span_width / 2 + m.cellsize * 2
+            x = self.right + m.cellsize * 2
         else:
             x = cell.center.x + m.cellsize * 2
 
