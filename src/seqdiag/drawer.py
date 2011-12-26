@@ -14,10 +14,13 @@
 #  limitations under the License.
 
 import blockdiag.DiagramDraw
+from metrics import DiagramMetrics
 from blockdiag.utils import XY
 
 
 class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
+    MetricsClass = DiagramMetrics
+
     def _draw_background(self):
         for node in self.nodes:
             node.activities.sort(lambda x, y: cmp(x['level'], y['level']))
@@ -140,6 +143,3 @@ class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
 
         self.drawer.textarea(m.labelbox, sep.label,
                              self.metrics.font_for(sep), fill=sep.textcolor)
-
-from DiagramMetrics import DiagramMetrics
-DiagramDraw.set_metrics_class(DiagramMetrics)
