@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 from elements import *
-import diagparser
+import parser
 from blockdiag.utils import XY
 
 
@@ -114,33 +114,33 @@ class DiagramTreeBuilder:
 
     def instantiate(self, group, tree):
         for stmt in tree.stmts:
-            if isinstance(stmt, diagparser.Node):
+            if isinstance(stmt, parser.Node):
                 node = DiagramNode.get(stmt.id)
                 node.set_attributes(stmt.attrs)
                 self.append_node(node, group)
 
-            elif isinstance(stmt, diagparser.Edge):
+            elif isinstance(stmt, parser.Edge):
                 self.instantiate_edge(group, stmt)
 
-            elif isinstance(stmt, diagparser.SubGraph):
+            elif isinstance(stmt, parser.SubGraph):
                 node = NodeGroup.get(None)
                 self.instantiate(node, stmt)
                 self.diagram.groups.append(node)
 
-            elif isinstance(stmt, diagparser.DefAttrs):
+            elif isinstance(stmt, parser.DefAttrs):
                 group.set_attributes(stmt.attrs)
 
-            elif isinstance(stmt, diagparser.Separator):
+            elif isinstance(stmt, parser.Separator):
                 sep = EdgeSeparator(stmt.type, unquote(stmt.value))
                 sep.group = group
                 self.diagram.separators.append(sep)
                 group.edges.append(sep)
 
-            elif isinstance(stmt, diagparser.AttrClass):
+            elif isinstance(stmt, parser.AttrClass):
                 name = unquote(stmt.name)
                 Diagram.classes[name] = stmt
 
-            elif isinstance(stmt, diagparser.AttrPlugin):
+            elif isinstance(stmt, parser.AttrPlugin):
                 self.diagram.set_plugin(stmt.name, stmt.attrs)
 
         return group
@@ -156,7 +156,7 @@ class DiagramTreeBuilder:
 
         edge = DiagramEdge(edge_from, edge_to)
         if edge_type:
-            edge.set_attributes([diagparser.Attr('dir', edge_type)])
+            edge.set_attributes([parser.Attr('dir', edge_type)])
         edge.set_attributes(tree.attrs)
 
         if edge.dir in ('forward', 'both'):
@@ -166,7 +166,7 @@ class DiagramTreeBuilder:
 
         if len(tree.nodes) > 2:
             nodes = [edge_to.id] + tree.nodes[2:]
-            nested = diagparser.Edge(nodes, tree.attrs, tree.subedge)
+            nested = parser.Edge(nodes, tree.attrs, tree.subedge)
             self.instantiate_edge(group, nested)
         elif tree.subedge:
             self.instantiate(group, tree.subedge)
