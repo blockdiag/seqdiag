@@ -13,12 +13,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import blockdiag.DiagramDraw
+import blockdiag.drawer
 from metrics import DiagramMetrics
 from blockdiag.utils import XY
 
 
-class DiagramDraw(blockdiag.DiagramDraw.DiagramDraw):
+class DiagramDraw(blockdiag.drawer.DiagramDraw):
     MetricsClass = DiagramMetrics
 
     def _draw_background(self):
