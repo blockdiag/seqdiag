@@ -16,9 +16,9 @@
 import os
 from docutils import nodes
 from docutils.parsers import rst
-from seqdiag import diagparser
+from seqdiag import parser
 from seqdiag.builder import ScreenNodeBuilder
-from seqdiag.DiagramDraw import DiagramDraw
+from seqdiag.drawer import DiagramDraw
 from blockdiag.utils.rst import directives
 
 
@@ -42,7 +42,7 @@ class SeqdiagDirective(directives.BlockdiagDirective):
     node_class = seqdiag
 
     def node2diagram(self, node):
-        tree = diagparser.parse_string(node['code'])
+        tree = parser.parse_string(node['code'])
         return ScreenNodeBuilder.build(tree)
 
     def node2image(self, node, diagram):
