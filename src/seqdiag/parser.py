@@ -113,6 +113,7 @@ def parse(seq):
     node_stmt = node_id + attr_list >> unarg(Node)
     # We use a forward_decl becaue of circular definitions like (stmt_list ->
     # stmt -> subgraph -> stmt_list)
+    separator_stmt = (sep >> make_separator)
     subedge = forward_decl()
     edge_rel = (op('<<--') | op('<--') | op('<<-') | op('<-') |
                 op('->') | op('->>') | op('-->') | op('-->>') |
@@ -125,7 +126,7 @@ def parse(seq):
         attr_list +
         maybe(subedge)
         >> unarg(make_edge))
-    edge_stmt_list = many(edge_stmt + skip(maybe(op(';'))))
+    edge_stmt_list = many((edge_stmt | separator_stmt) + skip(maybe(op(';'))))
     subedge.define(
         op_('{') +
         edge_stmt_list +
@@ -137,8 +138,6 @@ def parse(seq):
         | node_stmt
     )
     subgraph_stmt_list = many(subgraph_stmt + skip(maybe(op(';'))))
-    separator_stmt = (
-        sep >> make_separator)
     subgraph = (
         skip(n('group')) +
         skip(maybe(id)) +

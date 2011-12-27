@@ -1,0 +1,13 @@
+{
+  A -> B;
+
+  === separator ===
+
+  A -> B {
+     B -> C;
+
+     === separator ===
+
+     B -> D;
+  }
+}
