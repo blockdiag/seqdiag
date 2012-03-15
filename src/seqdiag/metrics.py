@@ -172,6 +172,9 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
             else:
                 width = self.pagesize().x - cell.center.x - self.cellsize * 3
 
+            if edge.right_node.xy.x + 1 == self.node_count:
+                width -= self.cellsize * 2
+
             if width < edge.rightnotesize.x:
                 span_width = edge.rightnotesize.x - width
                 self.spreadsheet.span_width[self.node_count] += span_width
