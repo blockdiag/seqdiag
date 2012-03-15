@@ -19,6 +19,9 @@ import seqdiag.drawer
 import seqdiag.parser
 from blockdiag.utils.bootstrap import Application
 
+# for compatibility
+from blockdiag.utils.bootstrap import create_fontmap, detectfont
+
 
 class SeqdiagApp(Application):
     module = seqdiag
