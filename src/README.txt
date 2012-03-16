@@ -84,6 +84,11 @@ Apache License 2.0
 History
 =======
 
+0.7.3 (2012-03-16)
+------------------
+* Allow to insert separators in subedge-group
+* Fix bugs
+
 0.7.2 (2011-12-12)
 ------------------
 * Fix bugs
