@@ -143,8 +143,7 @@ def parse(seq):
     #     }
     #
     subgraph_stmt = (
-        attr_stmt
-        | graph_attr
+        graph_attr
         | node_stmt
     )
     subgraph_stmt_list = many(subgraph_stmt + skip(maybe(op(';'))))
@@ -170,8 +169,7 @@ def parse(seq):
         attr_list
         >> unarg(AttrPlugin))
     stmt = (
-        attr_stmt
-        | class_stmt
+        class_stmt
         | plugin_stmt
         | subgraph
         | edge_stmt
