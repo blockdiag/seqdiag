@@ -110,9 +110,14 @@ def parse(seq):
         >> unarg(DefAttrs))
     graph_attr = _id + op_('=') + _id >> make_graph_attr
     node_stmt = node_id + attr_list >> unarg(Node)
-    # We use a forward_decl becaue of circular definitions like (stmt_list ->
-    # stmt -> subgraph -> stmt_list)
     separator_stmt = (sep >> make_separator)
+
+    #  edge statements::
+    #     A -> B;
+    #     C -> D {
+    #       D -> E;
+    #     }
+    #
     subedge = forward_decl()
     edge_rel = (op('<<--') | op('<--') | op('<<-') | op('<-') |
                 op('->') | op('->>') | op('-->') | op('-->>') |
@@ -131,6 +136,12 @@ def parse(seq):
         edge_stmt_list +
         op_('}')
         >> make_subedge)
+
+    #  group statements::
+    #     group {
+    #        A;
+    #     }
+    #
     subgraph_stmt = (
         attr_stmt
         | graph_attr
@@ -144,6 +155,10 @@ def parse(seq):
         subgraph_stmt_list +
         op_('}')
         >> SubGraph)
+
+    #
+    #  graph
+    #
     class_stmt = (
         skip(n('class')) +
         node_id +
