@@ -113,17 +113,20 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
         return lines
 
     def activity_box(self, node, activity):
+        edges = dict([e.order, e] for e in self.edges + self.separators)
+
         # y coodinates for top of activity box
         starts = activity['lifetime'][0]
-        edge = self.edges[starts]
+        edge = edges[starts]
         y1 = self.edge(edge).baseheight
-        if edge.diagonal and edge.node2 == node:
-            y1 += self.edge_height * 3 / 4
+        if isinstance(edge, elements.DiagramEdge):
+            if edge.diagonal and edge.node2 == node:
+                y1 += self.edge_height * 3 / 4
 
         # y coodinates for bottom of activity box
         ends = activity['lifetime'][-1] + 1
-        if ends < len(self.edges):
-            y2 = self.edge(self.edges[ends]).baseheight
+        if ends < len(edges):
+            y2 = self.edge(edges[ends]).baseheight
         else:
             y2 = self.bottomheight + self.cellsize * 2
 
@@ -188,7 +191,10 @@ class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
             return super(DiagramMetrics, self).cell(obj, use_padding)
 
     def edge(self, edge):
-        return EdgeMetrics(edge, self)
+        if isinstance(edge, elements.EdgeSeparator):
+            return self.separator(edge)
+        else:
+            return EdgeMetrics(edge, self)
 
     def separator(self, separator):
         return SeparatorMetrics(separator, self)

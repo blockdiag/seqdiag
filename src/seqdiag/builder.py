@@ -54,21 +54,25 @@ class DiagramTreeBuilder:
         first_node = self.diagram.edges[0].node1
         active_nodes = {first_node: 1}
 
-        for i, edge in enumerate(self.diagram.edges):
-            if edge.node1 == edge.node2:
-                pass
-            elif edge.activate == False:
-                pass
-            elif edge.dir == 'forward':
-                if edge.node2 in active_nodes:
-                    active_nodes[edge.node2] += 1
-                else:
-                    active_nodes[edge.node2] = 1
-            elif edge.dir == 'back':
-                if edge.node2 in active_nodes:
-                    active_nodes[edge.node2] -= 1
-                else:
-                    active_nodes[edge.node2] = 0
+        edge_count = len(self.diagram.edges) + len(self.diagram.separators)
+        for i in range(edge_count):
+            match = [e for e in self.diagram.edges  if e.order == i]
+            if match:
+                edge = match[0]
+                if edge.node1 == edge.node2:
+                    pass
+                elif edge.activate == False:
+                    pass
+                elif edge.dir == 'forward':
+                    if edge.node2 in active_nodes:
+                        active_nodes[edge.node2] += 1
+                    else:
+                        active_nodes[edge.node2] = 1
+                elif edge.dir == 'back':
+                    if edge.node2 in active_nodes:
+                        active_nodes[edge.node2] -= 1
+                    else:
+                        active_nodes[edge.node2] = 0
 
             for node in active_nodes:
                 if active_nodes[node] > 0:
