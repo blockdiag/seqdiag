@@ -56,12 +56,12 @@ class DiagramTreeBuilder:
 
         edge_count = len(self.diagram.edges) + len(self.diagram.separators)
         for i in range(edge_count):
-            match = [e for e in self.diagram.edges  if e.order == i]
+            match = [e for e in self.diagram.edges if e.order == i]
             if match:
                 edge = match[0]
                 if edge.node1 == edge.node2:
                     pass
-                elif edge.activate == False:
+                elif edge.activate is False:
                     pass
                 elif edge.dir == 'forward':
                     if edge.node2 in active_nodes:
