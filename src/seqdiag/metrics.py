@@ -20,9 +20,11 @@ from blockdiag.utils import Box, XY
 from blockdiag.utils.collections import namedtuple
 
 try:
-    from blockdiag.utils.PILTextFolder import PILTextFolder as TextFolder
+    from blockdiag.utils.PILTextFolder import PILTextFolder
+    TextFolder = PILTextFolder
 except ImportError:
     from blockdiag.utils.TextFolder import TextFolder
+    TextFolder = TextFolder
 
 
 class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):

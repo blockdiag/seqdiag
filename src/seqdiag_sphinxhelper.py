@@ -19,3 +19,6 @@ from seqdiag import command, parser, builder, drawer
 from seqdiag import parser as diagparser
 from seqdiag import drawer as DiagramDraw
 from seqdiag.utils.rst.directives import seqdiag, SeqdiagDirective
+
+(collections, FontMap, command, parser, builder, drawer, 
+ diagparser, DiagramDraw, seqdiag, SeqdiagDirective)
