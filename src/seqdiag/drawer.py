@@ -96,16 +96,6 @@ class DiagramDraw(blockdiag.drawer.DiagramDraw):
             for line in m.failedmark:
                 self.drawer.line(line, fill=edge.color)
 
-        if edge.label:
-            if edge.direction in ('right', 'self'):
-                halign = 'left'
-            else:
-                halign = 'right'
-
-            self.drawer.textarea(m.textbox, edge.label,
-                                 self.metrics.font_for(edge), fill=edge.color,
-                                 halign=halign, valign='top')
-
         if edge.leftnote:
             polygon = m.leftnoteshape
             self.drawer.polygon(polygon, fill=edge.notecolor,
@@ -129,6 +119,19 @@ class DiagramDraw(blockdiag.drawer.DiagramDraw):
             self.drawer.textarea(m.rightnotebox, edge.rightnote,
                                  self.metrics.font_for(edge), fill=edge.color,
                                  valign='top', halign='left')
+
+    def edge_label(self, edge):
+        m = self.metrics.edge(edge)
+
+        if edge.label:
+            if edge.direction in ('right', 'self'):
+                halign = 'left'
+            else:
+                halign = 'right'
+
+            self.drawer.textarea(m.textbox, edge.label,
+                                 self.metrics.font_for(edge), fill=edge.color,
+                                 halign=halign, valign='top')
 
     def separator(self, sep):
         m = self.metrics.separator(sep)
