@@ -337,7 +337,8 @@ class EdgeMetrics(object):
                 self.activity_line_width(self.edge.node1)
         elif self.edge.direction == 'right':
             x = m.node(self.edge.left_node).bottom.x + \
-                self.activity_line_width(self.edge.node1)
+                self.activity_line_width(self.edge.left_node) + \
+                self.metrics.cellsize / 2
         else:  # left
             x = m.node(self.edge.right_node).bottom.x - self.edge.textwidth
 
