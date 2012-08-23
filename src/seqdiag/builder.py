@@ -181,6 +181,8 @@ class DiagramTreeBuilder:
             if edge.dir == 'both':
                 reverse.style = 'dashed'
                 reverse.label = edge.return_label
+                reverse.leftnote = None
+                reverse.rightnote = None
 
             group.edges.append(reverse)
 
