@@ -51,6 +51,9 @@ class DiagramTreeBuilder:
             edge.label = u"%d. %s" % (i + 1, edge.label or "")
 
     def create_activities(self):
+        if len(self.diagram.edges) == 0:
+            return
+
         first_node = self.diagram.edges[0].node1
         active_nodes = {first_node: 1}
 
