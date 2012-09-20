@@ -84,6 +84,11 @@ Apache License 2.0
 History
 =======
 
+0.7.4 (2012-09-20)
+------------------
+* Support blockdiag-1.1.7 interface
+* Fix bugs
+
 0.7.3 (2012-03-16)
 ------------------
 * Allow to insert separators in subedge-group
