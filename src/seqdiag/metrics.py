@@ -231,7 +231,7 @@ class EdgeMetrics(object):
 
             x = cell.bottom.x + width
         else:
-            x = cell.bottom.x - m.cell.cellsize
+            x = cell.bottom.x - m.cellsize
 
             if self.edge.failed:
                 x -= self.metrics.edge_length / 2
@@ -368,6 +368,10 @@ class EdgeMetrics(object):
 
         x = cell.center.x - m.cellsize * 3 - notesize.x
         y = self.baseheight - notesize.y / 2
+
+        if self.edge.failed and self.edge.direction == 'left':
+            x += self.metrics.edge_length / 2 - m.cellsize
+
         return Box(x, y, x + notesize.x, y + notesize.y)
 
     @property
@@ -390,6 +394,8 @@ class EdgeMetrics(object):
         cell = m.cell(self.edge.right_node)
         if self.edge.direction == 'self':
             x = self.right + m.cellsize * 2
+        elif self.edge.failed:
+            x = self.right + m.cellsize * 4
         else:
             x = cell.center.x + m.cellsize * 2
 
