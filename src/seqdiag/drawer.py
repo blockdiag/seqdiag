@@ -50,7 +50,10 @@ class DiagramDraw(blockdiag.drawer.DiagramDraw):
 
     def node_activity_shadow(self, node, activity):
         box = self.metrics.activity_shadow(node, activity)
-        self.drawer.rectangle(box, fill=self.shadow, filter='transp-blur')
+        if self.diagram.shadow_style == 'solid':
+            self.drawer.rectangle(box, fill=self.shadow)
+        else:
+            self.drawer.rectangle(box, fill=self.shadow, filter='transp-blur')
 
     def node_activity(self, node, activity):
         box = self.metrics.activity_box(node, activity)
@@ -71,14 +74,22 @@ class DiagramDraw(blockdiag.drawer.DiagramDraw):
         if edge.leftnote:
             polygon = m.edge(edge).leftnoteshape
             shadow = [XY(pt.x + dx, pt.y + dy) for pt in polygon]
-            self.drawer.polygon(shadow, fill=self.shadow,
-                                outline=self.shadow, filter='transp-blur')
+            if self.diagram.shadow_style == 'solid':
+                self.drawer.polygon(shadow, fill=self.shadow,
+                                    outline=self.shadow)
+            else:
+                self.drawer.polygon(shadow, fill=self.shadow,
+                                    outline=self.shadow, filter='transp-blur')
 
         if edge.rightnote:
             polygon = m.edge(edge).rightnoteshape
             shadow = [XY(pt.x + dx, pt.y + dy) for pt in polygon]
-            self.drawer.polygon(shadow, fill=self.shadow,
-                                outline=self.shadow, filter='transp-blur')
+            if self.diagram.shadow_style == 'solid':
+                self.drawer.polygon(shadow, fill=self.shadow,
+                                    outline=self.shadow)
+            else:
+                self.drawer.polygon(shadow, fill=self.shadow,
+                                    outline=self.shadow, filter='transp-blur')
 
     def edge(self, edge):
         # render shaft of edges
