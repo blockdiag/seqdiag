@@ -25,12 +25,14 @@ class DiagramDraw(blockdiag.drawer.DiagramDraw):
         for node in self.nodes:
             node.activities.sort(lambda x, y: cmp(x['level'], y['level']))
 
-        for node in self.nodes:
-            for activity in node.activities:
-                self.node_activity_shadow(node, activity)
+        if self.diagram.shadow_style != 'none':
+            for node in self.nodes:
+                for activity in node.activities:
+                    self.node_activity_shadow(node, activity)
 
-        for edge in self.edges:
-            self.edge_shadow(edge)
+        if self.diagram.shadow_style != 'none':
+            for edge in self.edges:
+                self.edge_shadow(edge)
 
         super(DiagramDraw, self)._draw_background()
 
