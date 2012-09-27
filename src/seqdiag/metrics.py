@@ -394,7 +394,7 @@ class EdgeMetrics(object):
         cell = m.cell(self.edge.right_node)
         if self.edge.direction == 'self':
             x = self.right + m.cellsize * 2
-        elif self.edge.failed:
+        elif self.edge.failed and self.edge.direction == 'right':
             x = self.right + m.cellsize * 4
         else:
             x = cell.center.x + m.cellsize * 2
