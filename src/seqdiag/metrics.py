@@ -15,19 +15,12 @@
 
 import sys
 import elements
-import blockdiag.DiagramMetrics
-from blockdiag.utils import Box, XY
+import blockdiag.drawer
+from blockdiag.utils import textfolder, Box, XY
 from blockdiag.utils.collections import namedtuple
 
-try:
-    from blockdiag.utils.PILTextFolder import PILTextFolder
-    TextFolder = PILTextFolder
-except ImportError:
-    from blockdiag.utils.TextFolder import TextFolder
-    TextFolder = TextFolder
 
-
-class DiagramMetrics(blockdiag.DiagramMetrics.DiagramMetrics):
+class DiagramMetrics(blockdiag.drawer.DiagramMetrics):
     edge_height = 10
 
     def __init__(self, diagram, **kwargs):
@@ -425,8 +418,8 @@ class SeparatorMetrics(object):
         y2 = y1 + self.metrics.node_height
         d = self.metrics.cellsize / 4
 
-        lines = TextFolder((x1, y1, x2, y2), separator.label,
-                           metrics.font_for(self))
+        lines = textfolder.get((x1, y1, x2, y2), separator.label,
+                               metrics.font_for(self), format=metrics.format)
         box = lines.outlinebox
         self.labelbox = (box[0] - d, box[1] - d, box[2] + d, box[3] + d)
 
