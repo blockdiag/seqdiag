@@ -15,12 +15,12 @@
 
 import sys
 import elements
-import blockdiag.drawer
+import blockdiag.metrics
 from blockdiag.utils import textfolder, Box, XY
 from blockdiag.utils.collections import namedtuple
 
 
-class DiagramMetrics(blockdiag.drawer.DiagramMetrics):
+class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
     edge_height = 10
 
     def __init__(self, diagram, **kwargs):
