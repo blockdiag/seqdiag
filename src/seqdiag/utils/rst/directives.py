@@ -46,7 +46,7 @@ class SeqdiagDirective(directives.BlockdiagDirective):
         return ScreenNodeBuilder.build(tree)
 
     def node2image(self, node, diagram):
-        filename = self._filename(node)
+        filename = self.image_filename(node)
         fontpath = self.detectfont()
         drawer = DiagramDraw(format, diagram, filename,
                              font=fontpath, antialias=antialias)
@@ -61,7 +61,7 @@ class SeqdiagDirective(directives.BlockdiagDirective):
             ratio = float(options['maxwidth']) / size[0]
             thumb_size = (options['maxwidth'], size[1] * ratio)
 
-            thumb_filename = self._filename(node, prefix='_thumb')
+            thumb_filename = self.image_filename(node, prefix='_thumb')
             if not os.path.isfile(thumb_filename):
                 drawer.filename = thumb_filename
                 drawer.draw()
