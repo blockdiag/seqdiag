@@ -39,7 +39,7 @@ import codecs
 from re import MULTILINE, DOTALL
 from funcparserlib.lexer import make_tokenizer, Token, LexerError
 from funcparserlib.parser import (some, a, maybe, many, finished, skip,
-    forward_decl)
+                                  forward_decl)
 from blockdiag.utils.namedtuple import namedtuple
 
 ENCODING = 'utf-8'
@@ -66,8 +66,7 @@ def tokenize(str):
         ('Comment', (r'(//|#).*',)),
         ('NL',      (r'[\r\n]+',)),
         ('Space',   (r'[ \t\r\n]+',)),
-        ('Separator',
-                    (r'(?P<sep>===|\.\.\.)[^\r\n]+(?P=sep)',)),
+        ('Separator', (r'(?P<sep>===|\.\.\.)[^\r\n]+(?P=sep)',)),
         ('Name',    (ur'[A-Za-z_0-9\u0080-\uffff]'
                      ur'[A-Za-z_\-.0-9\u0080-\uffff]*',)),
         ('Op',      (r'(=>)|[{};,=\[\]]|(<<?--?)|(--?>>?)',)),
@@ -88,11 +87,11 @@ def parse(seq):
     op = lambda s: a(Token('Op', s)) >> tokval
     op_ = lambda s: skip(op(s))
     id = some(lambda t:
-        t.type in ['Name', 'Number', 'String']).named('id') >> tokval
+              t.type in ['Name', 'Number', 'String']).named('id') >> tokval
     sep = some(lambda t: t.type == 'Separator').named('sep') >> tokval
     make_graph_attr = lambda args: DefAttrs(u'graph', [Attr(*args)])
     make_edge = lambda x, x2, xs, attrs, subedge: \
-                       Edge([x, x2] + xs, attrs, subedge)
+        Edge([x, x2] + xs, attrs, subedge)
     make_subedge = lambda args: SubGraph(args)
     make_separator = lambda str: Separator(str[0:3], str[3:-3].strip())
 
@@ -106,9 +105,9 @@ def parse(seq):
         many(op_('[') + many(a_list) + op_(']'))
         >> flatten)
     attr_stmt = (
-       (n('graph') | n('node') | n('edge')) +
-       attr_list
-       >> unarg(DefAttrs))
+        (n('graph') | n('node') | n('edge')) +
+        attr_list
+        >> unarg(DefAttrs))
     graph_attr = id + op_('=') + id >> make_graph_attr
     node_stmt = node_id + attr_list >> unarg(Node)
     # We use a forward_decl becaue of circular definitions like (stmt_list ->
@@ -133,7 +132,7 @@ def parse(seq):
         op_('}')
         >> make_subedge)
     subgraph_stmt = (
-          attr_stmt
+        attr_stmt
         | graph_attr
         | node_stmt
     )
@@ -156,7 +155,7 @@ def parse(seq):
         attr_list
         >> unarg(AttrPlugin))
     stmt = (
-          attr_stmt
+        attr_stmt
         | class_stmt
         | plugin_stmt
         | subgraph

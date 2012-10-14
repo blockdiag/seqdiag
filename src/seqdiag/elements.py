@@ -31,8 +31,8 @@ class DiagramNode(blockdiag.elements.DiagramNode):
         if len(self.activity) <= index:
             self.activity.insert(index, [])
 
-        if len(self.activity[index]) > 0 and \
-           self.activity[index][-1] != height - 1:
+        if (len(self.activity[index]) > 0 and
+           (self.activity[index][-1] != height - 1)):
             self.deactivate(index)
 
         self.activity[index].append(height)
