@@ -29,6 +29,7 @@ setup(
      author='Takeshi Komiya',
      author_email='i.tkomiya at gmail.com',
      url='http://blockdiag.com/',
+     download_url='http://pypi.python.org/pypi/seqdiag',
      license='Apache License 2.0',
      py_modules=['seqdiag_sphinxhelper'],
      packages=find_packages('src'),
