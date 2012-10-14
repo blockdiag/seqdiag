@@ -146,8 +146,8 @@ class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
                 cell = self.cell(edge.node1)
                 width = self.edge(edge).right - cell.center.x
             else:
-                width = self.cell(edge.right_node).center.x - \
-                        self.cell(edge.left_node).center.x
+                width = (self.cell(edge.right_node).center.x -
+                         self.cell(edge.left_node).center.x)
             width, height = self.textsize(edge.label, width,
                                           font=self.font_for(edge))
 
@@ -203,8 +203,8 @@ class EdgeMetrics(object):
     @property
     def baseheight(self):
         cell = self.metrics.cell(self.edge)
-        if cell.height == self.edge.leftnotesize.y or \
-           cell.height == self.edge.rightnotesize.y:
+        if (cell.height == self.edge.leftnotesize.y or
+           (cell.height == self.edge.rightnotesize.y)):
             return cell.center.y
         else:
             return cell.top.y + self.edge.textheight
@@ -250,8 +250,8 @@ class EdgeMetrics(object):
                     XY(x2, baseheight + fold_height),
                     XY(x1 + m.cellsize, baseheight + fold_height)]
         else:
-            x1 = self.metrics.node(self.edge.left_node).bottom.x + \
-                 self.activity_line_width(self.edge.left_node)
+            x1 = (self.metrics.node(self.edge.left_node).bottom.x +
+                  self.activity_line_width(self.edge.left_node))
             x2 = self.metrics.node(self.edge.right_node).bottom.x
 
             margin = m.cellsize
