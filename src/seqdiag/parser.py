@@ -142,16 +142,16 @@ def parse(seq):
     #        A;
     #     }
     #
-    subgraph_stmt = (
+    group_stmt = (
         graph_attr
         | node_stmt
     )
-    subgraph_stmt_list = many(subgraph_stmt + skip(maybe(op(';'))))
-    subgraph = (
+    group_stmt_list = many(group_stmt + skip(maybe(op(';'))))
+    group = (
         skip(n('group')) +
         skip(maybe(_id)) +
         op_('{') +
-        subgraph_stmt_list +
+        group_stmt_list +
         op_('}')
         >> SubGraph)
 
@@ -169,9 +169,9 @@ def parse(seq):
         attr_list
         >> unarg(AttrPlugin))
     stmt = (
-        class_stmt
+        group
+        | class_stmt
         | plugin_stmt
-        | subgraph
         | edge_stmt
         | separator_stmt
         | graph_attr
