@@ -47,6 +47,9 @@ setup(
              'pep8>=1.3',
              'unittest2',
          ],
+         rst=[
+             'docutils',
+         ],
      ),
      test_suite='nose.collector',
      tests_require=['Nose','pep8'],
