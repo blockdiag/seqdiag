@@ -17,7 +17,7 @@ import re
 import sys
 import blockdiag.elements
 from blockdiag.elements import *
-from blockdiag.utils import images, XY
+from blockdiag.utils import images, Size
 
 
 class DiagramNode(blockdiag.elements.DiagramNode):
@@ -92,9 +92,9 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
         super(DiagramEdge, self).__init__(node1, node2)
 
         self.leftnote = None
-        self.leftnotesize = XY(0, 0)
+        self.leftnotesize = Size(0, 0)
         self.rightnote = None
-        self.rightnotesize = XY(0, 0)
+        self.rightnotesize = Size(0, 0)
         self.textwidth = 0
         self.textheight = 0
         self.order = 0
