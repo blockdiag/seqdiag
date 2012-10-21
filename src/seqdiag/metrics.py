@@ -56,13 +56,13 @@ class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
             font = self.font_for(edge)
             if edge.leftnote:
                 edge.leftnotesize = self.textsize(edge.leftnote, font=font)
-                if height < edge.leftnotesize.y:
-                    height = edge.leftnotesize.y
+                if height < edge.leftnotesize.height:
+                    height = edge.leftnotesize.height
 
             if edge.rightnote:
                 edge.rightnotesize = self.textsize(edge.rightnote, font=font)
-                if height < edge.rightnotesize.y:
-                    height = edge.rightnotesize.y
+                if height < edge.rightnotesize.height:
+                    height = edge.rightnotesize.height
 
             self.spreadsheet.set_node_height(edge.order + 1, height)
             self.expand_pagesize_for_note(edge)
@@ -135,8 +135,10 @@ class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
     def activity_shadow(self, node, activity):
         box = self.activity_box(node, activity)
 
-        return (box[0] + self.shadow_offset.x, box[1] + self.shadow_offset.y,
-                box[2] + self.shadow_offset.x, box[3] + self.shadow_offset.y)
+        return Box(box[0] + self.shadow_offset.x,
+                   box[1] + self.shadow_offset.y,
+                   box[2] + self.shadow_offset.x,
+                   box[3] + self.shadow_offset.y)
 
     def edge_textsize(self, edge):
         width = 0
@@ -158,8 +160,8 @@ class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
             cell = self.cell(edge.left_node)
             width = cell.center.x - self.cellsize * 6
 
-            if width < edge.leftnotesize.x:
-                span_width = edge.leftnotesize.x - width
+            if width < edge.leftnotesize.width:
+                span_width = edge.leftnotesize.width - width
                 self.spreadsheet.span_width[0] += span_width
 
         if edge.rightnote:
@@ -173,8 +175,8 @@ class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
             if edge.right_node.xy.x + 1 == self.node_count:
                 width -= self.cellsize * 2
 
-            if width < edge.rightnotesize.x:
-                span_width = edge.rightnotesize.x - width
+            if width < edge.rightnotesize.width:
+                span_width = edge.rightnotesize.width - width
                 self.spreadsheet.span_width[self.node_count] += span_width
 
     def cell(self, obj, use_padding=True):
@@ -203,8 +205,8 @@ class EdgeMetrics(object):
     @property
     def baseheight(self):
         cell = self.metrics.cell(self.edge)
-        if (cell.height == self.edge.leftnotesize.y or
-           (cell.height == self.edge.rightnotesize.y)):
+        if (cell.height == self.edge.leftnotesize.height or
+           (cell.height == self.edge.rightnotesize.height)):
             return cell.center.y
         else:
             return cell.top.y + self.edge.textheight
@@ -359,13 +361,13 @@ class EdgeMetrics(object):
         cell = m.cell(self.edge.left_node)
         notesize = self.edge.leftnotesize
 
-        x = cell.center.x - m.cellsize * 3 - notesize.x
-        y = self.baseheight - notesize.y / 2
+        x = cell.center.x - m.cellsize * 3 - notesize.width
+        y = self.baseheight - notesize.height / 2
 
         if self.edge.failed and self.edge.direction == 'left':
             x += self.metrics.edge_length / 2 - m.cellsize
 
-        return Box(x, y, x + notesize.x, y + notesize.y)
+        return Box(x, y, x + notesize.width, y + notesize.height)
 
     @property
     def leftnoteshape(self):
@@ -393,8 +395,8 @@ class EdgeMetrics(object):
             x = cell.center.x + m.cellsize * 2
 
         notesize = self.edge.rightnotesize
-        y = self.baseheight - notesize.y / 2
-        return Box(x, y, x + notesize.x, y + notesize.y)
+        y = self.baseheight - notesize.height / 2
+        return Box(x, y, x + notesize.width, y + notesize.height)
 
     @property
     def rightnoteshape(self):
