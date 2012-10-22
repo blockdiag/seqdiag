@@ -420,7 +420,8 @@ class SeparatorMetrics(object):
         y2 = y1 + self.metrics.node_height
         d = self.metrics.cellsize / 4
 
-        size = metrics.textsize(separator.label, metrics.font_for(self), x2 - x1)
+        font = metrics.font_for(self)
+        size = metrics.textsize(separator.label, font, x2 - x1)
         dx = (x2 - x1 - size.width) / 2
         dy = (y2 - y1 - size.height) / 2
         self.labelbox = Box(x1 + dx - d,
