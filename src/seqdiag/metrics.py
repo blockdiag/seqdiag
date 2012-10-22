@@ -192,7 +192,8 @@ class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
                 width = self.edge(edge).right - cell.center.x
             else:
                 width = (self.cell(edge.right_node).center.x -
-                         self.cell(edge.left_node).center.x)
+                         self.cell(edge.left_node).center.x -
+                         self.cellsize * 4)  # 4: width of activity and padding
             width, height = self.textsize(edge.label, width=width,
                                           font=self.font_for(edge))
 
