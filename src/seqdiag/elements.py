@@ -24,8 +24,12 @@ class DiagramNode(blockdiag.elements.DiagramNode):
     def __init__(self, id):
         super(DiagramNode, self).__init__(id)
 
+        self.activated = False
         self.activity = []
         self.activities = []
+
+    def set_activated(self, value):
+        self.activated = True
 
     def activate(self, height, index):
         if len(self.activity) <= index:

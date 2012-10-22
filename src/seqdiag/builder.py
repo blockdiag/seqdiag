@@ -56,6 +56,9 @@ class DiagramTreeBuilder:
 
         first_node = self.diagram.edges[0].node1
         active_nodes = {first_node: 1}
+        for node in self.diagram.nodes:
+            if node.activated:
+                active_nodes[node] = 1
 
         edge_count = len(self.diagram.edges) + len(self.diagram.separators)
         for i in range(edge_count):
