@@ -16,7 +16,7 @@
 import sys
 import elements
 import blockdiag.metrics
-from blockdiag.utils import textfolder, Box, XY
+from blockdiag.utils import Box, XY
 from blockdiag.utils.collections import namedtuple
 
 
@@ -150,7 +150,7 @@ class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
             else:
                 width = (self.cell(edge.right_node).center.x -
                          self.cell(edge.left_node).center.x)
-            width, height = self.textsize(edge.label, width,
+            width, height = self.textsize(edge.label, width=width,
                                           font=self.font_for(edge))
 
         return XY(width, height)
@@ -420,10 +420,13 @@ class SeparatorMetrics(object):
         y2 = y1 + self.metrics.node_height
         d = self.metrics.cellsize / 4
 
-        lines = textfolder.get((x1, y1, x2, y2), separator.label,
-                               metrics.font_for(self), format=metrics.format)
-        box = lines.outlinebox
-        self.labelbox = (box[0] - d, box[1] - d, box[2] + d, box[3] + d)
+        size = metrics.textsize(separator.label, metrics.font_for(self), x2 - x1)
+        dx = (x2 - x1 - size.width) / 2
+        dy = (y2 - y1 - size.height) / 2
+        self.labelbox = Box(x1 + dx - d,
+                            y1 + dy - d,
+                            x1 + dx + size.width + d,
+                            y1 + dy + size.height + d)
 
     @property
     def baseheight(self):
