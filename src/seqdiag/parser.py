@@ -59,7 +59,7 @@ class ParseException(Exception):
     pass
 
 
-def tokenize(str):
+def tokenize(string):
     'str -> Sequence(Token)'
     specs = [
         ('Comment', (r'/\*(.|[\r\n])*?\*/', MULTILINE)),
@@ -75,7 +75,7 @@ def tokenize(str):
     ]
     useless = ['Comment', 'NL', 'Space']
     t = make_tokenizer(specs)
-    return [x for x in t(str) if x.type not in useless]
+    return [x for x in t(string) if x.type not in useless]
 
 
 def parse(seq):
@@ -86,19 +86,19 @@ def parse(seq):
     n = lambda s: a(Token('Name', s)) >> tokval
     op = lambda s: a(Token('Op', s)) >> tokval
     op_ = lambda s: skip(op(s))
-    id = some(lambda t:
-              t.type in ['Name', 'Number', 'String']).named('id') >> tokval
+    _id = some(lambda t:
+               t.type in ['Name', 'Number', 'String']).named('id') >> tokval
     sep = some(lambda t: t.type == 'Separator').named('sep') >> tokval
     make_graph_attr = lambda args: DefAttrs(u'graph', [Attr(*args)])
     make_edge = lambda x, x2, xs, attrs, subedge: \
         Edge([x, x2] + xs, attrs, subedge)
     make_subedge = lambda args: SubGraph(args)
-    make_separator = lambda str: Separator(str[0:3], str[3:-3].strip())
+    make_separator = lambda s: Separator(s[0:3], s[3:-3].strip())
 
-    node_id = id  # + maybe(port)
+    node_id = _id  # + maybe(port)
     a_list = (
-        id +
-        maybe(op_('=') + id) +
+        _id +
+        maybe(op_('=') + _id) +
         skip(maybe(op(',')))
         >> unarg(Attr))
     attr_list = (
@@ -108,7 +108,7 @@ def parse(seq):
         (n('graph') | n('node') | n('edge')) +
         attr_list
         >> unarg(DefAttrs))
-    graph_attr = id + op_('=') + id >> make_graph_attr
+    graph_attr = _id + op_('=') + _id >> make_graph_attr
     node_stmt = node_id + attr_list >> unarg(Node)
     # We use a forward_decl becaue of circular definitions like (stmt_list ->
     # stmt -> subgraph -> stmt_list)
@@ -139,7 +139,7 @@ def parse(seq):
     subgraph_stmt_list = many(subgraph_stmt + skip(maybe(op(';'))))
     subgraph = (
         skip(n('group')) +
-        skip(maybe(id)) +
+        skip(maybe(_id)) +
         op_('{') +
         subgraph_stmt_list +
         op_('}')
@@ -167,7 +167,7 @@ def parse(seq):
     stmt_list = many(stmt + skip(maybe(op(';'))))
     graph = (
         maybe(n('diagram') | n('seqdiag')) +
-        maybe(id) +
+        maybe(_id) +
         op_('{') +
         stmt_list +
         op_('}')
@@ -207,5 +207,5 @@ def parse_string(string):
 
 
 def parse_file(path):
-    input = codecs.open(path, 'r', 'utf-8').read()
-    return parse_string(input)
+    code = codecs.open(path, 'r', 'utf-8').read()
+    return parse_string(code)

@@ -77,7 +77,7 @@ class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
         height = len(self.edges) + len(self.separators)
         dummy = elements.DiagramNode(None)
         dummy.xy = XY(1, height)
-        x, y = self.spreadsheet._node_bottomright(dummy, use_padding=False)
+        _, y = self.spreadsheet._node_bottomright(dummy, use_padding=False)
         return y
 
     @property

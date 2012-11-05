@@ -13,8 +13,9 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from elements import *
-import parser
+from seqdiag import parser
+from seqdiag.elements import (Diagram, DiagramNode, NodeGroup,
+                              DiagramEdge, EdgeSeparator, unquote)
 from blockdiag.utils import XY
 
 
@@ -195,7 +196,7 @@ class DiagramTreeBuilder:
 
 class ScreenNodeBuilder:
     @classmethod
-    def build(klass, tree):
+    def build(cls, tree):
         DiagramNode.clear()
         DiagramEdge.clear()
         NodeGroup.clear()

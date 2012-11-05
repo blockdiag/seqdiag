@@ -16,8 +16,6 @@
 from blockdiag.utils import collections
 from blockdiag.utils.fontmap import FontMap
 from seqdiag import command, parser, builder, drawer
-from seqdiag import parser as diagparser
-from seqdiag import drawer as DiagramDraw
 from seqdiag.utils.rst.directives import seqdiag, SeqdiagDirective
 
 (collections, FontMap, command, parser, builder, drawer, 
