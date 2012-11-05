@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 import sys
-import elements
+from seqdiag import elements
 import blockdiag.metrics
 from blockdiag.utils import Box, XY
 from blockdiag.utils.collections import namedtuple

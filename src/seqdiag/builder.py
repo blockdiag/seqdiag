@@ -19,7 +19,7 @@ from seqdiag.elements import (Diagram, DiagramNode, NodeGroup,
 from blockdiag.utils import XY
 
 
-class DiagramTreeBuilder:
+class DiagramTreeBuilder(object):
     def build(self, tree):
         self.diagram = Diagram()
         self.diagram = self.instantiate(self.diagram, tree)
@@ -44,8 +44,9 @@ class DiagramTreeBuilder:
         for i, edge in enumerate(self.diagram.edges):
             edge.order = i
 
+        height = len(self.diagram.edges) + 1
         for group in self.diagram.groups:
-            group.colheight = i + 2
+            group.colheight = height
 
     def update_label_numbered(self):
         for i, edge in enumerate(self.diagram.edges):
@@ -194,7 +195,7 @@ class DiagramTreeBuilder:
             group.edges.append(reverse)
 
 
-class ScreenNodeBuilder:
+class ScreenNodeBuilder(object):
     @classmethod
     def build(cls, tree):
         DiagramNode.clear()

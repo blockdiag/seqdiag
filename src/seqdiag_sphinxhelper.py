@@ -19,4 +19,4 @@ from seqdiag import command, parser, builder, drawer
 from seqdiag.utils.rst.directives import seqdiag, SeqdiagDirective
 
 (collections, FontMap, command, parser, builder, drawer, 
- diagparser, DiagramDraw, seqdiag, SeqdiagDirective)
+ seqdiag, SeqdiagDirective)
