@@ -7,6 +7,7 @@ import tempfile
 import seqdiag.command
 from utils import *
 from seqdiag.elements import *
+from blockdiag.tests.utils import supported_pil
 
 
 def extra_case(func):
@@ -24,7 +25,7 @@ def extra_case(func):
 
 @argv_wrapper
 @stderr_wrapper
-def __build_diagram(filename, format, *args):
+def __build_diagram(filename, format, args):
     testdir = os.path.dirname(__file__)
     diagpath = "%s/diagrams/%s" % (testdir, filename)
 
@@ -38,7 +39,10 @@ def __build_diagram(filename, format, *args):
 
         sys.argv = ['seqdiag.py', '-T', format, '-o', tmpfile[1], diagpath]
         if args:
-            sys.argv += args
+            if isinstance(args[0], (list, tuple)):
+                sys.argv += args[0]
+            else:
+                sys.argv += args
         if os.path.exists(fontpath):
             sys.argv += ['-f', fontpath]
 
@@ -63,7 +67,11 @@ def diagram_files():
 
 
 def test_generator_svg():
-    for testcase in generator_core('svg'):
+    args = []
+    if not supported_pil():
+        args.append('--ignore-pil')
+
+    for testcase in generator_core('svg', args):
         yield testcase
 
 
@@ -85,12 +93,14 @@ def test_generator_pdf():
         pass
 
 
-def generator_core(format):
+def generator_core(_format, *args):
     for diagram in diagram_files():
-        yield __build_diagram, diagram, format
+        yield __build_diagram, diagram, _format, args
 
         if re.search('separate', diagram):
-            yield __build_diagram, diagram, format, '--separate'
+            _args = list(args) + ['--separate']
+            yield __build_diagram, diagram, _format, _args
 
-        if format == 'png':
-            yield __build_diagram, diagram, format, '--antialias'
+        if _format == 'png':
+            _args = list(args) + ['--antialias']
+            yield __build_diagram, diagram, _format, _args
