@@ -16,13 +16,13 @@
 import re
 import sys
 import blockdiag.elements
-from blockdiag.elements import *
+from blockdiag.elements import NodeGroup, unquote
 from blockdiag.utils import images, Size
 
 
 class DiagramNode(blockdiag.elements.DiagramNode):
-    def __init__(self, id):
-        super(DiagramNode, self).__init__(id)
+    def __init__(self, _id):
+        super(DiagramNode, self).__init__(_id)
 
         self.activated = False
         self.activity = []
@@ -164,37 +164,37 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
         self.activate = False
 
     def set_dir(self, value):
-        dir = value.lower()
-        if dir in ('back', 'both', 'forward'):
-            self.dir = dir
-        elif dir == '=>':
+        _dir = value.lower()
+        if _dir in ('back', 'both', 'forward'):
+            self.dir = _dir
+        elif _dir == '=>':
             self.dir = 'both'
-        elif dir in ('->', '->>', '-->', '-->>'):
+        elif _dir in ('->', '->>', '-->', '-->>'):
             self.dir = 'forward'
 
-            if re.search('--', dir):
+            if re.search('--', _dir):
                 self.style = 'dashed'
             else:
                 self.style = None
 
-            if re.search('>>', dir):
+            if re.search('>>', _dir):
                 self.async = True
             else:
                 self.async = False
-        elif dir in ('<-', '<<-', '<--', '<<--'):
+        elif _dir in ('<-', '<<-', '<--', '<<--'):
             self.dir = 'back'
 
-            if re.search('--', dir):
+            if re.search('--', _dir):
                 self.style = 'dashed'
             else:
                 self.style = None
 
-            if re.search('<<', dir):
+            if re.search('<<', _dir):
                 self.async = True
             else:
                 self.async = False
         else:
-            msg = "WARNING: unknown edge dir: %s\n" % dir
+            msg = "WARNING: unknown edge dir: %s\n" % _dir
             sys.stderr.write(msg)
 
 
