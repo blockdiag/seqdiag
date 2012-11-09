@@ -17,7 +17,7 @@ import re
 import sys
 import blockdiag.elements
 from blockdiag.elements import NodeGroup, unquote
-from blockdiag.utils import images, Size
+from blockdiag.utils import images, Size, XY
 
 
 class DiagramNode(blockdiag.elements.DiagramNode):
