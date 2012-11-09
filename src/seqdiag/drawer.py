@@ -118,8 +118,8 @@ class DiagramDraw(blockdiag.drawer.DiagramDraw):
             self.drawer.line(folded, fill=self.fill)
 
             self.drawer.textarea(m.leftnotebox, edge.leftnote,
-                                 self.metrics.font_for(edge), fill=edge.color,
-                                 valign='top', halign='left')
+                                 self.metrics.font_for(edge),
+                                 fill=edge.color, halign='left')
 
         if edge.rightnote:
             polygon = m.rightnoteshape
@@ -130,8 +130,8 @@ class DiagramDraw(blockdiag.drawer.DiagramDraw):
             self.drawer.line(folded, fill=self.fill)
 
             self.drawer.textarea(m.rightnotebox, edge.rightnote,
-                                 self.metrics.font_for(edge), fill=edge.color,
-                                 valign='top', halign='left')
+                                 self.metrics.font_for(edge),
+                                 fill=edge.color, halign='left')
 
     def edge_label(self, edge):
         m = self.metrics.edge(edge)
@@ -143,8 +143,8 @@ class DiagramDraw(blockdiag.drawer.DiagramDraw):
                 halign = 'right'
 
             self.drawer.textarea(m.textbox, edge.label,
-                                 self.metrics.font_for(edge), fill=edge.color,
-                                 halign=halign, valign='top')
+                                 self.metrics.font_for(edge),
+                                 fill=edge.color, halign=halign)
 
     def separator(self, sep):
         m = self.metrics.separator(sep)
