@@ -15,7 +15,7 @@
 
 from seqdiag import parser
 from seqdiag.elements import (Diagram, DiagramNode, NodeGroup,
-                              DiagramEdge, EdgeSeparator, unquote)
+                              DiagramEdge, EdgeSeparator, AltBlock, unquote)
 from blockdiag.utils import XY
 
 
