@@ -17,7 +17,7 @@ import sys
 from seqdiag import elements
 import blockdiag.metrics
 from blockdiag.utils import Box, XY
-from blockdiag.utils.collections import namedtuple
+from blockdiag.utils.collections import namedtuple, defaultdict
 
 
 class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
@@ -67,6 +67,48 @@ class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
             self.spreadsheet.set_node_height(edge.order + 1, height)
             self.expand_pagesize_for_note(edge)
 
+        span_width = defaultdict(int)
+        span_height = defaultdict(int)
+        for block in diagram.altblocks:
+            x1, y1 = block.xy
+            x2 = x1 + block.colwidth
+            y2 = y1 + block.colheight
+
+            for y in range(y1, y2):
+                span_width[(x1, y)] += 1
+                span_width[(x2, y)] += 1
+
+            for x in range(x1, x2):
+                if block.type != 'else':
+                    span_height[(x, y1)] += 1
+                span_height[(x, y2)] += 1
+
+        for x in range(self.node_count + 1):
+            widths = [span_width[xy] for xy in span_width if xy[0] == x]
+            if widths:
+                width = self.span_width + max(widths) * self.cellsize
+                self.spreadsheet.set_span_width(x, width)
+
+        for y in range(0, len(self.edges) + 1):
+            blocks = [b for b in diagram.altblocks if b.edges[0].order == y]
+            span_height = self.spreadsheet.span_height[y]
+            span_height = 0
+
+            if blocks:
+                max_ylevel_top = max(b.ylevel_top for b in blocks)
+                span_height = (self.spreadsheet.span_height[y + 1] +
+                               self.cellsize * 5 / 2 * (max_ylevel_top - 1) +
+                               self.cellsize)
+                self.spreadsheet.set_span_height(y + 1, span_height)
+
+            blocks = [b for b in diagram.altblocks if b.edges[-1].order == y]
+            if blocks:
+                max_ylevel_bottom = max(b.ylevel_bottom for b in blocks)
+                span_height = (self.spreadsheet.span_height[y + 2] +
+                               self.cellsize / 2 * (max_ylevel_bottom - 1))
+
+                self.spreadsheet.set_span_height(y + 2, span_height)
+
     def pagesize(self, width=None, height=None):
         width = self.node_count
         height = len(self.edges) + len(self.separators) + 1
@@ -78,6 +120,7 @@ class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
         dummy = elements.DiagramNode(None)
         dummy.xy = XY(1, height)
         _, y = self.spreadsheet._node_bottomright(dummy, use_padding=False)
+        y += self.spreadsheet.span_height[len(self.edges) + 1] / 2
         return y
 
     @property
@@ -184,6 +227,9 @@ class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
             klass = namedtuple('_', 'xy width height colwidth colheight')
             edge = klass(XY(1, obj.order + 1), None, None, 1, 1)
             return super(DiagramMetrics, self).cell(edge, use_padding=False)
+        elif isinstance(obj, elements.AltBlock):
+            box = super(DiagramMetrics, self).cell(obj, use_padding=False)
+            return AltBlockMetrics(self, obj, box)
         else:
             return super(DiagramMetrics, self).cell(obj, use_padding)
 
@@ -195,6 +241,29 @@ class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
 
     def separator(self, separator):
         return SeparatorMetrics(separator, self)
+
+
+class AltBlockMetrics(blockdiag.metrics.NodeMetrics):
+    def __init__(self, metrics, block, box):
+        self.block = block
+        sheet = metrics.spreadsheet
+        cellsize = metrics.cellsize
+
+        box[0] -= (sheet.span_width[block.xy.x + 1] / 2 -
+                   cellsize * (block.xlevel - 1))
+        box[1] -= cellsize * 5 / 2 * (block.ylevel_top - 1) + cellsize * 3
+        box[2] += (sheet.span_width[block.xy.x + block.colwidth + 2] / 2 -
+                   cellsize * (block.xlevel - 1))
+        box[3] += cellsize * (block.ylevel_bottom - 1) + cellsize
+
+        super(AltBlockMetrics, self).__init__(metrics, *box)
+
+    @property
+    def textbox(self):
+        size = self.metrics.textsize(self.block.type,
+                                     font=self.metrics.font_for(self.block))
+        return Box(self.x1, self.y1,
+                   self.x1 + size.width, self.y1 + size.height)
 
 
 class EdgeMetrics(object):

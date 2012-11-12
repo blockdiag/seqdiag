@@ -37,6 +37,9 @@ class DiagramDraw(blockdiag.drawer.DiagramDraw):
         super(DiagramDraw, self)._draw_background()
 
     def _draw_elements(self, **kwargs):
+        for block in self.diagram.altblocks:
+            self.altblock(block)
+
         for node in self.nodes:
             self.lifelines(node)
 
@@ -159,3 +162,15 @@ class DiagramDraw(blockdiag.drawer.DiagramDraw):
 
         self.drawer.textarea(m.labelbox, sep.label,
                              self.metrics.font_for(sep), fill=sep.textcolor)
+
+    def altblock(self, block):
+        m = self.metrics.cell(block)
+        self.drawer.rectangle(m, outline=block.linecolor)
+
+        box = m.textbox
+        line = [XY(box.x1, box.y2),
+                XY(box.x2, box.y2),
+                XY(box.x2 + self.metrics.cellsize * 2, box.y1)]
+        self.drawer.line(line, fill=block.linecolor)
+        self.drawer.textarea(box, block.type, fill=block.textcolor,
+                             font=self.metrics.font_for(block))
