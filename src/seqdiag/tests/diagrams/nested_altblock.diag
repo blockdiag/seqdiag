@@ -1,0 +1,18 @@
+{
+  alt {
+    A -> B [label = label, note = note];
+    alt {
+      A -> B [label = label, note = note];
+    }
+  }
+  alt {
+    alt {
+      alt {
+        A -> B [label = label, note = note];
+      }
+    }
+  }
+  alt {
+    A -> B [label = label, note = note];
+  }
+}
