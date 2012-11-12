@@ -1,0 +1,10 @@
+{
+  alt {
+    color = red;
+    A => B;
+    loop {
+      A -> C [note = hello];
+    }
+    A [width = 200, label = "hoge"];
+  }
+}

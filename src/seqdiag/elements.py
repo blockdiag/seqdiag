@@ -198,6 +198,58 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
             sys.stderr.write(msg)
 
 
+class AltBlock(blockdiag.elements.Base):
+    basecolor = (0, 0, 0)
+    linecolor = (0, 0, 0)
+    width = None
+    height = None
+
+    @classmethod
+    def clear(cls):
+        super(EdgeSeparator, cls).clear()
+        cls.basecolor = (0, 0, 0)
+        cls.linecolor = (0, 0, 0)
+
+    @classmethod
+    def set_default_linecolor(cls, color):
+        color = images.color_to_rgb(color)
+        cls.linecolor = color
+
+    def __init__(self, _type, _id):
+        self.type = _type
+        self.id = _id
+        self.xlevel = 1
+        self.ylevel_top = 1
+        self.ylevel_bottom = 1
+        self.edges = []
+        self.color = self.basecolor
+
+    @property
+    def xy(self):
+        if len(self.edges) == 0:
+            return XY(0, 0)
+        else:
+            x = min(e.left_node.xy.x for e in self.edges)
+            y = min(e.order for e in self.edges) + 1
+            return XY(x, y)
+
+    @property
+    def colwidth(self):
+        if len(self.edges) == 0:
+            return 1
+        else:
+            x2 = max(e.right_node.xy.x for e in self.edges)
+            return x2 - self.xy.x + 1
+
+    @property
+    def colheight(self):
+        if len(self.edges) == 0:
+            return 1
+        else:
+            y2 = max(e.order for e in self.edges) + 1
+            return y2 - self.xy.y + 1
+
+
 class Diagram(blockdiag.elements.Diagram):
     _DiagramNode = DiagramNode
     _DiagramEdge = DiagramEdge
@@ -212,9 +264,16 @@ class Diagram(blockdiag.elements.Diagram):
         self.edge_length = None
         self.groups = []
         self.separators = []
+        self.altblocks = []
 
     def traverse_groups(self, preorder=False):
         return self.groups
+
+    def set_default_linecolor(self, color):
+        super(Diagram, self).set_default_linecolor(color)
+
+        color = images.color_to_rgb(color)
+        AltBlock.set_default_linecolor(color)
 
     def set_default_note_color(self, color):
         color = images.color_to_rgb(color)

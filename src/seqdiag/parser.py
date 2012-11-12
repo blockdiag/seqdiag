@@ -53,6 +53,7 @@ DefAttrs = namedtuple('DefAttrs', 'object attrs')
 AttrClass = namedtuple('AttrClass', 'name attrs')
 AttrPlugin = namedtuple('AttrPlugin', 'name attrs')
 Separator = namedtuple('Separator', 'type value')
+AltBlock = namedtuple('AltBlock', 'type id stmts')
 
 
 class ParseException(Exception):
@@ -155,6 +156,33 @@ def parse(seq):
         op_('}')
         >> SubGraph)
 
+    #  alt statements::
+    #     loop {
+    #        A -> B;
+    #     }
+    #     alt {
+    #        D -> E;
+    #     }
+    #
+    altblock = forward_decl()
+    altblock_stmt = (
+        altblock
+        | graph_attr
+        | edge_stmt
+        | node_stmt
+    )
+    altblock_stmt_list = many(altblock_stmt + skip(maybe(op(';'))))
+    alttypes = (
+        n('alt') | n('loop')
+    )
+    altblock.define(
+        alttypes +
+        maybe(_id) +
+        op_('{') +
+        altblock_stmt_list +
+        op_('}')
+        >> unarg(AltBlock))
+
     #
     #  graph
     #
@@ -169,7 +197,8 @@ def parse(seq):
         attr_list
         >> unarg(AttrPlugin))
     stmt = (
-        group
+        altblock
+        | group
         | class_stmt
         | plugin_stmt
         | edge_stmt
