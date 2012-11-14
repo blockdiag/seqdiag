@@ -170,8 +170,8 @@ class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
 
         index = activity['level']
         base_x = self.cell(node).bottom.x
-        box = (base_x + (index - 1) * self.cellsize / 2, y1,
-               base_x + (index + 1) * self.cellsize / 2, y2)
+        box = Box(base_x + (index - 1) * self.cellsize / 2, y1,
+                  base_x + (index + 1) * self.cellsize / 2, y2)
 
         return box
 
@@ -245,11 +245,12 @@ class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
 
 
 class AltBlockMetrics(blockdiag.metrics.NodeMetrics):
-    def __init__(self, metrics, block, box):
+    def __init__(self, metrics, block, node):
         self.block = block
         sheet = metrics.spreadsheet
         cellsize = metrics.cellsize
 
+        box = node.box
         box[0] -= (sheet.span_width[block.xy.x + 1] / 2 -
                    cellsize * (block.xlevel - 1))
         box[1] -= cellsize * 5 / 2 * (block.ylevel_top - 1) + cellsize * 3
