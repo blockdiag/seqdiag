@@ -19,6 +19,7 @@ from docutils.parsers import rst
 from seqdiag import parser
 from seqdiag.builder import ScreenNodeBuilder
 from seqdiag.drawer import DiagramDraw
+from seqdiag.utils.rst.nodes import seqdiag
 from blockdiag.utils.rst import directives
 
 
@@ -31,10 +32,6 @@ directive_options_default = dict(format='PNG',
                                  inline_svg=False,
                                  ignore_pil=False)
 directive_options = {}
-
-
-class seqdiag(nodes.General, nodes.Element):
-    pass
 
 
 class SeqdiagDirectiveBase(directives.BlockdiagDirectiveBase):
