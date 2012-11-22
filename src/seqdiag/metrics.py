@@ -137,9 +137,9 @@ class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
         d = self.cellsize
         pt = self.node(node).bottom
         for sep in delayed:
-            m = self.cell(sep)
-            y1 = m.top.y
-            y2 = m.bottom.y
+            cell = self.cell(sep)
+            y1 = cell.top.y
+            y2 = cell.bottom.y
             lines.append(((pt, XY(pt.x, y1)), '8,4'))
             lines.append(((XY(pt.x, y1 + d), XY(pt.x, y2 - d)), '2,8'))
 
@@ -262,20 +262,20 @@ class AltBlockMetrics(blockdiag.metrics.NodeMetrics):
 
     @property
     def textbox(self):
-        size = self.metrics.textsize(self.block.type,
-                                     font=self.metrics.font_for(self.block))
+        size = self.textsize(self.block.type,
+                             font=self.font_for(self.block))
         return Box(self.x1, self.y1,
                    self.x1 + size.width, self.y1 + size.height)
 
 
-class EdgeMetrics(object):
+class EdgeMetrics(blockdiag.metrics.SubMetrics):
     def __init__(self, edge, metrics):
         self.metrics = metrics
         self.edge = edge
 
     @property
     def baseheight(self):
-        cell = self.metrics.cell(self.edge)
+        cell = self.cell(self.edge)
         if (cell.height == self.edge.leftnotesize.height or
            (cell.height == self.edge.rightnotesize.height)):
             return cell.center.y
@@ -284,52 +284,49 @@ class EdgeMetrics(object):
 
     @property
     def right(self):
-        m = self.metrics
-        cell = m.cell(self.edge.right_node)
+        cell = self.cell(self.edge.right_node)
 
         if self.edge.direction == 'self':
-
-            if self.edge.node1.xy.x + 1 == m.node_count:
-                width = cell.width / 2 + m.cellsize * 3
+            if self.edge.node1.xy.x + 1 == self.node_count:
+                width = cell.width / 2 + self.cellsize * 3
             else:
-                span_width = m.spreadsheet.span_width[self.edge.node1.xy.x]
+                span_width = self.spreadsheet.span_width[self.edge.node1.xy.x]
                 width = cell.width / 2 + span_width / 2
 
             x = cell.bottom.x + width
         else:
-            x = cell.bottom.x - m.cellsize
+            x = cell.bottom.x - self.cellsize
 
             if self.edge.failed:
-                x -= self.metrics.edge_length / 2
+                x -= self.edge_length / 2
 
         return x
 
     @property
     def shaft(self):
-        m = self.metrics
         baseheight = self.baseheight
 
         if self.edge.direction == 'self':
-            cell = m.cell(self.edge.node1)
-            fold_height = m.cellsize * 2
+            cell = self.cell(self.edge.node1)
+            fold_height = self.cellsize * 2
 
             # adjust textbox to right on activity-lines
             base_x = cell.bottom.x
             x1 = base_x + self.activity_line_width(self.edge.node1)
             x2 = self.right
 
-            line = [XY(x1 + m.cellsize, baseheight),
+            line = [XY(x1 + self.cellsize, baseheight),
                     XY(x2, baseheight),
                     XY(x2, baseheight + fold_height),
-                    XY(x1 + m.cellsize, baseheight + fold_height)]
+                    XY(x1 + self.cellsize, baseheight + fold_height)]
         else:
-            x1 = (self.metrics.node(self.edge.left_node).bottom.x +
+            x1 = (self.node(self.edge.left_node).bottom.x +
                   self.activity_line_width(self.edge.left_node))
-            x2 = self.metrics.node(self.edge.right_node).bottom.x
+            x2 = self.node(self.edge.right_node).bottom.x
 
-            margin = m.cellsize
+            margin = self.cellsize
             if self.edge.diagonal:
-                height = m.node_height * 3 / 4
+                height = self.node_height * 3 / 4
                 if self.edge.direction == 'right':
                     line = [XY(x1 + margin, baseheight),
                             XY(x2 - margin, baseheight + height)]
@@ -341,7 +338,7 @@ class EdgeMetrics(object):
                         XY(x2 - margin, baseheight)]
 
             if self.edge.failed:
-                edge_length = self.metrics.edge_length
+                edge_length = self.edge_length
                 pt1, pt2 = line
                 if self.edge.direction == 'right':
                     pt2 = XY(pt2.x - edge_length / 2, (pt1.y + pt2.y) / 2)
@@ -355,7 +352,7 @@ class EdgeMetrics(object):
     def failedmark(self):
         lines = []
         if self.edge.failed:
-            r = self.metrics.cellsize
+            r = self.cellsize
             if self.edge.direction == 'right':
                 pt = self.shaft[-1]
                 lines.append((XY(pt.x + r, pt.y - r),
@@ -373,7 +370,7 @@ class EdgeMetrics(object):
 
     @property
     def head(self):
-        cell = self.metrics.cellsize
+        cell = self.cellsize
 
         head = []
         if self.edge.direction == 'right':
@@ -396,24 +393,20 @@ class EdgeMetrics(object):
 
     @property
     def textbox(self):
-        m = self.metrics
-
         if self.edge.direction == 'self':
-            x = m.node(self.edge.node1).bottom.x + \
+            x = self.node(self.edge.node1).bottom.x + \
                 self.activity_line_width(self.edge.node1)
         elif self.edge.direction == 'right':
-            x = m.node(self.edge.left_node).bottom.x + \
+            x = self.node(self.edge.left_node).bottom.x + \
                 self.activity_line_width(self.edge.left_node) + \
-                self.metrics.cellsize / 2
+                self.cellsize / 2
         else:  # left
-            x = m.node(self.edge.right_node).bottom.x - self.edge.textwidth
+            x = self.node(self.edge.right_node).bottom.x - self.edge.textwidth
 
         y1 = self.baseheight - self.edge.textheight
         return Box(x, y1, x + self.edge.textwidth, y1 + self.edge.textheight)
 
     def activity_line_width(self, node):
-        m = self.metrics
-
         index = self.edge.order
         activities = [a for a in node.activities if index in a['lifetime']]
         if activities:
@@ -421,22 +414,21 @@ class EdgeMetrics(object):
         else:
             level = 0
 
-        return m.cellsize / 2 * level
+        return self.cellsize / 2 * level
 
     @property
     def leftnotebox(self):
         if not self.edge.leftnote:
             return Box(0, 0, 0, 0)
 
-        m = self.metrics
-        cell = m.cell(self.edge.left_node)
+        cell = self.cell(self.edge.left_node)
         notesize = self.edge.leftnotesize
 
-        x = cell.center.x - m.cellsize * 3 - notesize.width
+        x = cell.center.x - self.cellsize * 3 - notesize.width
         y = self.baseheight - notesize.height / 2
 
         if self.edge.failed and self.edge.direction == 'left':
-            x += self.metrics.edge_length / 2 - m.cellsize
+            x += self.edge_length / 2 - self.cellsize
 
         return Box(x, y, x + notesize.width, y + notesize.height)
 
@@ -445,7 +437,7 @@ class EdgeMetrics(object):
         if not self.edge.leftnote:
             return []
 
-        r = self.metrics.cellsize
+        r = self.cellsize
         box = self.leftnotebox
         return [XY(box[0], box[1]), XY(box[2], box[1]),
                 XY(box[2] + r, box[1] + r), XY(box[2] + r, box[3]),
@@ -456,14 +448,13 @@ class EdgeMetrics(object):
         if not self.edge.rightnote:
             return Box(0, 0, 0, 0)
 
-        m = self.metrics
-        cell = m.cell(self.edge.right_node)
+        cell = self.cell(self.edge.right_node)
         if self.edge.direction == 'self':
-            x = self.right + m.cellsize * 2
+            x = self.right + self.cellsize * 2
         elif self.edge.failed and self.edge.direction == 'right':
-            x = self.right + m.cellsize * 4
+            x = self.right + self.cellsize * 4
         else:
-            x = cell.center.x + m.cellsize * 2
+            x = cell.center.x + self.cellsize * 2
 
         notesize = self.edge.rightnotesize
         y = self.baseheight - notesize.height / 2
@@ -474,22 +465,22 @@ class EdgeMetrics(object):
         if not self.edge.rightnote:
             return []
 
-        r = self.metrics.cellsize
+        r = self.cellsize
         box = self.rightnotebox
         return [XY(box[0], box[1]), XY(box[2], box[1]),
                 XY(box[2] + r, box[1] + r), XY(box[2] + r, box[3]),
                 XY(box[0],  box[3]), XY(box[0], box[1])]
 
 
-class SeparatorMetrics(object):
+class SeparatorMetrics(blockdiag.metrics.SubMetrics):
     def __init__(self, separator, metrics):
         self.metrics = metrics
         self.separator = separator
 
         x1, x2 = self.baseline
         y1 = self.baseheight
-        y2 = y1 + self.metrics.node_height
-        d = self.metrics.cellsize / 4
+        y2 = y1 + self.node_height
+        d = self.cellsize / 4
 
         font = metrics.font_for(self)
         size = metrics.textsize(separator.label, font, x2 - x1)
@@ -502,16 +493,16 @@ class SeparatorMetrics(object):
 
     @property
     def baseheight(self):
-        return self.metrics.cell(self.separator).top.y
+        return self.cell(self.separator).top.y
 
     @property
     def baseline(self):
         dummy = elements.DiagramNode(None)
         dummy.xy = XY(0, 1)
-        dummy.colwidth = self.metrics.node_count
-        m = self.metrics.cell(dummy)
-        r = self.metrics.cellsize * 3
-        return (m.x1 - r, m.x2 + r)
+        dummy.colwidth = self.node_count
+        cell = self.cell(dummy)
+        r = self.cellsize * 3
+        return (cell.x1 - r, cell.x2 + r)
 
     @property
     def lines(self):
@@ -519,7 +510,7 @@ class SeparatorMetrics(object):
         if self.separator.type == 'divider':
             y = (self.labelbox[1] + self.labelbox[3]) / 2
             x1, x2 = self.baseline
-            d = self.metrics.cellsize / 4
+            d = self.cellsize / 4
 
             lines.append((XY(x1, y - d), XY(self.labelbox[0], y - d)))
             lines.append((XY(x1, y + d), XY(self.labelbox[0], y + d)))
