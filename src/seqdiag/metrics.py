@@ -96,18 +96,16 @@ class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
 
             if blocks:
                 max_ylevel_top = max(b.ylevel_top for b in blocks)
-                span_height = (self.spreadsheet.span_height[y + 1] +
-                               self.cellsize * 5 / 2 * (max_ylevel_top - 1) +
+                span_height = (self.cellsize * 5 / 2 * (max_ylevel_top - 1) +
                                self.cellsize)
-                self.spreadsheet.set_span_height(y + 1, span_height)
+                self.spreadsheet.add_span_height(y + 1, span_height)
 
             blocks = [b for b in diagram.altblocks if b.edges[-1].order == y]
             if blocks:
                 max_ylevel_bottom = max(b.ylevel_bottom for b in blocks)
-                span_height = (self.spreadsheet.span_height[y + 2] +
-                               self.cellsize / 2 * (max_ylevel_bottom - 1))
+                span_height = self.cellsize / 2 * (max_ylevel_bottom - 1)
 
-                self.spreadsheet.set_span_height(y + 2, span_height)
+                self.spreadsheet.add_span_height(y + 2, span_height)
 
     def pagesize(self, width=None, height=None):
         width = self.node_count
