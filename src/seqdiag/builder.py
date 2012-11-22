@@ -15,8 +15,8 @@
 
 from seqdiag import parser
 from seqdiag.elements import (Diagram, DiagramNode, NodeGroup,
-                              DiagramEdge, EdgeSeparator, AltBlock, unquote)
-from blockdiag.utils import XY
+                              DiagramEdge, EdgeSeparator, AltBlock)
+from blockdiag.utils import unquote, XY
 
 
 class DiagramTreeBuilder(object):

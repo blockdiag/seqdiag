@@ -19,7 +19,8 @@ from blockdiag.utils import XY
 
 
 class DiagramDraw(blockdiag.drawer.DiagramDraw):
-    MetricsClass = DiagramMetrics
+    def create_metrics(self, *args, **kwargs):
+        return DiagramMetrics(*args, **kwargs)
 
     def _draw_background(self):
         for node in self.nodes:
