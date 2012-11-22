@@ -13,6 +13,20 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import seqdiag.parser
+import seqdiag.builder
+import seqdiag.drawer
+core = seqdiag
+
+import blockdiag.utils.bootstrap
+import blockdiag.utils.collections
+import blockdiag.utils.fontmap
+utils = blockdiag.utils
+
+from seqdiag.utils.rst import nodes
+from seqdiag.utils.rst import directives
+
+# FIXME: obsoleted interface (keep for compatibility)
 from blockdiag.utils import collections
 from blockdiag.utils.fontmap import FontMap
 from seqdiag import command, parser, builder, drawer
