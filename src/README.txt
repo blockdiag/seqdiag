@@ -84,6 +84,10 @@ Apache License 2.0
 History
 =======
 
+0.8.2 (2012-11-12)
+------------------
+* Fix bugs
+
 0.8.1 (2012-11-12)
 ------------------
 * Add altblock feature (experimental)
