@@ -37,10 +37,10 @@ At the moment, the parser builds only a parse tree, not an abstract syntax tree
 
 import io
 from re import MULTILINE, DOTALL
+from collections import namedtuple
 from funcparserlib.lexer import make_tokenizer, Token, LexerError
 from funcparserlib.parser import (some, a, maybe, many, finished, skip,
                                   forward_decl)
-from blockdiag.utils.collections import namedtuple
 from blockdiag.utils.compat import u
 
 ENCODING = 'utf-8'
