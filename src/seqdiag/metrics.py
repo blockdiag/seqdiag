@@ -15,10 +15,10 @@
 
 from __future__ import division
 import sys
+from collections import namedtuple, defaultdict
 from seqdiag import elements
 import blockdiag.metrics
 from blockdiag.utils import Box, XY
-from blockdiag.utils.collections import namedtuple, defaultdict
 
 
 class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
