@@ -41,6 +41,7 @@ from funcparserlib.lexer import make_tokenizer, Token, LexerError
 from funcparserlib.parser import (some, a, maybe, many, finished, skip,
                                   forward_decl)
 from blockdiag.utils.collections import namedtuple
+from blockdiag.utils.compat import u
 
 ENCODING = 'utf-8'
 
@@ -68,8 +69,8 @@ def tokenize(string):
         ('NL',      (r'[\r\n]+',)),
         ('Space',   (r'[ \t\r\n]+',)),
         ('Separator', (r'(?P<sep>===|\.\.\.)[^\r\n]+(?P=sep)',)),
-        ('Name',    (u'[A-Za-z_0-9\u0080-\uffff]'
-                     u'[A-Za-z_\\-.0-9\u0080-\uffff]*',)),
+        ('Name',    (u('[A-Za-z_0-9\u0080-\uffff]') +
+                     u('[A-Za-z_\\-.0-9\u0080-\uffff]*'),)),
         ('Op',      (r'(=>)|[{};,=\[\]]|(<<?--?)|(--?>>?)',)),
         ('Number',  (r'-?(\.[0-9]+)|([0-9]+(\.[0-9]*)?)',)),
         ('String',  (r'(?P<quote>"|\').*?(?<!\\)(?P=quote)', DOTALL)),
@@ -90,7 +91,7 @@ def parse(seq):
     _id = some(lambda t:
                t.type in ['Name', 'Number', 'String']).named('id') >> tokval
     sep = some(lambda t: t.type == 'Separator').named('sep') >> tokval
-    make_graph_attr = lambda args: DefAttrs(u'graph', [Attr(*args)])
+    make_graph_attr = lambda args: DefAttrs(u('graph'), [Attr(*args)])
     make_edge = lambda x, x2, xs, attrs, subedge: \
         Edge([x, x2] + xs, attrs, subedge)
     make_subedge = lambda args: SubGraph(args)
