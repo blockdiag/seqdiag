@@ -17,6 +17,7 @@ from seqdiag import parser
 from seqdiag.elements import (Diagram, DiagramNode, NodeGroup,
                               DiagramEdge, EdgeSeparator, AltBlock)
 from blockdiag.utils import unquote, XY
+from blockdiag.utils.compat import u
 
 
 class DiagramTreeBuilder(object):
@@ -62,7 +63,7 @@ class DiagramTreeBuilder(object):
 
     def update_label_numbered(self):
         for i, edge in enumerate(self.diagram.edges):
-            edge.label = u"%d. %s" % (i + 1, edge.label or "")
+            edge.label = u("%d. %s") % (i + 1, edge.label or "")
 
     def create_activities(self):
         if len(self.diagram.edges) == 0:

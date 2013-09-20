@@ -2,10 +2,14 @@
 from __future__ import print_function
 import re
 import sys
-from StringIO import StringIO
 from nose.tools import eq_
 from seqdiag.builder import *
 from seqdiag.parser import parse_string
+
+try:
+    from io import StringIO
+except ImportError:
+    from cStringIO import StringIO
 
 
 def argv_wrapper(func, argv=[]):
