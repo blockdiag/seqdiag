@@ -13,6 +13,7 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+import sys
 import seqdiag
 import seqdiag.builder
 import seqdiag.drawer
@@ -24,5 +25,5 @@ class SeqdiagApp(Application):
     module = seqdiag
 
 
-def main():
-    return SeqdiagApp().run()
+def main(args=sys.argv[1:]):
+    return SeqdiagApp().run(args)

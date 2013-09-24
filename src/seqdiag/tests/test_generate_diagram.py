@@ -23,9 +23,8 @@ def extra_case(func):
     return func
 
 
-@argv_wrapper
 @stderr_wrapper
-def __build_diagram(filename, format, args):
+def __build_diagram(filename, format, additional_args):
     testdir = os.path.dirname(__file__)
     diagpath = "%s/diagrams/%s" % (testdir, filename)
 
@@ -37,16 +36,16 @@ def __build_diagram(filename, format, args):
         tmpfile = tempfile.mkstemp(dir=tmpdir)
         os.close(tmpfile[0])
 
-        sys.argv = ['seqdiag.py', '-T', format, '-o', tmpfile[1], diagpath]
-        if args:
-            if isinstance(args[0], (list, tuple)):
-                sys.argv += args[0]
+        args = ['-T', format, '-o', tmpfile[1], diagpath]
+        if additional_args:
+            if isinstance(additional_args[0], (list, tuple)):
+                args += additional_args[0]
             else:
-                sys.argv += args
+                args += additional_args
         if os.path.exists(fontpath):
-            sys.argv += ['-f', fontpath]
+            args += ['-f', fontpath]
 
-        seqdiag.command.main()
+        seqdiag.command.main(args)
 
         if re.search('ERROR', sys.stderr.getvalue()):
             raise RuntimeError(sys.stderr.getvalue())

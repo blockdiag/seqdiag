@@ -12,19 +12,6 @@ except ImportError:
     from cStringIO import StringIO
 
 
-def argv_wrapper(func, argv=[]):
-    def wrap(*args, **kwargs):
-        try:
-            argv = sys.argv
-            sys.argv = []
-            func(*args, **kwargs)
-        finally:
-            sys.argv = argv
-
-    wrap.__name__ = func.__name__
-    return wrap
-
-
 def stderr_wrapper(func):
     def wrap(*args, **kwargs):
         try:
