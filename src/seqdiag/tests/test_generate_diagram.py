@@ -5,8 +5,7 @@ import sys
 import re
 import tempfile
 import seqdiag.command
-from seqdiag.elements import *
-from blockdiag.tests.utils import supported_pil, stderr_wrapper
+from blockdiag.tests.utils import stderr_wrapper
 
 
 def extra_case(func):

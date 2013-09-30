@@ -16,8 +16,11 @@
 import re
 import sys
 import blockdiag.elements
-from blockdiag.elements import NodeGroup
 from blockdiag.utils import images, Size, XY
+
+
+class NodeGroup(blockdiag.elements.NodeGroup):
+    pass
 
 
 class DiagramNode(blockdiag.elements.DiagramNode):
