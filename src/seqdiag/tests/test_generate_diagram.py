@@ -65,11 +65,7 @@ def diagram_files():
 
 
 def test_generator_svg():
-    args = []
-    if not supported_pil():
-        args.append('--ignore-pil')
-
-    for testcase in generator_core('svg', args):
+    for testcase in generator_core('svg'):
         yield testcase
 
 
