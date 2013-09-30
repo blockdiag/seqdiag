@@ -281,13 +281,6 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(1, len(doctree))
         self.assertEqual(nodes.image, type(doctree[0]))
 
-    def test_desctable_without_description(self):
-        directives.setup(format='SVG', outputdir=self.tmpdir)
-        text = ".. seqdiag::\n   :desctable:\n\n   { A -> B }"
-        doctree = publish_doctree(text)
-        self.assertEqual(1, len(doctree))
-        self.assertEqual(nodes.image, type(doctree[0]))
-
     def test_desctable(self):
         directives.setup(format='SVG', outputdir=self.tmpdir)
         text = ".. seqdiag::\n   :desctable:\n\n" + \

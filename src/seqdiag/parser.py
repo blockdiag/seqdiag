@@ -106,10 +106,6 @@ def parse(seq):
     attr_list = (
         many(op_('[') + many(a_list) + op_(']'))
         >> flatten)
-    attr_stmt = (
-        (n('graph') | n('node') | n('edge')) +
-        attr_list
-        >> unarg(DefAttrs))
     graph_attr = _id + op_('=') + _id >> make_graph_attr
     node_stmt = node_id + attr_list >> unarg(Node)
     separator_stmt = (sep >> make_separator)

@@ -16,7 +16,7 @@
 import re
 import sys
 import blockdiag.elements
-from blockdiag.elements import NodeGroup, unquote
+from blockdiag.elements import NodeGroup
 from blockdiag.utils import images, Size, XY
 
 
