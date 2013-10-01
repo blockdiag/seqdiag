@@ -13,24 +13,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+__all__ = [
+    'core', 'utils'
+]
+
+import seqdiag
 import seqdiag.parser
 import seqdiag.builder
 import seqdiag.drawer
 core = seqdiag
 
+import seqdiag.utils.rst.nodes
+import seqdiag.utils.rst.directives
+utils = seqdiag.utils
+
 import blockdiag.utils.bootstrap
-import blockdiag.utils.collections
+utils.bootstrap = blockdiag.utils.bootstrap
+
 import blockdiag.utils.fontmap
-utils = blockdiag.utils
-
-from seqdiag.utils.rst import nodes
-from seqdiag.utils.rst import directives
-
-# FIXME: obsoleted interface (keep for compatibility)
-from blockdiag.utils import collections
-from blockdiag.utils.fontmap import FontMap
-from seqdiag import command, parser, builder, drawer
-from seqdiag.utils.rst.directives import seqdiag, SeqdiagDirective
-
-(collections, FontMap, command, parser, builder, drawer, 
- nodes, directives, seqdiag, SeqdiagDirective)
+utils.fontmap = blockdiag.utils.fontmap
