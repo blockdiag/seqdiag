@@ -32,3 +32,6 @@ utils.bootstrap = blockdiag.utils.bootstrap
 
 import blockdiag.utils.fontmap
 utils.fontmap = blockdiag.utils.fontmap
+
+import blockdiag.utils.compat
+utils.compat = blockdiag.utils.compat
