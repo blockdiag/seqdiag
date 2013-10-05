@@ -84,6 +84,12 @@ Apache License 2.0
 History
 =======
 
+0.9.0 (2013-10-05)
+------------------
+* Support python 3.2 and 3.3 (thanks to @masayuko)
+* Drop supports for python 2.4 and 2.5
+* Replace dependency: PIL -> Pillow
+
 0.8.2 (2013-02-09)
 ------------------
 * Fix bugs
