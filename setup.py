@@ -28,7 +28,7 @@ setup(
     name='seqdiag',
     version=seqdiag.__version__,
     description='seqdiag generates sequence-diagram image from text',
-    long_description=open("README.txt").read(),
+    long_description=open("README.rst").read(),
     classifiers=classifiers,
     keywords=['diagram', 'generator'],
     author='Takeshi Komiya',
