@@ -6,8 +6,6 @@ from setuptools import setup, find_packages
 sys.path.insert(0, 'src')
 import seqdiag
 
-long_description = open(os.path.join("src", "README.txt")).read()
-
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Intended Audience :: System Administrators",
@@ -30,7 +28,7 @@ setup(
     name='seqdiag',
     version=seqdiag.__version__,
     description='seqdiag generates sequence-diagram image from text',
-    long_description=long_description,
+    long_description=open("README.txt").read(),
     classifiers=classifiers,
     keywords=['diagram', 'generator'],
     author='Takeshi Komiya',
