@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg viewBox="0 0 448 464" xmlns="http://www.w3.org/2000/svg" xmlns:inkspace="http://www.inkscape.org/namespaces/inkscape" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs id="defs_block">
+    <filter height="1.504" id="filter_blur" inkspace:collect="always" width="1.1575" x="-0.07875" y="-0.252">
+      <feGaussianBlur id="feGaussianBlur3780" inkspace:collect="always" stdDeviation="4.2" />
+    </filter>
+  </defs>
+  <title>blockdiag</title>
+  <desc>{
+  // edge label
+  A -&gt; B [label = "call"];
+  A &lt;- B [label = "return"];
+
+  // diagonal edge
+  A -&gt; B [diagonal, label = "diagonal edge"];
+  A &lt;- B [diagonal, label = "return diagonal edge"];
+}
+</desc>
+  <rect fill="rgb(0,0,0)" height="301" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="8" x="127" y="141" />
+  <rect fill="rgb(0,0,0)" height="65" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="8" x="319" y="141" />
+  <rect fill="rgb(0,0,0)" height="88" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="8" x="319" y="278" />
+  <rect fill="rgb(0,0,0)" height="40" stroke="rgb(0,0,0)" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="128" x="67" y="46" />
+  <rect fill="rgb(0,0,0)" height="40" stroke="rgb(0,0,0)" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="128" x="259" y="46" />
+  <path d="M 128 80 L 128 452" fill="none" stroke="rgb(0,0,0)" stroke-dasharray="8 4" />
+  <rect fill="moccasin" height="301" stroke="rgb(0,0,0)" width="8" x="124" y="135" />
+  <path d="M 320 80 L 320 452" fill="none" stroke="rgb(0,0,0)" stroke-dasharray="8 4" />
+  <rect fill="moccasin" height="65" stroke="rgb(0,0,0)" width="8" x="316" y="135" />
+  <rect fill="moccasin" height="88" stroke="rgb(0,0,0)" width="8" x="316" y="272" />
+  <rect fill="rgb(255,255,255)" height="40" stroke="rgb(0,0,0)" width="128" x="64" y="40" />
+  <text fill="rgb(0,0,0)" font-family="sansserif" font-size="11" font-style="normal" font-weight="normal" x="125" y="66">A</text>
+  <rect fill="rgb(255,255,255)" height="40" stroke="rgb(0,0,0)" width="128" x="256" y="40" />
+  <text fill="rgb(0,0,0)" font-family="sansserif" font-size="11" font-style="normal" font-weight="normal" x="317" y="66">B</text>
+  <path d="M 136 135 L 312 135" fill="none" stroke="rgb(0,0,0)" />
+  <polygon fill="rgb(0,0,0)" points="304,131 312,135 304,139" stroke="rgb(0,0,0)" />
+  <path d="M 136 200 L 312 200" fill="none" stroke="rgb(0,0,0)" />
+  <polygon fill="rgb(0,0,0)" points="144,196 136,200 144,204" stroke="rgb(0,0,0)" />
+  <path d="M 136 265 L 312 295" fill="none" stroke="rgb(0,0,0)" />
+  <polygon fill="rgb(0,0,0)" points="304,291 312,295 304,299" stroke="rgb(0,0,0)" />
+  <path d="M 136 390 L 312 360" fill="none" stroke="rgb(0,0,0)" />
+  <polygon fill="rgb(0,0,0)" points="144,386 136,390 144,394" stroke="rgb(0,0,0)" />
+  <text fill="rgb(0,0,0)" font-family="sansserif" font-size="11" font-style="normal" font-weight="normal" x="140" y="133">call</text>
+  <text fill="rgb(0,0,0)" font-family="sansserif" font-size="11" font-style="normal" font-weight="normal" x="275" y="198">return</text>
+  <text fill="rgb(0,0,0)" font-family="sansserif" font-size="11" font-style="normal" font-weight="normal" x="140" y="263">diagonal edge</text>
+  <text fill="rgb(0,0,0)" font-family="sansserif" font-size="11" font-style="normal" font-weight="normal" x="190" y="358">return diagonal edge</text>
+</svg>
