@@ -1,0 +1,88 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd">
+<svg viewBox="0 0 640 771" xmlns="http://www.w3.org/2000/svg" xmlns:inkspace="http://www.inkscape.org/namespaces/inkscape" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <defs id="defs_block">
+    <filter height="1.504" id="filter_blur" inkspace:collect="always" width="1.1575" x="-0.07875" y="-0.252">
+      <feGaussianBlur id="feGaussianBlur3780" inkspace:collect="always" stdDeviation="4.2" />
+    </filter>
+  </defs>
+  <title>blockdiag</title>
+  <desc>{
+  // normal edge
+  A -&gt; B [label = "normal edge"];
+
+  // dotted edge
+  B --&gt; C [label = "dotted edge"];
+
+  // asynchronus edge
+  A -&gt;&gt; B [label = "asynchronus edge"];
+  B --&gt;&gt; C [label = "asynchronus dotted edge"];
+
+  // return edge
+  B &lt;- C [label = "return edge"];
+  A &lt;-- B [label = "return dotted edge"];
+  B &lt;&lt;- C [label = "return asynchronus edge"];
+  A &lt;&lt;-- B [label = "return asynchronus dotted edge"];
+
+  // self referenced edge
+  A -&gt; A [label = "self referenced edge"];
+}
+</desc>
+  <rect fill="rgb(0,0,0)" height="608" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="8" x="127" y="141" />
+  <rect fill="rgb(0,0,0)" height="468" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="8" x="319" y="141" />
+  <rect fill="rgb(0,0,0)" height="195" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="8" x="323" y="271" />
+  <rect fill="rgb(0,0,0)" height="325" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="8" x="511" y="206" />
+  <rect fill="rgb(0,0,0)" height="65" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="8" x="515" y="336" />
+  <rect fill="rgb(0,0,0)" height="40" stroke="rgb(0,0,0)" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="128" x="67" y="46" />
+  <rect fill="rgb(0,0,0)" height="40" stroke="rgb(0,0,0)" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="128" x="259" y="46" />
+  <rect fill="rgb(0,0,0)" height="40" stroke="rgb(0,0,0)" style="filter:url(#filter_blur);opacity:0.7;fill-opacity:1" width="128" x="451" y="46" />
+  <path d="M 128 80 L 128 759" fill="none" stroke="rgb(0,0,0)" stroke-dasharray="8 4" />
+  <rect fill="moccasin" height="608" stroke="rgb(0,0,0)" width="8" x="124" y="135" />
+  <path d="M 320 80 L 320 759" fill="none" stroke="rgb(0,0,0)" stroke-dasharray="8 4" />
+  <rect fill="moccasin" height="468" stroke="rgb(0,0,0)" width="8" x="316" y="135" />
+  <rect fill="moccasin" height="195" stroke="rgb(0,0,0)" width="8" x="320" y="265" />
+  <path d="M 512 80 L 512 759" fill="none" stroke="rgb(0,0,0)" stroke-dasharray="8 4" />
+  <rect fill="moccasin" height="325" stroke="rgb(0,0,0)" width="8" x="508" y="200" />
+  <rect fill="moccasin" height="65" stroke="rgb(0,0,0)" width="8" x="512" y="330" />
+  <rect fill="rgb(255,255,255)" height="40" stroke="rgb(0,0,0)" width="128" x="64" y="40" />
+  <text fill="rgb(0,0,0)" font-family="sansserif" font-size="11" font-style="normal" font-weight="normal" x="125" y="66">A</text>
+  <rect fill="rgb(255,255,255)" height="40" stroke="rgb(0,0,0)" width="128" x="256" y="40" />
+  <text fill="rgb(0,0,0)" font-family="sansserif" font-size="11" font-style="normal" font-weight="normal" x="317" y="66">B</text>
+  <rect fill="rgb(255,255,255)" height="40" stroke="rgb(0,0,0)" width="128" x="448" y="40" />
+  <text fill="rgb(0,0,0)" font-family="sansserif" font-size="11" font-style="normal" font-weight="normal" x="509" y="66">C</text>
+  <path d="M 136 135 L 312 135" fill="none" stroke="rgb(0,0,0)" />
+  <polygon fill="rgb(0,0,0)" points="304,131 312,135 304,139" stroke="rgb(0,0,0)" />
+  <path d="M 328 200 L 504 200" fill="none" stroke="rgb(0,0,0)" stroke-dasharray="4" />
+  <polygon fill="rgb(0,0,0)" points="496,196 504,200 496,204" stroke="rgb(0,0,0)" />
+  <path d="M 136 265 L 312 265" fill="none" stroke="rgb(0,0,0)" />
+  <path d="M 304 261 L 312 265" fill="none" stroke="rgb(0,0,0)" />
+  <path d="M 312 265 L 304 269" fill="none" stroke="rgb(0,0,0)" />
+  <path d="M 332 330 L 504 330" fill="none" stroke="rgb(0,0,0)" stroke-dasharray="4" />
+  <path d="M 496 326 L 504 330" fill="none" stroke="rgb(0,0,0)" />
+  <path d="M 504 330 L 496 334" fill="none" stroke="rgb(0,0,0)" />
+  <path d="M 332 395 L 504 395" fill="none" stroke="rgb(0,0,0)" />
+  <polygon fill="rgb(0,0,0)" points="340,391 332,395 340,399" stroke="rgb(0,0,0)" />
+  <path d="M 136 460 L 312 460" fill="none" stroke="rgb(0,0,0)" stroke-dasharray="4" />
+  <polygon fill="rgb(0,0,0)" points="144,456 136,460 144,464" stroke="rgb(0,0,0)" />
+  <path d="M 328 525 L 504 525" fill="none" stroke="rgb(0,0,0)" />
+  <path d="M 336 521 L 328 525" fill="none" stroke="rgb(0,0,0)" />
+  <path d="M 328 525 L 336 529" fill="none" stroke="rgb(0,0,0)" />
+  <path d="M 136 603 L 312 603" fill="none" stroke="rgb(0,0,0)" stroke-dasharray="4" />
+  <path d="M 144 599 L 136 603" fill="none" stroke="rgb(0,0,0)" />
+  <path d="M 136 603 L 144 607" fill="none" stroke="rgb(0,0,0)" />
+  <path d="M 136 681 L 224 681" fill="none" stroke="rgb(0,0,0)" />
+  <path d="M 224 681 L 224 697" fill="none" stroke="rgb(0,0,0)" />
+  <path d="M 224 697 L 136 697" fill="none" stroke="rgb(0,0,0)" />
+  <polygon fill="rgb(0,0,0)" points="144,693 136,697 144,701" stroke="rgb(0,0,0)" />
+  <text fill="rgb(0,0,0)" font-family="sansserif" font-size="11" font-style="normal" font-weight="normal" x="140" y="133">normal edge</text>
+  <text fill="rgb(0,0,0)" font-family="sansserif" font-size="11" font-style="normal" font-weight="normal" x="332" y="198">dotted edge</text>
+  <text fill="rgb(0,0,0)" font-family="sansserif" font-size="11" font-style="normal" font-weight="normal" x="140" y="263">asynchronus edge</text>
+  <text fill="rgb(0,0,0)" font-family="sansserif" font-size="11" font-style="normal" font-weight="normal" x="336" y="328">asynchronus dotted edge</text>
+  <text fill="rgb(0,0,0)" font-family="sansserif" font-size="11" font-style="normal" font-weight="normal" x="437" y="393">return edge</text>
+  <text fill="rgb(0,0,0)" font-family="sansserif" font-size="11" font-style="normal" font-weight="normal" x="203" y="458">return dotted edge</text>
+  <text fill="rgb(0,0,0)" font-family="sansserif" font-size="11" font-style="normal" font-weight="normal" x="364" y="523">return asynchronus edge</text>
+  <text fill="rgb(0,0,0)" font-family="sansserif" font-size="11" font-style="normal" font-weight="normal" x="142" y="588">return asynchronus dotted ed</text>
+  <text fill="rgb(0,0,0)" font-family="sansserif" font-size="11" font-style="normal" font-weight="normal" x="299" y="601">ge</text>
+  <text fill="rgb(0,0,0)" font-family="sansserif" font-size="11" font-style="normal" font-weight="normal" x="136" y="666">self referenced e</text>
+  <text fill="rgb(0,0,0)" font-family="sansserif" font-size="11" font-style="normal" font-weight="normal" x="136" y="679">dge</text>
+</svg>
