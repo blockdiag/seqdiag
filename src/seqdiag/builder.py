@@ -147,16 +147,16 @@ class DiagramTreeBuilder(object):
             elif isinstance(stmt, parser.Edge):
                 self.instantiate_edge(group, block, stmt)
 
-            elif isinstance(stmt, parser.SubGraph):
+            elif isinstance(stmt, parser.Group):
                 node = NodeGroup.get(None)
                 self.instantiate(node, block, stmt)
                 self.diagram.groups.append(node)
 
-            elif isinstance(stmt, parser.DefAttrs):
+            elif isinstance(stmt, parser.Attr):
                 if block:
-                    block.set_attributes(stmt.attrs)
+                    block.set_attribute(stmt)
                 else:
-                    group.set_attributes(stmt.attrs)
+                    group.set_attribute(stmt)
 
             elif isinstance(stmt, parser.Separator):
                 sep = EdgeSeparator(stmt.type, unquote(stmt.value))
@@ -164,7 +164,7 @@ class DiagramTreeBuilder(object):
                 self.diagram.separators.append(sep)
                 group.edges.append(sep)
 
-            elif isinstance(stmt, parser.AltBlock):
+            elif isinstance(stmt, parser.Fragment):
                 subblock = AltBlock(stmt.type, stmt.id)
                 if block:
                     subblock.xlevel = block.xlevel + 1
@@ -175,28 +175,25 @@ class DiagramTreeBuilder(object):
                     for edge in subblock.edges:
                         block.edges.append(edge)
 
-            elif isinstance(stmt, parser.AttrClass):
-                name = unquote(stmt.name)
-                Diagram.classes[name] = stmt
-
-            elif isinstance(stmt, parser.AttrPlugin):
-                self.diagram.set_plugin(stmt.name, stmt.attrs)
+            elif isinstance(stmt, parser.Extension):
+                if stmt.type == 'class':
+                    name = unquote(stmt.name)
+                    Diagram.classes[name] = stmt
+                elif stmt.type == 'plugin':
+                    self.diagram.set_plugin(stmt.name, stmt.attrs)
 
         return group
 
-    def instantiate_edge(self, group, block, tree):
-        node_id = tree.nodes[0]
-        edge_from = DiagramNode.get(node_id)
-        self.append_node(edge_from, group)
+    def instantiate_edge(self, group, block, stmt):
+        from_node = DiagramNode.get(stmt.from_node)
+        self.append_node(from_node, group)
 
-        edge_type, node_id = tree.nodes[1]
-        edge_to = DiagramNode.get(node_id)
-        self.append_node(edge_to, group)
+        to_node = DiagramNode.get(stmt.to_node)
+        self.append_node(to_node, group)
 
-        edge = DiagramEdge(edge_from, edge_to)
-        if edge_type:
-            edge.set_attributes([parser.Attr('dir', edge_type)])
-        edge.set_attributes(tree.attrs)
+        edge = DiagramEdge(from_node, to_node)
+        edge.set_dir(stmt.edge_type)
+        edge.set_attributes(stmt.attrs)
 
         if edge.dir in ('forward', 'both'):
             forward = edge.duplicate()
@@ -205,12 +202,14 @@ class DiagramTreeBuilder(object):
             if block:
                 block.edges.append(forward)
 
-        if len(tree.nodes) > 2:
-            nodes = [edge_to.id] + tree.nodes[2:]
-            nested = parser.Edge(nodes, tree.attrs, tree.subedge)
+        if stmt.followers:
+            followers = list(stmt.followers)
+            next_edge_type, next_to_node = followers.pop(0)
+            nested = parser.Edge(stmt.to_node, next_edge_type, next_to_node,
+                                 followers, stmt.attrs, stmt.edge_block)
             self.instantiate_edge(group, block, nested)
-        elif tree.subedge:
-            self.instantiate(group, block, tree.subedge)
+        elif stmt.edge_block:
+            self.instantiate(group, block, stmt.edge_block)
 
         if edge.dir in ('back', 'both') and edge.node1 != edge.node2:
             reverse = edge.duplicate()
