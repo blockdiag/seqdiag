@@ -41,20 +41,19 @@ from collections import namedtuple
 from funcparserlib.lexer import make_tokenizer, Token, LexerError
 from funcparserlib.parser import (some, a, maybe, many, finished, skip,
                                   forward_decl)
+from blockdiag.parser import create_mapper, flatten, oneplus_to_list
 from blockdiag.utils.compat import u
 
-ENCODING = 'utf-8'
-
-Graph = namedtuple('Graph', 'type id stmts')
-SubGraph = namedtuple('SubGraph', 'stmts')
+Diagram = namedtuple('Diagram', 'type id stmts')
+Group = namedtuple('Group', 'stmts')
 Node = namedtuple('Node', 'id attrs')
 Attr = namedtuple('Attr', 'name value')
-Edge = namedtuple('Edge', 'nodes attrs subedge')
-DefAttrs = namedtuple('DefAttrs', 'object attrs')
-AttrClass = namedtuple('AttrClass', 'name attrs')
-AttrPlugin = namedtuple('AttrPlugin', 'name attrs')
+Edge = namedtuple('Edge', ('from_node edge_type to_node '
+                           'followers attrs edge_block'))
+Statements = namedtuple('Statements', 'stmts')
 Separator = namedtuple('Separator', 'type value')
-AltBlock = namedtuple('AltBlock', 'type id stmts')
+Extension = namedtuple('Extension', 'type name attrs')
+Fragment = namedtuple('Fragment', 'type id stmts')
 
 
 class ParseException(Exception):
@@ -83,78 +82,105 @@ def tokenize(string):
 
 def parse(seq):
     """Sequence(Token) -> object"""
-    unarg = lambda f: lambda args: f(*args)
     tokval = lambda x: x.value
-    flatten = lambda list: sum(list, [])
-    n = lambda s: a(Token('Name', s)) >> tokval
     op = lambda s: a(Token('Op', s)) >> tokval
     op_ = lambda s: skip(op(s))
-    _id = some(lambda t:
-               t.type in ['Name', 'Number', 'String']).named('id') >> tokval
-    sep = some(lambda t: t.type == 'Separator').named('sep') >> tokval
-    make_graph_attr = lambda args: DefAttrs(u('graph'), [Attr(*args)])
-    make_edge = lambda x, x2, xs, attrs, subedge: \
-        Edge([x, x2] + xs, attrs, subedge)
-    make_subedge = lambda args: SubGraph(args)
-    make_separator = lambda s: Separator(s[0:3], s[3:-3].strip())
+    _id = some(lambda t: t.type in ['Name', 'Number', 'String']) >> tokval
+    keyword = lambda s: a(Token('Name', s)) >> tokval
+    separator = some(lambda t: t.type == 'Separator') >> tokval
 
-    node_id = _id  # + maybe(port)
-    a_list = (
+    def make_separator(sep):
+        return Separator(sep[0:3], sep[3:-3].strip())
+
+    #
+    # parts of syntax
+    #
+    option_stmt = (
         _id +
-        maybe(op_('=') + _id) +
-        skip(maybe(op(',')))
-        >> unarg(Attr))
-    attr_list = (
-        many(op_('[') + many(a_list) + op_(']'))
-        >> flatten)
-    graph_attr = _id + op_('=') + _id >> make_graph_attr
-    node_stmt = node_id + attr_list >> unarg(Node)
-    separator_stmt = (sep >> make_separator)
+        maybe(op_('=') + _id)
+        >> create_mapper(Attr)
+    )
+    option_list = (
+        maybe(op_('[') + option_stmt + many(op_(',') + option_stmt) + op_(']'))
+        >> create_mapper(oneplus_to_list, default_value=[])
+    )
 
-    #  edge statements::
+    #  attributes statement::
+    #     default_shape = box;
+    #     default_fontsize = 16;
+    #
+    attribute_stmt = (
+        _id + op_('=') + _id
+        >> create_mapper(Attr)
+    )
+
+    #  node statement::
+    #     A;
+    #     B [attr = value, attr = value];
+    #
+    node_stmt = (
+        _id + option_list
+        >> create_mapper(Node)
+    )
+
+    #  separator statement::
+    #     === message ===
+    #     ... message ...
+    #
+    separator_stmt = (
+        separator
+        >> make_separator
+    )
+
+    #  edge statement::
     #     A -> B;
     #     C -> D {
     #       D -> E;
     #     }
     #
-    subedge = forward_decl()
-    edge_rel = (op('<<--') | op('<--') | op('<<-') | op('<-') |
-                op('->') | op('->>') | op('-->') | op('-->>') |
-                op('=>'))
-    edge_rhs = edge_rel + node_id
+    edge_block = forward_decl()
+    edge_relation = (
+        op('<<--') | op('<--') | op('<<-') | op('<-') |
+        op('->') | op('->>') | op('-->') | op('-->>') |
+        op('=>')
+    )
     edge_stmt = (
-        node_id +
-        edge_rhs +
-        many(edge_rhs) +
-        attr_list +
-        maybe(subedge)
-        >> unarg(make_edge))
-    edge_stmt_list = many((edge_stmt | separator_stmt) + skip(maybe(op(';'))))
-    subedge.define(
+        _id +
+        edge_relation +
+        _id +
+        many(edge_relation + _id) +
+        option_list +
+        maybe(edge_block)
+        >> create_mapper(Edge)
+    )
+    edge_block_inline_stmt_list = (
+        many(edge_stmt + skip(maybe(op(';'))) | separator_stmt)
+    )
+    edge_block.define(
         op_('{') +
-        edge_stmt_list +
+        edge_block_inline_stmt_list +
         op_('}')
-        >> make_subedge)
+        >> Statements
+    )
 
-    #  group statements::
+    #  group statement::
     #     group {
     #        A;
     #     }
     #
-    group_stmt = (
-        graph_attr
-        | node_stmt
+    group_inline_stmt_list = (
+        many((attribute_stmt | node_stmt) + skip(maybe(op(';'))))
     )
-    group_stmt_list = many(group_stmt + skip(maybe(op(';'))))
-    group = (
-        skip(n('group')) +
+    group_stmt = (
+        skip(keyword('group')) +
         skip(maybe(_id)) +
         op_('{') +
-        group_stmt_list +
+        group_inline_stmt_list +
         op_('}')
-        >> SubGraph)
+        >> Group
+    )
 
-    #  alt statements::
+    #  combined fragment (alt, loop) statement::
     #     loop {
     #        A -> B;
     #     }
@@ -162,64 +188,72 @@ def parse(seq):
     #        D -> E;
     #     }
     #
-    altblock = forward_decl()
-    altblock_stmt = (
-        altblock
-        | graph_attr
-        | edge_stmt
-        | node_stmt
+    fragment_stmt = forward_decl()
+    fragment_inline_stmt = (
+        attribute_stmt |
+        fragment_stmt |
+        edge_stmt |
+        node_stmt
     )
-    altblock_stmt_list = many(altblock_stmt + skip(maybe(op(';'))))
-    alttypes = (
-        n('alt') | n('loop')
+    fragment_inline_stmt_list = (
+        many(fragment_inline_stmt + skip(maybe(op(';'))))
     )
-    altblock.define(
-        alttypes +
+    fragment_types = (
+        keyword('alt') | keyword('loop')
+    )
+    fragment_stmt.define(
+        fragment_types +
         maybe(_id) +
         op_('{') +
-        altblock_stmt_list +
+        fragment_inline_stmt_list +
         op_('}')
-        >> unarg(AltBlock))
+        >> create_mapper(Fragment)
+    )
 
+    #  extension statement (class, plugin)::
+    #     class red [color = red];
+    #     plugin attributes [name = Name];
     #
-    #  graph
-    #
-    class_stmt = (
-        skip(n('class')) +
-        node_id +
-        attr_list
-        >> unarg(AttrClass))
-    plugin_stmt = (
-        skip(n('plugin')) +
-        node_id +
-        attr_list
-        >> unarg(AttrPlugin))
-    stmt = (
-        altblock
-        | group
-        | class_stmt
-        | plugin_stmt
-        | edge_stmt
-        | separator_stmt
-        | graph_attr
-        | node_stmt
+    extension_stmt = (
+        (keyword('class') | keyword('plugin')) +
+        _id +
+        option_list
+        >> create_mapper(Extension)
     )
-    stmt_list = many(stmt + skip(maybe(op(';'))))
-    graph = (
-        maybe(n('diagram') | n('seqdiag')) +
+
+    # diagram statement::
+    #     seqdiag {
+    #        A -> B;
+    #     }
+    #
+    diagram_inline_stmt = (
+        extension_stmt |
+        attribute_stmt |
+        fragment_stmt |
+        group_stmt |
+        edge_stmt |
+        separator_stmt |
+        node_stmt
+    )
+    diagram_inline_stmt_list = (
+        many(diagram_inline_stmt + skip(maybe(op(';'))))
+    )
+    diagram = (
+        maybe(keyword('diagram') | keyword('seqdiag')) +
         maybe(_id) +
         op_('{') +
-        stmt_list +
+        diagram_inline_stmt_list +
         op_('}')
-        >> unarg(Graph))
-    dotfile = graph + skip(finished)
+        >> create_mapper(Diagram)
+    )
+    dotfile = diagram + skip(finished)
 
     return dotfile.parse(seq)
 
 
 def sort_tree(tree):
     def weight(node):
-        if isinstance(node, (Attr, DefAttrs, AttrPlugin, AttrClass)):
+        if isinstance(node, (Attr, Extension)):
             return 1
         else:
             return 2
