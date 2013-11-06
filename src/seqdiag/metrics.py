@@ -450,7 +450,7 @@ class EdgeMetrics(object):
         box = self.leftnotebox
         return [XY(box[0], box[1]), XY(box[2], box[1]),
                 XY(box[2] + r, box[1] + r), XY(box[2] + r, box[3]),
-                XY(box[0],  box[3]), XY(box[0], box[1])]
+                XY(box[0], box[3]), XY(box[0], box[1])]
 
     @property
     def rightnotebox(self):
@@ -479,7 +479,7 @@ class EdgeMetrics(object):
         box = self.rightnotebox
         return [XY(box[0], box[1]), XY(box[2], box[1]),
                 XY(box[2] + r, box[1] + r), XY(box[2] + r, box[3]),
-                XY(box[0],  box[3]), XY(box[0], box[1])]
+                XY(box[0], box[3]), XY(box[0], box[1])]
 
 
 class SeparatorMetrics(object):
