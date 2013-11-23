@@ -12,20 +12,14 @@ You can get some examples and generated images on
 Setup
 =====
 
-by easy_install
-----------------
-Make environment::
+Use easy_install or pip::
 
-   $ easy_install seqdiag
+   $ sudo easy_install seqdiag
 
-by buildout
-------------
-Make environment::
+   Or
 
-   $ hg clone http://bitbucket.org/tk0miya/seqdiag
-   $ cd seqdiag
-   $ python bootstrap.py
-   $ bin/buildout
+   $ sudo pip seqdiag
+
 
 Copy and modify ini file. example::
 
