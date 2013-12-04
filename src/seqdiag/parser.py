@@ -44,7 +44,7 @@ from funcparserlib.parser import (some, a, maybe, many, finished, skip,
 from blockdiag.parser import create_mapper, flatten, oneplus_to_list
 from blockdiag.utils.compat import u
 
-Diagram = namedtuple('Diagram', 'type id stmts')
+Diagram = namedtuple('Diagram', 'id stmts')
 Group = namedtuple('Group', 'stmts')
 Node = namedtuple('Node', 'id attrs')
 Attr = namedtuple('Attr', 'name value')
@@ -226,6 +226,11 @@ def parse(seq):
     #        A -> B;
     #     }
     #
+    diagram_id = (
+        (keyword('diagram') | keyword('seqdiag')) +
+        maybe(_id)
+        >> list
+    )
     diagram_inline_stmt = (
         extension_stmt |
         attribute_stmt |
@@ -239,8 +244,7 @@ def parse(seq):
         many(diagram_inline_stmt + skip(maybe(op(';'))))
     )
     diagram = (
-        maybe(keyword('diagram') | keyword('seqdiag')) +
-        maybe(_id) +
+        maybe(diagram_id) +
         op_('{') +
         diagram_inline_stmt_list +
         op_('}')
