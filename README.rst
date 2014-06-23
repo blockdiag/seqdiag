@@ -1,5 +1,18 @@
 `seqdiag` generate sequence-diagram image file from spec-text file.
 
+.. image:: https://drone.io/bitbucket.org/blockdiag/seqdiag/status.png
+   :target: https://drone.io/bitbucket.org/blockdiag/seqdiag
+   :alt: drone.io CI build status
+
+.. image:: https://pypip.in/v/seqdiag/badge.png
+   :target: https://pypi.python.org/pypi/seqdiag/
+   :alt: Latest PyPI version
+
+.. image:: https://pypip.in/d/seqdiag/badge.png
+   :target: https://pypi.python.org/pypi/seqdiag/
+   :alt: Number of PyPI downloads
+
+
 Features
 ========
 
