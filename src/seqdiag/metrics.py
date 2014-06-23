@@ -14,11 +14,11 @@
 #  limitations under the License.
 
 from __future__ import division
-import sys
 from collections import namedtuple, defaultdict
 from seqdiag import elements
 import blockdiag.metrics
 from blockdiag.utils import Box, XY
+from blockdiag.utils.logging import warning
 
 
 class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
@@ -35,10 +35,7 @@ class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
         if diagram.edge_length:
             span_width = diagram.edge_length - self.node_width
             if span_width < 0:
-                msg = "WARNING: edge_length is too short: %d\n" % \
-                      diagram.edge_length
-                sys.stderr.write(msg)
-
+                warning("edge_length is too short: %d", diagram.edge_length)
                 span_width = 0
 
             self.spreadsheet.set_span_width(0, self.span_width)
