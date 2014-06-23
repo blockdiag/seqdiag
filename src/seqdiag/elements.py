@@ -14,9 +14,9 @@
 #  limitations under the License.
 
 import re
-import sys
 import blockdiag.elements
 from blockdiag.utils import images, Size, XY
+from blockdiag.utils.logging import warning
 
 
 class NodeGroup(blockdiag.elements.NodeGroup):
@@ -197,8 +197,7 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
             else:
                 self.async = False
         else:
-            msg = "WARNING: unknown edge dir: %s\n" % _dir
-            sys.stderr.write(msg)
+            warning("unknown edge dir: %s", _dir)
 
 
 class AltBlock(blockdiag.elements.Base):
@@ -287,8 +286,7 @@ class Diagram(blockdiag.elements.Diagram):
         if value == 'none':
             self.activation = value
         else:
-            msg = "WARNING: unknown activation style: %s\n" % value
-            sys.stderr.write(msg)
+            warning("unknown activation style: %s", value)
 
     def set_autonumber(self, value):
         if value.lower() == 'false':
@@ -297,7 +295,5 @@ class Diagram(blockdiag.elements.Diagram):
             self.autonumber = True
 
     def set_edge_height(self, value):
-        msg = "WARNING: edge_height is obsoleted; use span_height\n"
-        sys.stderr.write(msg)
-
+        warning("edge_height is obsoleted; use span_height")
         self.span_height = int(value)
