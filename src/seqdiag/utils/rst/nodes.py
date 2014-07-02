@@ -13,8 +13,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from docutils import nodes
+import seqdiag.parser
+import seqdiag.builder
+import seqdiag.drawer
+from blockdiag.utils.rst import nodes
 
 
-class seqdiag(nodes.General, nodes.Element):
-    pass
+class seqdiag(nodes.blockdiag):
+    name = 'seqdiag'
+    processor = seqdiag

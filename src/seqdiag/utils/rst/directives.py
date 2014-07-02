@@ -14,9 +14,6 @@
 #  limitations under the License.
 
 from docutils.parsers import rst
-import seqdiag.parser
-import seqdiag.builder
-import seqdiag.drawer
 from seqdiag.utils.rst.nodes import seqdiag as seqdiag_node
 from blockdiag.utils.rst import directives
 
@@ -34,7 +31,6 @@ directive_options = {}
 class SeqdiagDirective(directives.BlockdiagDirective):
     name = "seqdiag"
     node_class = seqdiag_node
-    processor = seqdiag
 
     @property
     def global_options(self):
