@@ -366,6 +366,7 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(2, len(doctree))
         self.assertEqual(nodes.image, type(doctree[0]))
         self.assertEqual(0, doctree[0]['uri'].index(self.tmpdir))
+        self.assertEqual('100', doctree[0]['width'])
         self.assertEqual(nodes.system_message, type(doctree[1]))
 
     def test_width_option(self):
@@ -377,6 +378,7 @@ class TestRstDirectives(unittest.TestCase):
         doctree = publish_doctree(text)
         self.assertEqual(1, len(doctree))
         self.assertEqual(nodes.image, type(doctree[0]))
+        self.assertEqual('100', doctree[0]['width'])
         self.assertEqual(0, doctree[0]['uri'].index(self.tmpdir))
 
     def test_height_option(self):
@@ -388,6 +390,7 @@ class TestRstDirectives(unittest.TestCase):
         doctree = publish_doctree(text)
         self.assertEqual(1, len(doctree))
         self.assertEqual(nodes.image, type(doctree[0]))
+        self.assertEqual('100', doctree[0]['height'])
         self.assertEqual(0, doctree[0]['uri'].index(self.tmpdir))
 
     def test_scale_option(self):
@@ -399,6 +402,7 @@ class TestRstDirectives(unittest.TestCase):
         doctree = publish_doctree(text)
         self.assertEqual(1, len(doctree))
         self.assertEqual(nodes.image, type(doctree[0]))
+        self.assertEqual(50, doctree[0]['scale'])
         self.assertEqual(0, doctree[0]['uri'].index(self.tmpdir))
 
     def test_name_option(self):
