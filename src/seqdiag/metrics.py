@@ -210,9 +210,9 @@ class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
             cell = self.cell(edge.right_node)
             if edge.direction == 'self':
                 right = self.edge(edge).right
-                width = self.pagesize().x - right - self.cellsize * 3
+                width = self.pagesize().width - right - self.cellsize * 3
             else:
-                width = self.pagesize().x - cell.center.x - self.cellsize * 3
+                width = self.pagesize().width - cell.center.x - self.cellsize * 3
 
             if edge.right_node.xy.x + 1 == self.node_count:
                 width -= self.cellsize * 2
