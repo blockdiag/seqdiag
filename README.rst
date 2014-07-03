@@ -92,6 +92,10 @@ Apache License 2.0
 History
 =======
 
+0.9.3 (2014-07-03)
+------------------
+* Fix bugs
+
 0.9.2 (2014-07-02)
 ------------------
 * Change interface of docutils node (for sphinxcontrib module)
