@@ -13,7 +13,6 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import re
 import blockdiag.elements
 from blockdiag.utils import images, Size, XY
 from blockdiag.utils.logging import warning
@@ -84,6 +83,22 @@ class EdgeSeparator(blockdiag.elements.Base):
 
 class DiagramEdge(blockdiag.elements.DiagramEdge):
     notecolor = (255, 182, 193)  # LightPink
+
+    # name -> (dir, style, async)
+    ARROW_DEF = {
+        'both': ('both', None, False),
+        '=>': ('both', None, False),
+        'forward': ('forward', None, False),
+        '->': ('forward', None, False),
+        '-->': ('forward', 'dashed', False),
+        '->>': ('forward', None, True),
+        '-->>': ('forward', 'dashed', True),
+        'back': ('back', None, False),
+        '<-': ('back', None, False),
+        '<--': ('back', 'dashed', False),
+        '<<-': ('back', None, True),
+        '<<--': ('back', 'dashed', True)
+    }
 
     @classmethod
     def clear(cls):
@@ -167,37 +182,20 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
         self.activate = False
 
     def set_dir(self, value):
-        _dir = value.lower()
-        if _dir in ('back', 'both', 'forward'):
-            self.dir = _dir
-        elif _dir == '=>':
-            self.dir = 'both'
-        elif _dir in ('->', '->>', '-->', '-->>'):
-            self.dir = 'forward'
-
-            if re.search('--', _dir):
-                self.style = 'dashed'
-            else:
-                self.style = None
-
-            if re.search('>>', _dir):
-                self.async = True
-            else:
-                self.async = False
-        elif _dir in ('<-', '<<-', '<--', '<<--'):
-            self.dir = 'back'
-
-            if re.search('--', _dir):
-                self.style = 'dashed'
-            else:
-                self.style = None
-
-            if re.search('<<', _dir):
-                self.async = True
-            else:
-                self.async = False
+        params = self.ARROW_DEF.get(value.lower())
+        if params is None:
+            warning("unknown edge dir: %s", value)
         else:
-            warning("unknown edge dir: %s", _dir)
+            self.dir, self.style, self.async = params
+
+    def to_desctable(self):
+        params = (self.dir, self.style, self.async)
+        for arrow_type, settings in self.ARROW_DEF.items():
+            if params == settings and not arrow_type.isalpha():
+                label = "%s %s %s" % (self.node1.label,
+                                      arrow_type,
+                                      self.node2.label)
+                return [label, self.description]
 
 
 class AltBlock(blockdiag.elements.Base):

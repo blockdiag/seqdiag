@@ -718,7 +718,7 @@ class TestRstDirectives(unittest.TestCase):
                 "   :desctable:\n"
                 "\n"
                 "   A -> B [description = \"foo\"]"
-                "   C -> D [description = \"bar\"]"
+                "   C <- D [description = \"bar\"]"
                 "   C [label = \"label_C\"]"
                 "   D [label = \"label_D\"]")
         doctree = publish_doctree(text)
@@ -750,7 +750,7 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(1, len(tbody[0][1][0]))
         self.assertEqual(nodes.Text, type(tbody[0][1][0][0]))
         self.assertEqual('foo', str(tbody[0][1][0][0]))
-        self.assertEqual('label_C -> label_D', tbody[1][0][0][0])
+        self.assertEqual('label_C <- label_D', tbody[1][0][0][0])
         self.assertEqual(1, len(tbody[1][1][0]))
         self.assertEqual(nodes.Text, type(tbody[1][1][0][0]))
         self.assertEqual('bar', str(tbody[1][1][0][0]))
@@ -760,8 +760,8 @@ class TestRstDirectives(unittest.TestCase):
         text = (".. seqdiag::\n"
                 "   :desctable:\n"
                 "\n"
-                "   A -> B [description = \"foo\"]"
-                "   C -> D [description = \"bar\"]"
+                "   A -->> B [description = \"foo\"]"
+                "   C => D [description = \"bar\"]"
                 "   C [label = \"label_C\", description = foo]"
                 "   D [label = \"label_D\"]")
         doctree = publish_doctree(text)
@@ -789,8 +789,8 @@ class TestRstDirectives(unittest.TestCase):
 
         # tbody
         tbody = doctree[2][0][3]
-        self.assertEqual(2, len(tbody))
-        self.assertEqual('A -> B', tbody[0][0][0][0])
+        self.assertEqual(3, len(tbody))
+        self.assertEqual('A -->> B', tbody[0][0][0][0])
         self.assertEqual(1, len(tbody[0][1][0]))
         self.assertEqual(nodes.Text, type(tbody[0][1][0][0]))
         self.assertEqual('foo', str(tbody[0][1][0][0]))
@@ -798,3 +798,7 @@ class TestRstDirectives(unittest.TestCase):
         self.assertEqual(1, len(tbody[1][1][0]))
         self.assertEqual(nodes.Text, type(tbody[1][1][0][0]))
         self.assertEqual('bar', str(tbody[1][1][0][0]))
+        self.assertEqual('label_C <-- label_D', tbody[2][0][0][0])
+        self.assertEqual(1, len(tbody[2][1][0]))
+        self.assertEqual(nodes.Text, type(tbody[2][1][0][0]))
+        self.assertEqual('bar', str(tbody[2][1][0][0]))
