@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.9.4 (2014-11-05)
+------------------
+* Fix bugs
+
+  - Fix :desctable: ignores edge direction
+
 0.9.3 (2014-07-03)
 ------------------
 * Fix bugs
