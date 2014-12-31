@@ -1,6 +1,10 @@
 Changelog
 =========
 
+0.9.5 (2015-01-01)
+------------------
+* Support blockdiag 1.5.0 core interface
+
 0.9.4 (2014-11-05)
 ------------------
 * Fix bugs
