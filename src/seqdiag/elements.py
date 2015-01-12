@@ -188,6 +188,9 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
         else:
             self.dir, self.style, self.async = params
 
+            if self.node1 == self.node2 and self.dir in ('forward', 'back'):
+                self.activate = False
+
     def to_desctable(self):
         params = (self.dir, self.style, self.async)
         for arrow_type, settings in self.ARROW_DEF.items():
