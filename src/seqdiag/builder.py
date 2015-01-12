@@ -80,9 +80,7 @@ class DiagramTreeBuilder(object):
             match = [e for e in self.diagram.edges if e.order == i]
             if match:
                 edge = match[0]
-                if edge.node1 == edge.node2:
-                    pass
-                elif edge.activate is False:
+                if edge.activate is False:
                     pass
                 elif edge.dir == 'forward':
                     if edge.node2 in active_nodes:
@@ -211,7 +209,7 @@ class DiagramTreeBuilder(object):
         elif stmt.edge_block:
             self.instantiate(group, block, stmt.edge_block)
 
-        if edge.dir in ('back', 'both') and edge.node1 != edge.node2:
+        if edge.dir in ('back', 'both'):
             reverse = edge.duplicate()
             reverse.dir = 'back'
             if edge.dir == 'both':
