@@ -13,25 +13,22 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-__all__ = [
-    'core', 'utils'
-]
-
 import seqdiag
 import seqdiag.parser
 import seqdiag.builder
 import seqdiag.drawer
-core = seqdiag
-
 import seqdiag.utils.rst.nodes
 import seqdiag.utils.rst.directives
-utils = seqdiag.utils
-
 import blockdiag.utils.bootstrap
-utils.bootstrap = blockdiag.utils.bootstrap
-
-import blockdiag.utils.fontmap
-utils.fontmap = blockdiag.utils.fontmap
-
 import blockdiag.utils.compat
+import blockdiag.utils.fontmap
+
+__all__ = [
+    'core', 'utils'
+]
+
+core = seqdiag
+utils = seqdiag.utils
+utils.bootstrap = blockdiag.utils.bootstrap
+utils.fontmap = blockdiag.utils.fontmap
 utils.compat = blockdiag.utils.compat
