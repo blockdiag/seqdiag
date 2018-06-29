@@ -103,7 +103,7 @@ class DiagramDraw(blockdiag.drawer.DiagramDraw):
 
         # render head of edges
         head = m.head
-        if edge.async:
+        if edge.asynchronous:
             self.drawer.line((head[0], head[1]), fill=edge.color)
             self.drawer.line((head[1], head[2]), fill=edge.color)
         else:
