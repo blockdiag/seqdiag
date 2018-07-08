@@ -84,7 +84,7 @@ class EdgeSeparator(blockdiag.elements.Base):
 class DiagramEdge(blockdiag.elements.DiagramEdge):
     notecolor = (255, 182, 193)  # LightPink
 
-    # name -> (dir, style, async)
+    # name -> (dir, style, asynchronous)
     ARROW_DEF = {
         'both': ('both', None, False),
         '=>': ('both', None, False),
@@ -121,7 +121,7 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
         self.textheight = 0
         self.order = 0
         self.activate = True
-        self.async = False
+        self.asynchronous = False
         self.diagonal = False
         self.failed = False
         self.return_label = ''
@@ -186,13 +186,13 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
         if params is None:
             warning("unknown edge dir: %s", value)
         else:
-            self.dir, self.style, self.async = params
+            self.dir, self.style, self.asynchronous = params
 
             if self.node1 == self.node2 and self.dir in ('forward', 'back'):
                 self.activate = False
 
     def to_desctable(self):
-        params = (self.dir, self.style, self.async)
+        params = (self.dir, self.style, self.asynchronous)
         for arrow_type, settings in self.ARROW_DEF.items():
             if params == settings and not arrow_type.isalpha():
                 label = "%s %s %s" % (self.node1.label,
