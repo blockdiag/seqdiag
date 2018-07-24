@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.9.6 (2018-07-24)
+------------------
+* Fix a bug
+
+  - Fix #24 Python 3.7 compatibility
+
 0.9.5 (2015-01-01)
 ------------------
 * Support blockdiag 1.5.0 core interface
