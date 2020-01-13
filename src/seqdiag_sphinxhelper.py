@@ -21,7 +21,6 @@ import seqdiag.utils.rst.nodes
 import seqdiag.utils.rst.directives
 import blockdiag.utils.bootstrap
 import blockdiag.utils.compat
-import blockdiag.utils.fontmap
 
 __all__ = [
     'core', 'utils'
@@ -31,4 +30,3 @@ core = seqdiag
 utils = seqdiag.utils
 utils.bootstrap = blockdiag.utils.bootstrap
 utils.fontmap = blockdiag.utils.fontmap
-utils.compat = blockdiag.utils.compat
