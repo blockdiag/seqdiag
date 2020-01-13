@@ -6,27 +6,18 @@ sys.path.insert(0, 'src')
 import seqdiag
 
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: System Administrators",
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python",
+    "Programming Language :: Python :: 3.5",
+    "Programming Language :: Python :: 3.6",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
     "Topic :: Software Development",
     "Topic :: Software Development :: Documentation",
     "Topic :: Text Processing :: Markup",
 ]
-
-requires = ['blockdiag>=1.5.0']
-test_requires = ['nose',
-                 'pep8>=1.3',
-                 'reportlab',
-                 'docutils']
-
-# only for Python2.6
-if sys.version_info > (2, 6) and sys.version_info < (2, 7):
-    test_requires.append('unittest2')
-
-if (3, 2) < sys.version_info < (3, 3):
-    requires.append('webcolors < 1.5')  # webcolors-1.5 does not support py32
 
 
 setup(
@@ -46,15 +37,21 @@ setup(
     package_dir={'': 'src'},
     package_data={'': ['buildout.cfg']},
     include_package_data=True,
-    install_requires=requires,
-    extras_require=dict(
-        testing=test_requires,
-        rst=[
+    python_requires=">=3.5",
+    install_requires=[
+        'blockdiag >= 1.5.0',
+    ],
+    extras_require={
+        'testing': [
+            'nose',
+            'flake8',
+            'flake8-coding',
+            'flake8-copyright',
+            'reportlab',
             'docutils',
         ],
-    ),
+    },
     test_suite='nose.collector',
-    tests_require=test_requires,
     entry_points="""
        [console_scripts]
        seqdiag = seqdiag.command:main
