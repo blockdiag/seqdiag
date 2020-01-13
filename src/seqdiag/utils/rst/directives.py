@@ -13,10 +13,10 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from docutils.parsers import rst
-from seqdiag.utils.rst.nodes import seqdiag as seqdiag_node
 from blockdiag.utils.rst import directives
+from docutils.parsers import rst
 
+from seqdiag.utils.rst.nodes import seqdiag as seqdiag_node
 
 directive_options_default = dict(format='PNG',
                                  antialias=False,

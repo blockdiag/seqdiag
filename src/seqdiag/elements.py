@@ -14,7 +14,7 @@
 #  limitations under the License.
 
 import blockdiag.elements
-from blockdiag.utils import images, Size, XY
+from blockdiag.utils import XY, Size, images
 from blockdiag.utils.logging import warning
 
 

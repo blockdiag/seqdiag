@@ -13,10 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from blockdiag.utils import XY, unquote
+
 from seqdiag import parser
-from seqdiag.elements import (Diagram, DiagramNode, NodeGroup,
-                              DiagramEdge, EdgeSeparator, AltBlock)
-from blockdiag.utils import unquote, XY
+from seqdiag.elements import (AltBlock, Diagram, DiagramEdge, DiagramNode,
+                              EdgeSeparator, NodeGroup)
 
 
 class DiagramTreeBuilder(object):
