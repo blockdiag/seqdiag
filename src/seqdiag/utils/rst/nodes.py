@@ -13,10 +13,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import seqdiag.parser
+from blockdiag.utils.rst import nodes
+
 import seqdiag.builder
 import seqdiag.drawer
-from blockdiag.utils.rst import nodes
+import seqdiag.parser
 
 
 class seqdiag(nodes.blockdiag):

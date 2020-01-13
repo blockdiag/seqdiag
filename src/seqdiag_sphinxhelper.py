@@ -13,14 +13,15 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-import seqdiag
-import seqdiag.parser
-import seqdiag.builder
-import seqdiag.drawer
-import seqdiag.utils.rst.nodes
-import seqdiag.utils.rst.directives
 import blockdiag.utils.bootstrap
 import blockdiag.utils.compat
+
+import seqdiag
+import seqdiag.builder
+import seqdiag.drawer
+import seqdiag.parser
+import seqdiag.utils.rst.directives
+import seqdiag.utils.rst.nodes
 
 __all__ = [
     'core', 'utils'

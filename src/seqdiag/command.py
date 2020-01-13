@@ -14,11 +14,13 @@
 #  limitations under the License.
 
 import sys
+
+from blockdiag.utils.bootstrap import Application
+
 import seqdiag
 import seqdiag.builder
 import seqdiag.drawer
 import seqdiag.parser
-from blockdiag.utils.bootstrap import Application
 
 
 class SeqdiagApp(Application):

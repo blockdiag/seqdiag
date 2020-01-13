@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
-import sys
-from setuptools import setup, find_packages
+import os
 
-sys.path.insert(0, 'src')
-import seqdiag
+from setuptools import find_packages, setup
 
 classifiers = [
     "Development Status :: 5 - Production/Stable",
@@ -20,9 +18,21 @@ classifiers = [
 ]
 
 
+def get_version():
+    """Get version number of the package from version.py without importing core module."""
+    package_dir = os.path.abspath(os.path.dirname(__file__))
+    version_file = os.path.join(package_dir, 'src/seqdiag/__init__.py')
+
+    namespace = {}
+    with open(version_file, 'r') as f:
+        exec(f.read(), namespace)
+
+    return namespace['__version__']
+
+
 setup(
     name='seqdiag',
-    version=seqdiag.__version__,
+    version=get_version(),
     description='seqdiag generates sequence-diagram image from text',
     long_description=open("README.rst").read(),
     classifiers=classifiers,
@@ -47,6 +57,7 @@ setup(
             'flake8',
             'flake8-coding',
             'flake8-copyright',
+            'flake8-isort',
             'reportlab',
             'docutils',
         ],

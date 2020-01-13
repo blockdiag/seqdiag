@@ -14,8 +14,9 @@
 #  limitations under the License.
 
 import blockdiag.drawer
-from seqdiag.metrics import DiagramMetrics
 from blockdiag.utils import XY
+
+from seqdiag.metrics import DiagramMetrics
 
 
 class DiagramDraw(blockdiag.drawer.DiagramDraw):

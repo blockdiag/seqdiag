@@ -14,11 +14,14 @@
 #  limitations under the License.
 
 from __future__ import division
-from collections import namedtuple, defaultdict
-from seqdiag import elements
+
+from collections import defaultdict, namedtuple
+
 import blockdiag.metrics
-from blockdiag.utils import Box, XY
+from blockdiag.utils import XY, Box
 from blockdiag.utils.logging import warning
+
+from seqdiag import elements
 
 
 class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
