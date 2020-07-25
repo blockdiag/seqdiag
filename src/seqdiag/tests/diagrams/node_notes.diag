@@ -4,4 +4,8 @@
   A -> D [label = "short label", note = "goodbye\nworld"];
   A -> B [note = "very very very very long long long long text"];
   A -> B [leftnote = "very very very very long long long long text"];
+  A -> B [label = """a
+multiline"'
+very very very very long long long long
+text"""];
 }
