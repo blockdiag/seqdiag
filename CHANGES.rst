@@ -1,6 +1,12 @@
 Changelog
 =========
 
+2.0.1 (unreleased)
+------------------
+* Fix a bug
+
+  - Separator does not support both default_fontsize and default_textcolor
+
 2.0.0 (2020-01-26)
 ------------------
 * Drop python2 and python3.4 support

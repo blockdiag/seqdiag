@@ -272,6 +272,11 @@ class Diagram(blockdiag.elements.Diagram):
     def traverse_groups(self, preorder=False):
         return self.groups
 
+    def set_default_textcolor(self, color):
+        super(Diagram, self).set_default_textcolor(color)
+
+        EdgeSeparator.set_default_text_color(color)
+
     def set_default_linecolor(self, color):
         super(Diagram, self).set_default_linecolor(color)
 
@@ -281,6 +286,14 @@ class Diagram(blockdiag.elements.Diagram):
     def set_default_note_color(self, color):
         color = images.color_to_rgb(color)
         self._DiagramEdge.set_default_note_color(color)
+
+    def set_default_fontfamily(self, fontfamily):
+        super(Diagram, self).set_default_fontfamily(fontfamily)
+        EdgeSeparator.set_default_fontfamily(fontfamily)
+
+    def set_default_fontsize(self, fontsize):
+        super(Diagram, self).set_default_fontsize(fontsize)
+        EdgeSeparator.set_default_fontsize(fontsize)
 
     def set_activation(self, value):
         value = value.lower()
