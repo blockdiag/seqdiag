@@ -493,7 +493,7 @@ class SeparatorMetrics(object):
         y2 = y1 + self.metrics.node_height
         d = self.metrics.cellsize // 4
 
-        font = metrics.font_for(self)
+        font = metrics.font_for(self.separator)
         size = metrics.textsize(separator.label, font, x2 - x1)
         dx = (x2 - x1 - size.width) // 2
         dy = (y2 - y1 - size.height) // 2
