@@ -83,6 +83,7 @@ class EdgeSeparator(blockdiag.elements.Base):
 
 class DiagramEdge(blockdiag.elements.DiagramEdge):
     notecolor = (255, 182, 193)  # LightPink
+    label_margin = 2
 
     # name -> (dir, style, asynchronous)
     ARROW_DEF = {
@@ -104,11 +105,16 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
     def clear(cls):
         super(DiagramEdge, cls).clear()
         cls.notecolor = (255, 182, 193)
+        cls.label_margin = 2
 
     @classmethod
     def set_default_note_color(cls, color):
         color = images.color_to_rgb(color)
         cls.notecolor = color
+
+    @classmethod
+    def set_default_label_margin(cls, margin):
+        cls.label_margin = int(margin)
 
     def __init__(self, node1, node2):
         super(DiagramEdge, self).__init__(node1, node2)
@@ -190,6 +196,9 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
 
             if self.node1 == self.node2 and self.dir in ('forward', 'back'):
                 self.activate = False
+
+    def set_label_margin(self, margin):
+        self.label_margin = int(margin)
 
     def to_desctable(self):
         params = (self.dir, self.style, self.asynchronous)
@@ -286,6 +295,9 @@ class Diagram(blockdiag.elements.Diagram):
     def set_default_note_color(self, color):
         color = images.color_to_rgb(color)
         self._DiagramEdge.set_default_note_color(color)
+
+    def set_default_edge_label_margin(self, margin):
+        self._DiagramEdge.set_default_label_margin(margin)
 
     def set_default_fontfamily(self, fontfamily):
         super(Diagram, self).set_default_fontfamily(fontfamily)

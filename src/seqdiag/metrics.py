@@ -194,6 +194,7 @@ class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
             else:
                 width = (self.cell(edge.right_node).center.x -
                          self.cell(edge.left_node).center.x -
+                         edge.label_margin * 2 -
                          self.cellsize * 4)  # 4: width of activity and padding
             width, height = self.textsize(edge.label, width=width,
                                           font=self.font_for(edge))
@@ -402,15 +403,19 @@ class EdgeMetrics(object):
 
         if self.edge.direction == 'self':
             x = m.node(self.edge.node1).bottom.x + \
-                self.activity_line_width(self.edge.node1)
+                self.activity_line_width(self.edge.node1) + \
+                self.edge.label_margin * 2
         elif self.edge.direction == 'right':
             x = m.node(self.edge.left_node).bottom.x + \
                 self.activity_line_width(self.edge.left_node) + \
+                self.edge.label_margin * 2 + \
                 self.metrics.cellsize // 2
         else:  # left
-            x = m.node(self.edge.right_node).bottom.x - self.edge.textwidth
+            x = m.node(self.edge.right_node).bottom.x - \
+                self.edge.textwidth - \
+                self.edge.label_margin * 2
 
-        y1 = self.baseheight - self.edge.textheight
+        y1 = self.baseheight - self.edge.textheight - self.edge.label_margin
         return Box(x, y1, x + self.edge.textwidth, y1 + self.edge.textheight)
 
     def activity_line_width(self, node):
