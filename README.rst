@@ -20,7 +20,7 @@ Features
 * Multilingualization for node-label (utf-8 only).
 
 You can get some examples and generated images on 
-`blockdiag.com`_ .
+`blockdiag.com <http://blockdiag.com/en/seqdiag/index.html>`_ .
 
 Setup
 =====
@@ -47,7 +47,7 @@ spec-text setting sample
 
 Few examples are available.
 You can get more examples at
-`blockdiag.com <http://blockdiag.com/seqdiag/build/html/index.html>`_ .
+`blockdiag.com <http://blockdiag.com/en/seqdiag/index.html>`_ .
 
 simple.diag
 ------------
