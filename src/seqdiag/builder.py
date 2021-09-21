@@ -157,7 +157,7 @@ class DiagramTreeBuilder(object):
                     group.set_attribute(stmt)
 
             elif isinstance(stmt, parser.Separator):
-                sep = EdgeSeparator(stmt.type, unquote(stmt.value))
+                sep = EdgeSeparator(stmt.type, unquote(stmt.value), stmt.href)
                 sep.group = group
                 self.diagram.separators.append(sep)
                 group.edges.append(sep)

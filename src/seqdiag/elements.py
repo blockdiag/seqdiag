@@ -67,9 +67,10 @@ class EdgeSeparator(blockdiag.elements.Base):
         cls.basecolor = (208, 208, 208)
         cls.linecolor = (0, 0, 0)
 
-    def __init__(self, _type, label):
+    def __init__(self, _type, label, href):
         super(EdgeSeparator, self).__init__()
         self.label = label
+        self.href = href
         self.group = None
         self.style = None
         self.color = self.basecolor
