@@ -97,49 +97,59 @@ class DiagramDraw(blockdiag.drawer.DiagramDraw):
                                     outline=self.shadow, filter='transp-blur')
 
     def edge(self, edge):
+        if edge.href and self.format == 'SVG':
+            drawer = self.drawer.anchor(edge.href)
+        else:
+            drawer = self.drawer
+
         # render shaft of edges
         m = self.metrics.edge(edge)
         shaft = m.shaft
-        self.drawer.line(shaft, fill=edge.color, style=edge.style)
+        drawer.line(shaft, fill=edge.color, style=edge.style)
 
         # render head of edges
         head = m.head
         if edge.asynchronous:
-            self.drawer.line((head[0], head[1]), fill=edge.color)
-            self.drawer.line((head[1], head[2]), fill=edge.color)
+            drawer.line((head[0], head[1]), fill=edge.color)
+            drawer.line((head[1], head[2]), fill=edge.color)
         else:
-            self.drawer.polygon(head, outline=edge.color, fill=edge.color)
+            drawer.polygon(head, outline=edge.color, fill=edge.color)
 
         if edge.failed:
             for line in m.failedmark:
-                self.drawer.line(line, fill=edge.color)
+                drawer.line(line, fill=edge.color)
 
         if edge.leftnote:
             polygon = m.leftnoteshape
-            self.drawer.polygon(polygon, fill=edge.notecolor,
-                                outline=self.fill)
+            drawer.polygon(polygon, fill=edge.notecolor,
+                           outline=self.fill)
 
             folded = [polygon[1], XY(polygon[1].x, polygon[2].y), polygon[2]]
-            self.drawer.line(folded, fill=self.fill)
+            drawer.line(folded, fill=self.fill)
 
-            self.drawer.textarea(m.leftnotebox, edge.leftnote,
-                                 self.metrics.font_for(edge),
-                                 fill=edge.color, halign='left')
+            drawer.textarea(m.leftnotebox, edge.leftnote,
+                            self.metrics.font_for(edge),
+                            fill=edge.color, halign='left')
 
         if edge.rightnote:
             polygon = m.rightnoteshape
-            self.drawer.polygon(polygon, fill=edge.notecolor,
-                                outline=self.fill)
+            drawer.polygon(polygon, fill=edge.notecolor,
+                           outline=self.fill)
 
             folded = [polygon[1], XY(polygon[1].x, polygon[2].y), polygon[2]]
-            self.drawer.line(folded, fill=self.fill)
+            drawer.line(folded, fill=self.fill)
 
-            self.drawer.textarea(m.rightnotebox, edge.rightnote,
-                                 self.metrics.font_for(edge),
-                                 fill=edge.color, halign='left')
+            drawer.textarea(m.rightnotebox, edge.rightnote,
+                            self.metrics.font_for(edge),
+                            fill=edge.color, halign='left')
 
     def edge_label(self, edge):
         m = self.metrics.edge(edge)
+
+        if edge.href and self.format == 'SVG':
+            drawer = self.drawer.anchor(edge.href)
+        else:
+            drawer = self.drawer
 
         if edge.label:
             if edge.direction in ('right', 'self'):
@@ -147,7 +157,7 @@ class DiagramDraw(blockdiag.drawer.DiagramDraw):
             else:
                 halign = 'right'
 
-            self.drawer.textarea(m.textbox, edge.label,
+            drawer.textarea(m.textbox, edge.label,
                                  self.metrics.font_for(edge),
                                  fill=edge.color, halign=halign)
 
