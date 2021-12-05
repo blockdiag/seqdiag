@@ -3,6 +3,7 @@ Changelog
 
 2.0.1 (unreleased)
 ------------------
+* Add "edge_label_margin" attribute to edges
 * Fix a bug
 
   - Separator does not support both default_fontsize and default_textcolor
