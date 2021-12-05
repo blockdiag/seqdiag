@@ -152,17 +152,22 @@ class DiagramDraw(blockdiag.drawer.DiagramDraw):
                                  fill=edge.color, halign=halign)
 
     def separator(self, sep):
+        if sep.href and self.format == 'SVG':
+            drawer = self.drawer.anchor(sep.href)
+        else:
+            drawer = self.drawer
+
         m = self.metrics.separator(sep)
         for line in m.lines:
-            self.drawer.line(line, fill=self.fill, style=sep.style)
+            drawer.line(line, fill=self.fill, style=sep.style)
 
         if sep.type == 'delay':
-            self.drawer.rectangle(m.labelbox, fill='white', outline='white')
+            drawer.rectangle(m.labelbox, fill='white', outline='white')
         elif sep.type == 'divider':
-            self.drawer.rectangle(m.labelbox, fill=sep.color,
+            drawer.rectangle(m.labelbox, fill=sep.color,
                                   outline=sep.linecolor)
 
-        self.drawer.textarea(m.labelbox, sep.label,
+        drawer.textarea(m.labelbox, sep.label,
                              self.metrics.font_for(sep), fill=sep.textcolor)
 
     def altblock(self, block):

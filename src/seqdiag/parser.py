@@ -37,6 +37,7 @@ At the moment, the parser builds only a parse tree, not an abstract syntax tree
 
 import io
 from collections import namedtuple
+import re
 from re import DOTALL, MULTILINE
 
 from blockdiag.parser import create_mapper, flatten, oneplus_to_list
@@ -51,7 +52,7 @@ Attr = namedtuple('Attr', 'name value')
 Edge = namedtuple('Edge', ('from_node edge_type to_node '
                            'followers attrs edge_block'))
 Statements = namedtuple('Statements', 'stmts')
-Separator = namedtuple('Separator', 'type value')
+Separator = namedtuple('Separator', 'type value href')
 Extension = namedtuple('Extension', 'type name attrs')
 Fragment = namedtuple('Fragment', 'type id stmts')
 
@@ -60,20 +61,24 @@ class ParseException(Exception):
     pass
 
 
+SEP_PATTERN  = r'(?P<sep>===|\.\.\.)(?P<label>[^\r\n]+)(?P=sep)(?P<href>.*)'
+SEP_RE = re.compile(SEP_PATTERN)
+
+
 def tokenize(string):
     """str -> Sequence(Token)"""
     # flake8: NOQA
-    specs = [                                                             # NOQA
-        ('Comment',   (r'/\*(.|[\r\n])*?\*/', MULTILINE)),                # NOQA
-        ('Comment',   (r'(//|#).*',)),                                    # NOQA
-        ('NL',        (r'[\r\n]+',)),                                     # NOQA
-        ('Space',     (r'[ \t\r\n]+',)),                                  # NOQA
-        ('Separator', (r'(?P<sep>===|\.\.\.)[^\r\n]+(?P=sep)',)),         # NOQA
-        ('Name',      ('[A-Za-z_0-9\u0080-\uffff]' +                      # NOQA
-                       '[A-Za-z_\\-.0-9\u0080-\uffff]*',)),               # NOQA
-        ('Op',        (r'(=>)|[{};,=\[\]]|(<<?--?)|(--?>>?)',)),          # NOQA
-        ('Number',    (r'-?(\.[0-9]+)|([0-9]+(\.[0-9]*)?)',)),            # NOQA
-        ('String',    (r'(?P<quote>"|\').*?(?<!\\)(?P=quote)', DOTALL)),  # NOQA
+    specs = [                                                                  # NOQA
+        ('Comment',   (r'/\*(.|[\r\n])*?\*/', MULTILINE)),                     # NOQA
+        ('Comment',   (r'(//|#).*',)),                                         # NOQA
+        ('NL',        (r'[\r\n]+',)),                                          # NOQA
+        ('Space',     (r'[ \t\r\n]+',)),                                       # NOQA
+        ('Separator', (SEP_PATTERN,)),                                         # NOQA
+        ('Name',      ('[A-Za-z_0-9\u0080-\uffff]' +                           # NOQA
+                       '[A-Za-z_\\-.0-9\u0080-\uffff]*',)),                    # NOQA
+        ('Op',        (r'(=>)|[{};,=\[\]]|(<<?--?)|(--?>>?)',)),               # NOQA
+        ('Number',    (r'-?(\.[0-9]+)|([0-9]+(\.[0-9]*)?)',)),                 # NOQA
+        ('String',    (r'(?P<quote>"|\').*?(?<!\\)(?P=quote)', DOTALL)),       # NOQA
     ]
     useless = ['Comment', 'NL', 'Space']
     t = make_tokenizer(specs)
@@ -90,7 +95,10 @@ def parse(seq):
     separator = some(lambda t: t.type == 'Separator') >> tokval
 
     def make_separator(sep):
-        return Separator(sep[0:3], sep[3:-3].strip())
+        m = SEP_RE.match(sep)
+        assert m is not None
+        d = m.groupdict()
+        return Separator(d["sep"].strip(), d["label"].strip(), d["href"].strip() or None)
 
     #
     # parts of syntax
