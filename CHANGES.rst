@@ -1,11 +1,15 @@
 Changelog
 =========
 
-2.0.1 (unreleased)
+3.0.0 (2021-12-06)
 ------------------
+* Drop python3.6 support
+* Use funcparserlib-1.0.0a0 or newer to support new python versions
+* Allow to write multiline string via triple quotes (""" ... """)
 * Add "edge_label_margin" attribute to edges
-* Fix a bug
+* Fix bugs
 
+  - Fix #147: file existence disclosure using svg renderer
   - Separator does not support both default_fontsize and default_textcolor
 
 2.0.0 (2020-01-26)
