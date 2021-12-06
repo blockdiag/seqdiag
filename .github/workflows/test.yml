@@ -19,6 +19,8 @@ jobs:
             toxenv: py38
           - python-version: '3.9'
             toxenv: py39
+          - python-version: '3.9'
+            toxenv: blockdiag_dev
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python ${{ matrix.python-version }}
