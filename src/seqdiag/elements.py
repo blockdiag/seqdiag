@@ -131,6 +131,7 @@ class DiagramEdge(blockdiag.elements.DiagramEdge):
         self.diagonal = False
         self.failed = False
         self.return_label = ''
+        self.href = None
 
     @property
     def left_node(self):
