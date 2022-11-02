@@ -190,7 +190,9 @@ class DiagramMetrics(blockdiag.metrics.DiagramMetrics):
         if edge.label:
             if edge.direction == 'self':
                 cell = self.cell(edge.node1)
-                width = self.edge(edge).right - cell.center.x
+                width = ((self.edge(edge).right - cell.center.x) * 2 -
+                         edge.label_margin * 2 -
+                         self.cellsize * 4)  # 4: width of activity and padding
             else:
                 width = (self.cell(edge.right_node).center.x -
                          self.cell(edge.left_node).center.x -
